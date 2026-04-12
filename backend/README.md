@@ -30,3 +30,9 @@ Backend foundation for the Maya City member-based CBHI application.
 - The backend assumes PostgreSQL.
 - TypeORM synchronization is enabled by default outside production so the schema can evolve quickly during early development.
 -  National ID, and notification integrations are scaffolded through environment variables and can be wired in next.
+
+## Production deployment
+
+- Use Supabase for PostgreSQL.
+- Keep `DB_SSL=true` in production.
+- Deploy the NestJS API to a Node runtime such as Render, Railway, Fly.io, or another container/VM host.

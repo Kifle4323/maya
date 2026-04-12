@@ -24,3 +24,7 @@ Each app already includes:
 - If Vercel asks for a framework preset, choose `Other`.
 - The build output directory is `build/web`.
 - Add environment variables separately in each Vercel project if needed.
+
+## Backend
+
+The `backend` service is a NestJS API. Use Supabase for PostgreSQL, then deploy the API itself to a Node-friendly host.
