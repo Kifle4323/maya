@@ -4,48 +4,48 @@ import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
 
-/// The translations for English (`en`).
-class AppLocalizationsEn extends AppLocalizations {
-  AppLocalizationsEn([String locale = 'en']) : super(locale);
+/// The translations for Oromo (`om`).
+class AppLocalizationsOm extends AppLocalizations {
+  AppLocalizationsOm([String locale = 'om']) : super(locale);
 
   @override
-  String get appTitle => 'Maya City CBHI';
+  String get appTitle => 'CBHI Magaalaa Maya';
 
   @override
-  String get appSubtitle => 'Community-Based Health Insurance';
+  String get appSubtitle => 'Caasaa Fayyaa Hawaasaa';
 
   @override
-  String get home => 'Home';
+  String get home => 'Mana';
 
   @override
-  String get family => 'Family';
+  String get family => 'Maatii';
 
   @override
-  String get card => 'Card';
+  String get card => 'Kaardii';
 
   @override
-  String get claims => 'Claims';
+  String get claims => 'Klaayimii';
 
   @override
   String get facilities => 'Facilities';
 
   @override
-  String get profile => 'Profile';
+  String get profile => 'Profaayilii';
 
   @override
-  String get settings => 'Settings';
+  String get settings => 'Qindaa\'inoota';
 
   @override
-  String get notifications => 'Notifications';
+  String get notifications => 'Beeksisota';
 
   @override
-  String get signIn => 'Sign In';
+  String get signIn => 'Seeni';
 
   @override
-  String get signOut => 'Sign Out';
+  String get signOut => 'Ba\'i';
 
   @override
-  String get register => 'Register';
+  String get register => 'Galmeessi';
 
   @override
   String get startNewRegistration => 'Start New Registration';
@@ -54,10 +54,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginAsFamilyMember => 'Login as Family Member';
 
   @override
-  String get forgotPassword => 'Forgot password?';
+  String get forgotPassword => 'Jecha darbii dagatte?';
 
   @override
-  String get sendOtp => 'Send OTP';
+  String get sendOtp => 'Koodii ergi';
 
   @override
   String get verifyAndSignIn => 'Verify and sign in';
@@ -69,19 +69,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get otpCodeExpiry => 'Code expires in';
 
   @override
-  String get password => 'Password';
+  String get password => 'Jecha darbii';
 
   @override
   String get emailOrPhone => 'Email or phone number';
 
   @override
-  String get phoneNumber => 'Phone number';
+  String get phoneNumber => 'Lakkoofsa bilbilaa';
 
   @override
-  String get oneTimePassword => 'One-Time Password';
+  String get oneTimePassword => 'Koodii yeroo tokkoo';
 
   @override
-  String get credentialLogin => 'Credential Login';
+  String get credentialLogin => 'Ragaa fayyadami';
 
   @override
   String get forHouseholdHeads =>
@@ -92,43 +92,43 @@ class AppLocalizationsEn extends AppLocalizations {
       'We\'ll send a verification code to your Ethiopian mobile number.';
 
   @override
-  String get developmentOtp => 'Development OTP';
+  String get developmentOtp => 'Koodii guddistuu';
 
   @override
   String get notShownInProduction => 'not shown in production';
 
   @override
   String get welcomeSubtitle =>
-      'Member-centered community-based health insurance for Ethiopian households, health facilities, and CBHI officers.';
+      'Caasaa fayyaa hawaasaa maatii Itoophiyaa, dhaabbilee fayyaa, fi hojjettoota CBHIf.';
 
   @override
-  String get multilingual => 'Multilingual';
+  String get multilingual => 'Afaan hedduu';
 
   @override
-  String get digitalCard => 'Digital Card';
+  String get digitalCard => 'Kaardii dijitaalaa';
 
   @override
-  String get claimsTracking => 'Claims Tracking';
+  String get claimsTracking => 'Hordoffii klaayimii';
 
   @override
-  String get offlineReady => 'Offline Ready';
+  String get offlineReady => 'Toora ala hojjata';
 
   @override
   String get householdHeadsUseSignIn =>
-      'Household heads, facility staff, and administrators use Sign In. Adult beneficiaries use family member login.';
+      'Hoggantoota maatii, hojjettootni dhaabbataa, fi bulchitootni \'Seeni\' fayyadamu. Miseensotni maatii guddatanii seensa maatii fayyadamu.';
 
   @override
-  String get privacyConsent => 'Privacy & Data Consent';
+  String get privacyConsent => 'Hayyama Dhuunfaa';
 
   @override
   String get privacyConsentSubtitle =>
-      'Please read and accept before using Maya City CBHI';
+      'CBHI Magaalaa Maya fayyadamuun dura dubbisaa fi hayyamaa';
 
   @override
-  String get scrollToRead => 'Scroll down to read all terms';
+  String get scrollToRead => 'Hunda dubbisuf gadi harcaasi';
 
   @override
-  String get iAcceptContinue => 'I Accept — Continue to App';
+  String get iAcceptContinue => 'Fudhachuun — Appitti itti fufi';
 
   @override
   String get byAccepting =>
@@ -136,56 +136,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get consentFooter =>
-      'By accepting, you consent to the collection and use of your data as described above.';
+      'Fudhachuudhaan, odeeffannoon kee akka funaanamu fi fayyadamamu hayyamta.';
 
   @override
-  String get privacySection1Title => '1. Data We Collect';
+  String get privacySection1Title => '1. Odeeffannoo Funaannu';
 
   @override
   String get privacySection1Body =>
-      'We collect your name, phone number, date of birth, address (region, zone, woreda, kebele), household size, identity document details, and health insurance membership information. Photos and supporting documents you upload are stored securely.';
+      'Maqaa, lakkoofsa bilbilaa, guyyaa dhalootaa, teessoo (naannoo, godina, aanaa, ganda), baay\'ina maatii, ragaa eenyummaa, fi odeeffannoo miseensummaa CBHI funaanna.';
 
   @override
-  String get privacySection2Title => '2. How We Use Your Data';
+  String get privacySection2Title => '2. Odeeffannoo Kee Akkamitti Fayyadamna';
 
   @override
   String get privacySection2Body =>
-      'Your data is used to manage your CBHI membership, verify eligibility at health facilities, process claims, send renewal reminders, and improve the platform. We do not sell your data to third parties.';
+      'Odeeffannoon kee miseensummaa CBHI bulchuuf, eeyyama mirkaneessuuf, klaayimii hojjechuuf, fi beeksisota erguuf fayyadama.';
 
   @override
-  String get privacySection3Title => '3. Data Storage & Security';
+  String get privacySection3Title => '3. Kuusaa Odeeffannoo fi Nageenyaa';
 
   @override
   String get privacySection3Body =>
-      'Data is stored on secure servers managed by the Ethiopian Health Insurance Agency (EHIA). We use encryption in transit (HTTPS) and access controls to protect your information. Offline data is stored locally on your device.';
+      'Odeeffannoon Ejensii Inshuraansii Fayyaa Itoophiyaa (EHIA) bulchu sarvaroota nageenyaa qaban irratti kuufama.';
 
   @override
-  String get privacySection4Title => '4. Your Rights';
+  String get privacySection4Title => '4. Mirga Kee';
 
   @override
   String get privacySection4Body =>
-      'You have the right to access, correct, or delete your personal data. To request deletion, go to Profile → Delete Account. For other requests, contact EHIA at info@ehia.gov.et.';
+      'Odeeffannoo dhuunfaa kee argachuu, sirreessuu, ykn haaquuf mirga qabda. Haaquuf Profaayilii → Herrega Haqi deemi.';
 
   @override
-  String get privacySection5Title => '5. Offline Data';
+  String get privacySection5Title => '5. Odeeffannoo Toora Ala';
 
   @override
   String get privacySection5Body =>
-      'When you use the app offline, your data is stored locally on your device in an encrypted database. This data syncs to our servers when you reconnect to the internet.';
+      'Toora ala fayyadamtu, odeeffannoon kee meeshaa kee irratti kuufama. Interneetii yoo argame sarvaroota keenyatti walsimsiifama.';
 
   @override
-  String get privacySection6Title => '6. Third-Party Services';
+  String get privacySection6Title => '6. Tajaajila Sadaffaa';
 
   @override
   String get privacySection6Body =>
-      'We use Chapa for payment processing and Africa\'s Talking for SMS delivery. These services have their own privacy policies. We share only the minimum data required for these services to function.';
+      'Kaffaltiif Chapa fi ergaa gabaaf Africa\'s Talking fayyadamna. Tajaajiloonni kun imaammata dhuunfaa isaanii qabu.';
 
   @override
-  String get privacySection7Title => '7. Contact';
+  String get privacySection7Title => '7. Nu Quunnamaa';
 
   @override
   String get privacySection7Body =>
-      'Ethiopian Health Insurance Agency (EHIA)\nEmail: info@ehia.gov.et\nWebsite: www.ehia.gov.et\nAddress: Addis Ababa, Ethiopia';
+      'Ejensii Inshuraansii Fayyaa Itoophiyaa (EHIA)\nImeelii: info@ehia.gov.et\nWebsaayitii: www.ehia.gov.et';
 
   @override
   String get dataWeCollect => '1. Data We Collect';
@@ -209,41 +209,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contact => '7. Contact';
 
   @override
-  String get onboardingTitle1 => 'Welcome to Maya City CBHI';
+  String get onboardingTitle1 => 'Baga CBHI Magaalaa Maya Dhuftan';
 
   @override
   String get onboardingBody1 =>
-      'Community-Based Health Insurance protects your family from unexpected medical costs. Register once and access healthcare services across accredited facilities.';
+      'Caasaan fayyaa hawaasaa maatii keessan baasii fayyaa hin eegamne irraa eega. Yeroo tokko galmeessaa tajaajila dhaabbilee raggaafaman irraa argadhaa.';
 
   @override
-  String get onboardingTitle2 => 'Easy Registration';
+  String get onboardingTitle2 => 'Galmeessa Salphaa';
 
   @override
   String get onboardingBody2 =>
-      'Register your household in guided steps: personal details and ID, review, identity, membership, and optional indigent proof documents — even without internet.';
+      'Maatii keessan tartiibaan galmeessaa: odeeffannoo dhuunfaa, eenyummaa, miseensummaa — toora ala illee hojjata.';
 
   @override
-  String get onboardingTitle3 => 'Your Digital CBHI Card';
+  String get onboardingTitle3 => 'Kaardii CBHI Dijitaalaa Keessan';
 
   @override
   String get onboardingBody3 =>
-      'Your digital membership card is always in your pocket. Show the QR code at any accredited health facility to verify your coverage instantly.';
+      'Kaardii miseensummaa dijitaalaa keessan yeroo hunda harkaa jira. Koodii QR hojjettootni dhaabbataa fayyaaf agarsiisaa.';
 
   @override
-  String get onboardingTitle4 => 'Works Offline';
+  String get onboardingTitle4 => 'Toora Ala Hojjata';
 
   @override
   String get onboardingBody4 =>
-      'No internet? No problem. Register and manage your household offline. Your data syncs automatically when connectivity is restored.';
+      'Interneetii hin jiru? Rakkoo hin qabu. Galmeessa fi jijjiiramni naannoo keessatti olkaa\'amu interneetii yoo argame ofumaan walsimsiifama.';
 
   @override
-  String get getStarted => 'Get Started';
+  String get getStarted => 'Jalqabi';
 
   @override
-  String get next => 'Next';
+  String get next => 'Itti aanaa';
 
   @override
-  String get skip => 'Skip';
+  String get skip => 'Irri darbii';
 
   @override
   String get step1PersonalInfo => 'Step 1 of 5';
@@ -265,61 +265,61 @@ class AppLocalizationsEn extends AppLocalizations {
       'Capture household head details and supporting documents before identity verification.';
 
   @override
-  String get firstName => 'First name';
+  String get firstName => 'Maqaa jalqabaa';
 
   @override
-  String get middleName => 'Middle name';
+  String get middleName => 'Maqaa giddu';
 
   @override
-  String get lastName => 'Last name';
+  String get lastName => 'Maqaa dhumaa';
 
   @override
-  String get emailAddress => 'Email address';
+  String get emailAddress => 'Teessoo imeelii';
 
   @override
-  String get gender => 'Gender';
+  String get gender => 'Saala';
 
   @override
-  String get male => 'Male';
+  String get male => 'Dhiira';
 
   @override
-  String get female => 'Female';
+  String get female => 'Dhalaa';
 
   @override
-  String get other => 'Other';
+  String get other => 'Kan biraa';
 
   @override
-  String get dateOfBirth => 'Date of birth';
+  String get dateOfBirth => 'Guyyaa dhalootaa';
 
   @override
-  String get preferredLanguage => 'Preferred language';
+  String get preferredLanguage => 'Afaan filatame';
 
   @override
-  String get english => 'English';
+  String get english => 'Ingliffaa';
 
   @override
-  String get amharic => 'Amharic';
+  String get amharic => 'Afaan Amaaraa';
 
   @override
-  String get afaanOromo => 'Afaan Oromo';
+  String get afaanOromo => 'Afaan Oromoo';
 
   @override
   String get householdAddress => 'Household address';
 
   @override
-  String get region => 'Region';
+  String get region => 'Naannoo';
 
   @override
-  String get zone => 'Zone';
+  String get zone => 'Godina';
 
   @override
-  String get woreda => 'Woreda';
+  String get woreda => 'Aanaa';
 
   @override
-  String get kebele => 'Kebele';
+  String get kebele => 'Ganda';
 
   @override
-  String get householdSize => 'Household size';
+  String get householdSize => 'Baay\'ina maatii';
 
   @override
   String get birthCertificate => 'Birth certificate';
@@ -331,13 +331,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewInformation => 'Review information';
 
   @override
-  String get takePhoto => 'Take photo';
+  String get takePhoto => 'Suuraa kaasi';
 
   @override
-  String get chooseFromGallery => 'Choose from gallery';
+  String get chooseFromGallery => 'Gaallarii irraa filadhu';
 
   @override
-  String get choosePdfOrImage => 'Choose PDF or image';
+  String get choosePdfOrImage => 'PDF yookaan suuraa filadhu';
 
   @override
   String get uploadDocument => 'Upload document';
@@ -433,25 +433,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retryValidation => 'Retry validation';
 
   @override
-  String get membershipSelection => 'Membership selection';
+  String get membershipSelection => 'Filannoo miseensummaa';
 
   @override
-  String get chooseMembershipPathway =>
-      'Choose the household membership pathway. Paying members can enter a premium estimate while indigent members use employment screening.';
+  String get chooseMembershipPathway => 'Gosa miseensummaa maatii filadhaa.';
 
   @override
-  String get indigentMembership => 'Indigent membership';
+  String get indigentMembership => 'Miseensummaa gargaarsaa';
 
   @override
-  String get indigentMembershipSubtitle =>
-      'Zero-touch eligibility screening with subsidized premium if approved.';
+  String get indigentMembershipSubtitle => 'Maatii galii gadi aanaa qabaniif.';
 
   @override
-  String get payingMembership => 'Paying membership';
+  String get payingMembership => 'Miseensummaa kaffaltiiwwanii';
 
   @override
   String get payingMembershipSubtitle =>
-      'Standard membership with annual household premium payment.';
+      'Miseensummaa idilee kaffalti waggaa qabu.';
 
   @override
   String get estimatedPremiumAmount => 'Estimated premium amount (ETB)';
@@ -460,59 +458,57 @@ class AppLocalizationsEn extends AppLocalizations {
   String get completeRegistration => 'Complete registration';
 
   @override
-  String get indigentApplication => 'Indigent Application';
+  String get indigentApplication => 'Iyyannoo gargaarsa';
 
   @override
   String get indigentApplicationSubtitle =>
       'Qualifying households receive subsidized or free CBHI coverage. Upload supporting documents from your kebele. Documents are verified automatically by AI.';
 
   @override
-  String get monthlyIncome => 'Monthly Income';
+  String get monthlyIncome => 'Galii ji\'aa';
 
   @override
-  String get monthlyIncomeSubtitle =>
-      'Enter your household monthly income in ETB.';
+  String get monthlyIncomeSubtitle => 'Galii ji\'aa maatii ETBn galchi.';
 
   @override
-  String get monthlyIncomeEtb => 'Monthly income (ETB)';
+  String get monthlyIncomeEtb => 'Galii ji\'aa (ETB)';
 
   @override
-  String get householdStatus => 'Household Status';
+  String get householdStatus => 'Haala maatii';
 
   @override
-  String get ownsProperty => 'Owns property (land, house, or business)';
+  String get ownsProperty => 'Qabeenya (lafa, mana, daldala) qaba';
 
   @override
-  String get hasMemberWithDisability =>
-      'Has a household member with disability';
+  String get hasMemberWithDisability => 'Miseensa maatii hir\'ina qaamaa qabu';
 
   @override
-  String get supportingDocuments => 'Supporting Documents';
+  String get supportingDocuments => 'Galmee deeggarsa';
 
   @override
-  String get upload1To3Documents => 'Upload 1-3 documents from your kebele.';
+  String get upload1To3Documents => 'Galmee 1-3 gandaa keessanii fe\'aa.';
 
   @override
-  String get addDocument => 'Add';
+  String get addDocument => 'Dabali';
 
   @override
   String get acceptedDocumentTypes => 'Accepted document types';
 
   @override
-  String get noDocumentsYet => 'No documents uploaded yet';
+  String get noDocumentsYet => 'Galmeen hin fe\'amne';
 
   @override
-  String get tapAddToUpload => 'Tap Add to upload a document';
+  String get tapAddToUpload => 'Galmee fe\'uuf \'Dabali\' tuqi';
 
   @override
-  String get submitApplication => 'Submit Application';
+  String get submitApplication => 'Iyyannoo ergi';
 
   @override
-  String get validatingDocuments => 'Validating documents...';
+  String get validatingDocuments => 'Galmee mirkaneessaa jira...';
 
   @override
   String get expiredDocumentsCannotSubmit =>
-      'Expired documents — cannot submit';
+      'Galmeen yeroon isaa darbeera — erguu hin danda\'u';
 
   @override
   String get documentExpired => 'EXPIRED';
@@ -572,7 +568,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your Maya City household account is active and your digital CBHI card is now available from the home screen.';
 
   @override
-  String get syncNow => 'Sync now';
+  String get syncNow => 'Amma walsimsiisi';
 
   @override
   String get openMyAccount => 'Open my account';
@@ -581,28 +577,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get startAnotherRegistration => 'Start another registration';
 
   @override
-  String get household => 'Household';
+  String get household => 'Maatii';
 
   @override
-  String get coverage => 'Coverage';
+  String get coverage => 'Tajaajila';
 
   @override
-  String get premium => 'Premium';
+  String get premium => 'Kaffalti';
 
   @override
-  String get paid => 'Paid';
+  String get paid => 'Kaffalameera';
 
   @override
-  String get members => 'Members';
+  String get members => 'Miseensota';
 
   @override
-  String get eligibility => 'Eligibility';
+  String get eligibility => 'Eeyyama';
 
   @override
-  String get eligible => 'Eligible';
+  String get eligible => 'Eeyyamameera';
 
   @override
-  String get pending => 'Pending';
+  String get pending => 'Eeggachaa jira';
 
   @override
   String get noHouseholdSynced => 'No household synced yet';
@@ -633,26 +629,26 @@ class AppLocalizationsEn extends AppLocalizations {
       'Coverage eligibility details will appear after sync.';
 
   @override
-  String get renewCoverage => 'Renew Coverage';
+  String get renewCoverage => 'Tajaajila haaromsi';
 
   @override
-  String get confirmRenewal => 'Confirm Renewal';
+  String get confirmRenewal => 'Haaromsuu mirkaneessi';
 
   @override
-  String get paymentHistory => 'Payment History';
+  String get paymentHistory => 'Seenaa kaffaltiiwwanii';
 
   @override
-  String get noPaymentsRecorded => 'No payments recorded';
+  String get noPaymentsRecorded => 'Kaffaltin galmaayee hin jiru';
 
   @override
   String get renewalTransactionsHere =>
       'Renewal and contribution transactions will appear here.';
 
   @override
-  String get recentNotifications => 'Recent Notifications';
+  String get recentNotifications => 'Beeksisota dhiyoo';
 
   @override
-  String get noNotificationsYet => 'No notifications yet';
+  String get noNotificationsYet => 'Beeksisni hin jiru';
 
   @override
   String get coverageAlertsHere =>
@@ -687,10 +683,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirmFreeRenewalButton => 'Confirm Free Renewal';
 
   @override
-  String get payPremium => 'Pay Premium';
+  String get payPremium => 'Kaffalti kaffali';
 
   @override
-  String get premiumAmount => 'Premium Amount';
+  String get premiumAmount => 'Baay\'ina kaffaltiiwwanii';
 
   @override
   String get acceptedPaymentMethods => 'Accepted Payment Methods';
@@ -715,11 +711,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String payViaChapa(String amount) {
-    return 'Pay $amount ETB via Chapa';
+    return 'ETB $amount Chapadhaan kaffali';
   }
 
   @override
-  String get paymentInitiated => 'Payment Initiated';
+  String get paymentInitiated => 'Kaffaltin jalqabameera';
 
   @override
   String transaction(String txRef) {
@@ -728,10 +724,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get completePaymentOnChapa =>
-      'Complete your payment on the Chapa checkout page, then tap Verify Payment.';
+      'Kaffalti xumurtee \'Kaffalti mirkaneessi\' tuqi.';
 
   @override
-  String get verifyPayment => 'Verify Payment';
+  String get verifyPayment => 'Kaffalti mirkaneessi';
 
   @override
   String get paymentSuccessful => 'Payment successful! Coverage activated.';
@@ -741,7 +737,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Payment could not be completed. Please try again.';
 
   @override
-  String get myFamily => 'My family';
+  String get myFamily => 'Maatii koo';
 
   @override
   String get householdMembers => 'Household members';
@@ -755,7 +751,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Manage household beneficiaries, capture photos, and prepare family-member OTP access from one place.';
 
   @override
-  String get addBeneficiary => 'Add beneficiary';
+  String get addBeneficiary => 'Fayyadamaa dabali';
 
   @override
   String get noBeneficiariesAvailable => 'No beneficiaries available';
@@ -765,10 +761,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Add family members once the household account is active.';
 
   @override
-  String get edit => 'Edit';
+  String get edit => 'Gulaali';
 
   @override
-  String get remove => 'Remove';
+  String get remove => 'Haqi';
 
   @override
   String get removeBeneficiary => 'Remove beneficiary?';
@@ -779,7 +775,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get cancel => 'Cancel';
+  String get cancel => 'Dhiisi';
 
   @override
   String get accessThroughHouseholdHead => 'Access through household head';
@@ -866,30 +862,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get photoRequired => 'Beneficiary photo is required before saving.';
 
   @override
-  String get digitalCbhiCards => 'Digital CBHI Cards';
+  String get digitalCbhiCards => 'Kaardii CBHI Dijitaalaa';
 
   @override
-  String get encryptedQrToken => 'Encrypted QR token • Show to facility staff';
+  String get encryptedQrToken =>
+      'Koodii QR eegamaa • Hojjettootni dhaabbataa agarsiisi';
 
   @override
-  String get completeSyncForQr => 'Complete sync to generate QR token';
+  String get completeSyncForQr => 'Kaardii uumuuf herreggaa kee walsimsiisi';
 
   @override
-  String get shareCardInfo => 'Share Card Info';
+  String get shareCardInfo => 'Odeeffannoo kaardii qoodi';
 
   @override
-  String get cardDetailsCopied =>
-      'Card details copied — share with facility staff if needed.';
+  String get cardDetailsCopied => 'Odeeffannoon kaardii garagalfameera.';
 
   @override
-  String get noDigitalCardCached => 'No digital card cached yet';
+  String get noDigitalCardCached => 'Kaardiin dijitaalaa hin kuufamne';
 
   @override
   String get syncToGenerateCard =>
-      'Sync your account to generate your digital card.';
+      'Kaardii kee uumuuf herreggaa kee walsimsiisi.';
 
   @override
-  String get myClaims => 'My Claims';
+  String get myClaims => 'Klaayimii koo';
 
   @override
   String get trackClaimsSubtitle =>
@@ -900,7 +896,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Claims are submitted by health facility staff when you receive services. Show your digital card at any accredited facility.';
 
   @override
-  String get noClaimsYet => 'No claims yet';
+  String get noClaimsYet => 'Klaayimiin hin jiru';
 
   @override
   String get claimsWillAppearHere =>
@@ -946,43 +942,43 @@ class AppLocalizationsEn extends AppLocalizations {
   String get serviceLevel => 'Service Level';
 
   @override
-  String get language => 'Language';
+  String get language => 'Afaan';
 
   @override
-  String get darkMode => 'Dark Mode';
+  String get darkMode => 'Haala dukkana';
 
   @override
   String get easierOnEyes => 'Easier on the eyes in low light';
 
   @override
-  String get biometricLogin => 'Biometric Login';
+  String get biometricLogin => 'Seensa baayomeetrikii';
 
   @override
   String get useFingerprintOrFace => 'Use fingerprint or face ID to sign in';
 
   @override
-  String get about => 'About';
+  String get about => 'Waa\'ee';
 
   @override
-  String get platform => 'Platform';
+  String get platform => 'Marsariitii';
 
   @override
-  String get authority => 'Authority';
+  String get authority => 'Abbaa Aangoo';
 
   @override
-  String get ministry => 'Ministry';
+  String get ministry => 'Ministeera';
 
   @override
-  String get ehia => 'Ethiopian Health Insurance Agency (EHIA)';
+  String get ehia => 'Ejensii Inshuraansii Fayyaa Itoophiyaa (EHIA)';
 
   @override
-  String get fmoh => 'Federal Ministry of Health (FMOH)';
+  String get fmoh => 'Ministeera Fayyaa Federaalaa (FMOH)';
 
   @override
-  String get platformVersion => 'Maya City CBHI v1.0';
+  String get platformVersion => 'CBHI Magaalaa Maya v1.0';
 
   @override
-  String get helpAndFaq => 'Help & FAQ';
+  String get helpAndFaq => 'Gargaarsa fi gaaffii';
 
   @override
   String get ehiaHelpline => 'EHIA Helpline';
@@ -992,16 +988,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'info@ehia.gov.et  |  Ethiopian Health Insurance Agency';
 
   @override
-  String get profileDetails => 'Profile Details';
+  String get profileDetails => 'Bal\'ina profaayilii';
 
   @override
-  String get notSynced => 'Not synced';
+  String get notSynced => 'Hin walsimsiifamne';
 
   @override
-  String get independentAccessLabel => 'Independent access';
+  String get independentAccessLabel => 'Seensa of-danda\'aa';
 
   @override
-  String get householdManagedLabel => 'Household-managed';
+  String get householdManagedLabel => 'Hogganaa maatiidhaan bulcha';
 
   @override
   String get faqQ1 => 'How do I register my household?';
@@ -1067,7 +1063,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Contact the Ethiopian Health Insurance Agency (EHIA) at info@ehia.gov.et or visit your local CBHI office. You can also call the EHIA helpline.';
 
   @override
-  String get required => 'Required';
+  String get required => 'Barbaachisaa';
 
   @override
   String get invalidPhone =>
@@ -1094,31 +1090,31 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your session has expired. Please sign in again.';
 
   @override
-  String get loading => 'Loading your health coverage...';
+  String get loading => 'Tajaajila keessan fe\'aa jira...';
 
   @override
-  String get syncing => 'Syncing...';
+  String get syncing => 'Walsimsiisaa jira...';
 
   @override
-  String get retry => 'Retry';
+  String get retry => 'Irra deebi\'i yaali';
 
   @override
-  String get save => 'Save';
+  String get save => 'Olkaa\'i';
 
   @override
-  String get confirm => 'Confirm';
+  String get confirm => 'Mirkaneessi';
 
   @override
-  String get close => 'Close';
+  String get close => 'Cufii';
 
   @override
-  String get yes => 'Yes';
+  String get yes => 'Eeyyee';
 
   @override
-  String get no => 'No';
+  String get no => 'Lakki';
 
   @override
-  String get ok => 'OK';
+  String get ok => 'Tole';
 
   @override
   String get success => 'Success';
@@ -1133,7 +1129,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get info => 'Info';
 
   @override
-  String get notAvailable => 'Not available';
+  String get notAvailable => 'Hin jiru';
 
   @override
   String get etb => 'ETB';
@@ -1142,11 +1138,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get months => 'months';
 
   @override
-  String get setupAccountTitle => 'Set Up Your Account';
+  String get setupAccountTitle => 'Herrega qindeessi';
 
   @override
   String get setupAccountSubtitle =>
-      'A setup code was sent to your phone. Enter it below to activate your account and create a password.';
+      'Koodiin bilbila keessanitti ergameera. Galchaa jecha darbii uumaa.';
 
   @override
   String get setupCode => 'Setup Code';
@@ -1155,117 +1151,120 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setupCodeHint => '6-digit code from SMS';
 
   @override
-  String get newPassword => 'New Password';
+  String get newPassword => 'Jecha darbii haaraa';
 
   @override
-  String get confirmPassword => 'Confirm Password';
+  String get confirmPassword => 'Jecha darbii mirkaneessi';
 
   @override
-  String get passwordsDoNotMatch => 'Passwords do not match';
+  String get passwordsDoNotMatch => 'Jechootni darbii wal hin simanu';
 
   @override
-  String get passwordTooShort => 'Password must be at least 6 characters';
+  String get passwordTooShort =>
+      'Jecha darbiin yoo xiqqaate qubee 6 qabaachuu qaba';
 
   @override
-  String get activateAccount => 'Activate Account';
+  String get activateAccount => 'Herrega hojii irra oolchi';
 
   @override
-  String get accountActivated => 'Account activated! You are now signed in.';
+  String get accountActivated =>
+      'Herreggaan hojii irra oolee jira! Seentaniittu.';
 
   @override
-  String get resendSetupCode => 'Resend setup code';
+  String get resendSetupCode => 'Koodii irra deebi\'ii ergi';
 
   @override
   String setupCodeSent(String target) {
-    return 'Setup code sent to $target';
+    return 'Koodiin gara $target ergameera';
   }
 
   @override
   String get backgroundSyncComplete => 'Coverage synced';
 
   @override
-  String get offlineBadge => 'OFFLINE';
+  String get offlineBadge => 'Toora ala';
 
   @override
-  String get pleaseEnterAll6Digits => 'Please enter all 6 digits';
+  String get pleaseEnterAll6Digits => 'Lakkoofsa 6 hunda galchi';
 
   @override
-  String get verifyOtp => 'Verify & Sign In';
+  String get verifyOtp => 'Mirkaneessi fi seeni';
 
   @override
-  String get resendOtp => 'Resend code';
+  String get resendOtp => 'Koodii irra deebi\'ii ergi';
 
   @override
-  String get otpExpiry => 'Code expires in';
+  String get otpExpiry => 'Koodiin ni dhumata';
 
   @override
   String newCodeSentTo(String target) {
-    return 'New code sent to $target';
+    return 'Koodiin haaraan gara $target ergameera';
   }
 
   @override
   String enterCodeSentTo(String target) {
-    return 'Enter the code sent to $target';
+    return 'Koodii gara $target ergame galchi';
   }
 
   @override
   String enterResetCodeSentTo(String target) {
-    return 'Enter the reset code sent to $target';
+    return 'Koodii haaromsuu gara $target ergame galchi';
   }
 
   @override
-  String get verifyYourPhone => 'Verify Your Phone';
+  String get verifyYourPhone => 'Bilbila keessan mirkaneessaa';
 
   @override
-  String get phonePlusOtp => 'Phone + OTP';
+  String get phonePlusOtp => 'Bilbila + OTP';
 
   @override
   String get otpPhoneSubtitle =>
-      'We\'ll send a 6-digit code to your Ethiopian mobile number.';
+      'Koodii lakkoofsa 6 bilbila Itoophiyaa keessanitti ergina.';
 
   @override
   String get credentialLoginSubtitle =>
-      'Sign in with your email or phone and password.';
+      'Imeelii yookaan bilbila fi jecha darbii fayyadami.';
 
   @override
-  String get emailOrPhoneNumber => 'Email or phone number';
+  String get emailOrPhoneNumber => 'Imeelii yookaan bilbila';
 
   @override
-  String get signInWithBiometrics => 'Sign in with biometrics';
+  String get signInWithBiometrics => 'Baayomeetrikiidhaan seeni';
 
   @override
-  String get biometricAuthenticationFailed => 'Biometric authentication failed';
+  String get biometricAuthenticationFailed =>
+      'Mirkaneessa baayomeetrikii hin milkoofne';
 
   @override
-  String get familyLogin => 'Family Member Login';
+  String get familyLogin => 'Seensa miseensa maatii';
 
   @override
-  String get register_action => 'New Registration';
+  String get register_action => 'Galmeessa haaraa';
 
   @override
-  String get demoSandboxAutoSuccess =>
-      'Demo Sandbox — No real money charged. Payment auto-succeeds.';
+  String get demoSandboxAutoSuccess => 'Haala demo — kaffaltin hin jiru.';
 
   @override
-  String get householdLabel => 'Household';
+  String get householdLabel => 'Maatii';
 
   @override
-  String get transactionLabel => 'Transaction';
+  String get transactionLabel => 'Daldala';
 
   @override
-  String get statusLabel => 'Status';
+  String get statusLabel => 'Haala';
 
   @override
-  String get amountLabel => 'Amount';
+  String get amountLabel => 'Baay\'ina';
 
   @override
-  String get methodLabel => 'Method';
+  String get methodLabel => 'Mala';
 
   @override
-  String get successPayment => 'Payment successful! Coverage activated.';
+  String get successPayment =>
+      'Kaffaltin milkaa\'e! Tajaajilli hojii irra oolee jira.';
 
   @override
-  String get openChapaCheckout => 'Open Chapa Checkout';
+  String get openChapaCheckout => 'Fuula kaffalti Chapa bani';
 
   @override
   String get adminPortalTitle => 'Admin Portal';
@@ -1334,56 +1333,55 @@ class AppLocalizationsEn extends AppLocalizations {
   String get refresh => 'Refresh';
 
   @override
-  String get maxDocumentsReached => 'Maximum 3 documents allowed.';
+  String get maxDocumentsReached => 'Galmee 3 ol hin ta\'u.';
 
   @override
   String get pleaseUploadAtLeastOneDocument =>
-      'Please upload at least one supporting document.';
+      'Yoo xiqqaate galmee deeggarsa tokko fe\'aa.';
 
   @override
   String expiredDocumentError(String docs) {
-    return 'Cannot submit: $docs is expired. Please upload a valid document from your kebele.';
+    return 'Erguu hin danda\'u: $docs yeroon isaa darbeera. Galmee sirrii gandaa irraa fe\'aa.';
   }
 
   @override
-  String get waitForValidation =>
-      'Please wait for all documents to finish validating.';
+  String get waitForValidation => 'Galmeen hundi mirkaneeffamutti eegaa.';
 
   @override
-  String get invalidNumber => 'Enter a valid number';
+  String get invalidNumber => 'Lakkoofsa sirrii galchi';
 
   @override
   String get invalidIncome => 'Income is required';
 
   @override
-  String get selectDateRange => 'Select date range';
+  String get selectDateRange => 'Guyyoota filadhu';
 
   @override
-  String get clearDateRange => 'Clear date range';
+  String get clearDateRange => 'Haqi';
 
   @override
-  String get dateRangeActive => 'Date range active';
+  String get dateRangeActive => 'Guyyoota filatamaniiru';
 
   @override
-  String get searchClaimsHint => 'Search by claim # or beneficiary...';
+  String get searchClaimsHint => 'Klaayimii # yookaan maqaa barbaadi...';
 
   @override
-  String get scanQrCard => 'Scan QR Card';
+  String get scanQrCard => 'Kaardii QR qori';
 
   @override
-  String get scanMemberCard => 'Scan Member Card';
+  String get scanMemberCard => 'Kaardii miseensaa qori';
 
   @override
-  String get pointCameraAtCard => 'Point the camera at the member\'s QR code';
+  String get pointCameraAtCard => 'Kaameraa gara koodii QR qajeelchi';
 
   @override
-  String get toggleFlash => 'Toggle flash';
+  String get toggleFlash => 'Ifaa jijjiiri';
 
   @override
-  String get attachDocument => 'Attach Document';
+  String get attachDocument => 'Galmee makami';
 
   @override
-  String get supportingDocument => 'Supporting Document';
+  String get supportingDocument => 'Galmee deeggarsa';
 
   @override
   String get navAuditLog => 'Audit Log';
@@ -1416,59 +1414,61 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ipAddress => 'IP Address';
 
   @override
-  String get changePassword => 'Change Password';
+  String get changePassword => 'Jecha darbii jijjiiri';
 
   @override
-  String get passwordChanged => 'Password changed successfully.';
+  String get passwordChanged => 'Jecha darbiin jijjiirameera.';
 
   @override
-  String get deleteAccount => 'Delete Account';
+  String get deleteAccount => 'Herrega haqi';
 
   @override
-  String get deleteAccountTitle => 'Delete Account?';
+  String get deleteAccountTitle => 'Herrega haqi?';
 
   @override
   String get deleteAccountMessage =>
-      'This action cannot be undone. All your personal data will be anonymised.';
+      'Tarkaanfiin kun deebi\'uu hin danda\'u. Odeeffannoon dhuunfaa keessan hundi haqqifama.';
 
   @override
-  String get recommended => 'Recommended';
+  String get recommended => 'Kan gorfamu';
 
   @override
-  String get selectThisOption => 'Select This Option';
+  String get selectThisOption => 'Kana filadhu';
 
   @override
-  String get indigentFeature1 => 'Upload kebele / income proof';
+  String get indigentFeature1 => 'Galmee gandaa fe\'aa';
 
   @override
-  String get indigentFeature2 => 'No premium payment';
+  String get indigentFeature2 => 'Kaffaltin hin jiru';
 
   @override
-  String get indigentFeature3 => 'Same registration as paying members';
+  String get indigentFeature3 =>
+      'Galmeessa miseensota kaffaltiiwwanii fakkaata';
 
   @override
-  String get payingFeature1 => 'Pay annual premium';
+  String get payingFeature1 => 'Kaffalti waggaa kaffali';
 
   @override
-  String get payingFeature2 => 'Full coverage benefits';
+  String get payingFeature2 => 'Faaydaa tajaajila guutuu';
 
   @override
-  String get payingFeature3 => 'Premium: ETB 500 / household';
+  String get payingFeature3 => 'Kaffalti: ETB 500 / maatii';
 
   @override
-  String get indigentApplicationMenuTitle => 'Indigent Application';
+  String get indigentApplicationMenuTitle => 'Iyyannoo gargaarsaa';
 
   @override
-  String get indigentApplicationMenuSubtitle => 'Apply for subsidized coverage';
+  String get indigentApplicationMenuSubtitle =>
+      'Tajaajila gargaarsaaf iyyannoo galchi';
 
   @override
-  String get indigentApplicationSubmitted => 'Application submitted!';
+  String get indigentApplicationSubmitted => 'Iyyannoon fudhatamuufi!';
 
   @override
-  String get dobLabel => 'Date of birth';
+  String get dobLabel => 'Guyyaa dhalootaa';
 
   @override
-  String get genderLabel => 'Gender';
+  String get genderLabel => 'Saala';
 
   @override
   String get idLabel => 'ID';
@@ -1557,17 +1557,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get grievances => 'Grievances';
 
   @override
-  String get myGrievances => 'My Grievances';
+  String get myGrievances => 'Komii koo';
 
   @override
-  String get submitNew => 'Submit New';
+  String get submitNew => 'Haaraa ergi';
 
   @override
   String get noGrievancesYet => 'No grievances submitted';
 
   @override
   String get noGrievancesSubtitle =>
-      'You haven\'t filed any grievances. If you have an issue, we\'re here to help.';
+      'Komii hin galmoofne. Rakkoo yoo qabaatte, gargaaruuf qophii dha.';
 
   @override
   String get grievanceSubmitted => 'Grievance submitted successfully';
@@ -1576,26 +1576,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whatIsYourIssue => 'What is your issue?';
 
   @override
-  String get grievanceSubject => 'Subject';
+  String get grievanceSubject => 'Mata duree';
 
   @override
-  String get grievanceSubjectHint => 'Brief description of your issue';
+  String get grievanceSubjectHint => 'Rakkoo kee gabaabsii ibsi';
 
   @override
-  String get grievanceDescription => 'Description';
+  String get grievanceDescription => 'Ibsa';
 
   @override
   String get grievanceDescriptionHint =>
-      'Please describe your issue in detail. Include dates, names, and any relevant information.';
+      'Rakkoo kee bal\'inaan ibsi. Guyyaa, maqaa, fi lakkoofsa wabii galchi.';
 
   @override
   String get referenceIdOptional => 'Reference ID (optional)';
 
   @override
-  String get referenceIdHint => 'Claim number, application ID, etc.';
+  String get referenceIdHint => 'Lakkoofsa klaayimii, koodii maatii, kkf';
 
   @override
-  String get submitGrievance => 'Submit Grievance';
+  String get submitGrievance => 'Komii ergi';
 
   @override
   String get coverageHistory => 'Coverage History';
@@ -1619,111 +1619,110 @@ class AppLocalizationsEn extends AppLocalizations {
   String get totalApproved => 'Total Approved';
 
   @override
-  String get grievancesTitle => 'Grievances & Appeals';
+  String get grievancesTitle => 'Komii fi Iyyannoo';
 
   @override
-  String get noGrievancesTitle => 'No Grievances Filed';
+  String get noGrievancesTitle => 'Komiin hin galmoofne';
 
   @override
-  String get grievanceType => 'What is your grievance about?';
+  String get grievanceType => 'Komiin kee waa\'ee maalii?';
 
   @override
-  String get referenceId => 'Reference ID (optional)';
+  String get referenceId => 'Lakkoofsa wabii (dirqama miti)';
 
   @override
   String get grievanceInfoBanner =>
-      'Your grievance will be reviewed by a CBHI officer within 5 business days. You will be notified of the resolution.';
+      'Komiin kee guyyaa hojii 5 keessatti sakatta\'ama. Furmaata irratti beeksifama.';
 
   @override
-  String get fillRequiredFields =>
-      'Please fill in the subject and description.';
+  String get fillRequiredFields => 'Mata duree fi ibsa guuti.';
 
   @override
-  String get benefitPackageTitle => 'Benefit Package';
+  String get benefitPackageTitle => 'Paakeejii Faaydaa';
 
   @override
   String get noPackageConfigured =>
-      'No benefit package configured. Contact your CBHI office.';
+      'Paakeejiin hin qindaa\'amne. Waajjira CBHI kee quunnamii.';
 
   @override
-  String get filterByCategory => 'Filter by Category';
+  String get filterByCategory => 'Gosa irratti cali\'i';
 
   @override
-  String get allCategories => 'All';
+  String get allCategories => 'Hunda';
 
   @override
-  String get noServicesInCategory => 'No services in this category';
+  String get noServicesInCategory => 'Gosuma kana keessatti tajaajila hin jiru';
 
   @override
-  String get tryDifferentCategory => 'Try selecting a different category';
+  String get tryDifferentCategory => 'Gosa biraa filadhu';
 
   @override
-  String get perMemberPerYear => 'per member / year';
+  String get perMemberPerYear => 'miseensa / waggaa';
 
   @override
-  String get maxClaim => 'Max';
+  String get maxClaim => 'Ol\'aanaa';
 
   @override
-  String get coPay => 'Co-pay';
+  String get coPay => 'Kaffalti qoodaa';
 
   @override
-  String get maxPerYear => 'Max/yr';
+  String get maxPerYear => 'Ol. / Wag.';
 
   @override
-  String get fullyCovered => 'Fully Covered';
+  String get fullyCovered => 'Guutumaan haguugame';
 
   @override
-  String get notCovered => 'Not Covered';
+  String get notCovered => 'Hin haguugamne';
 
   @override
-  String get unlimited => 'Unlimited';
+  String get unlimited => 'Daangaa hin qabu';
 
   @override
-  String get noCoverageHistory => 'No Coverage History';
+  String get noCoverageHistory => 'Seenaa tajaajilaa hin jiru';
 
   @override
   String get noCoverageHistorySubtitle =>
-      'Your coverage history will appear here after your first enrollment.';
+      'Galmeeffamtee booda seenaan tajaajila kee ni mul\'ata.';
 
   @override
   String get benefitUtilizationTitle => 'Benefit Utilization';
 
   @override
-  String get used => 'used';
+  String get used => 'fayyadamame';
 
   @override
-  String get limit => 'limit';
+  String get limit => 'daangaa';
 
   @override
-  String get remaining => 'Remaining';
+  String get remaining => 'Hafaa';
 
   @override
-  String get utilized => 'Utilized';
+  String get utilized => 'Fayyadamame';
 
   @override
   String get nearingBenefitLimit =>
-      'You are approaching your annual benefit limit. Consider preventive care.';
+      'Daangaa faaydaa waggaa kee bira gahaa jirta. Kunuunsa fayyaa yaadi.';
 
   @override
-  String get renewalReminder => 'Renewal Reminder';
+  String get renewalReminder => 'Yaadachiisa haaromsuu';
 
   @override
-  String get coverageExpired => 'Coverage Expired';
+  String get coverageExpired => 'Tajaajilli dhumee jira';
 
   @override
   String get coverageExpiredMessage =>
-      'Your coverage has expired. Renew now to restore access to health services.';
+      'Tajaajilli kee dhumee jira. Amma haaromsi.';
 
   @override
   String coverageExpiresInDays(String days) {
-    return 'Your coverage expires in $days days. Renew now to avoid interruption.';
+    return 'Tajaajilli kee guyyaa $days keessatti ni dhumata. Amma haaromsi.';
   }
 
   @override
   String coverageExpiresSoon(String days) {
-    return 'Your coverage expires in $days days. Consider renewing soon.';
+    return 'Tajaajilli kee guyyaa $days keessatti ni dhumata. Dafii haaromsi.';
   }
 
   @override
-  String get renewNow => 'Renew Now';
+  String get renewNow => 'Amma haaromsi';
 }

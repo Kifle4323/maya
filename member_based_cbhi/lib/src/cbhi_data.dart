@@ -1685,22 +1685,6 @@ class CbhiRepository {
     }
   }
 
-  // ── Payment ───────────────────────────────────────────────────────────────
-
-  Future<Map<String, dynamic>> initiatePayment({
-    required double amount,
-    String? description,
-  }) async {
-    return _postJson('/payments/initiate', {
-      'amount': amount,
-      if (description != null) 'description': description,
-    }, authorized: true);
-  }
-
-  Future<Map<String, dynamic>> verifyPayment(String txRef) async {
-    return _getJson('/payments/verify/$txRef', authorized: true);
-  }
-
   // ── Media URL resolver ────────────────────────────────────────────────────
 
   String resolveMediaUrl(String? path) {

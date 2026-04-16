@@ -1,11 +1,11 @@
 {
-    "name": "member_based_cbhi",
-    "short_name": "member_based_cbhi",
+    "name": "Maya City CBHI",
+    "short_name": "CBHI",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#0D7A5F",
+    "theme_color": "#0D7A5F",
+    "description": "Maya City Community-Based Health Insurance — member portal for household enrollment, coverage management, and premium payments.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

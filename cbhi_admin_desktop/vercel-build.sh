@@ -18,4 +18,9 @@ export PATH="$FLUTTER_ROOT/bin:$PATH"
 flutter config --enable-web
 flutter --version
 flutter pub get
-flutter build web --release
+
+API_URL="${CBHI_API_BASE_URL:-http://localhost:3000/api/v1}"
+echo "Building with API: $API_URL"
+
+flutter build web --release \
+  --dart-define=CBHI_API_BASE_URL="$API_URL"

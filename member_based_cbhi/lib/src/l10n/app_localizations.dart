@@ -7,6 +7,7 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_am.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_om.dart';
 
 // ignore_for_file: type=lint
 
@@ -62,7 +63,8 @@ import 'app_localizations_en.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -70,7 +72,8 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -82,17 +85,19 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('am'),
-    Locale('en')
+    Locale('en'),
+    Locale('om'),
   ];
 
   /// Application title
@@ -335,6 +340,96 @@ abstract class AppLocalizations {
   /// **'By accepting, you consent to the collection and use of your data as described above.'**
   String get byAccepting;
 
+  /// No description provided for @consentFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'By accepting, you consent to the collection and use of your data as described above.'**
+  String get consentFooter;
+
+  /// No description provided for @privacySection1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Data We Collect'**
+  String get privacySection1Title;
+
+  /// No description provided for @privacySection1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'We collect your name, phone number, date of birth, address (region, zone, woreda, kebele), household size, identity document details, and health insurance membership information. Photos and supporting documents you upload are stored securely.'**
+  String get privacySection1Body;
+
+  /// No description provided for @privacySection2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'2. How We Use Your Data'**
+  String get privacySection2Title;
+
+  /// No description provided for @privacySection2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is used to manage your CBHI membership, verify eligibility at health facilities, process claims, send renewal reminders, and improve the platform. We do not sell your data to third parties.'**
+  String get privacySection2Body;
+
+  /// No description provided for @privacySection3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Data Storage & Security'**
+  String get privacySection3Title;
+
+  /// No description provided for @privacySection3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Data is stored on secure servers managed by the Ethiopian Health Insurance Agency (EHIA). We use encryption in transit (HTTPS) and access controls to protect your information. Offline data is stored locally on your device.'**
+  String get privacySection3Body;
+
+  /// No description provided for @privacySection4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'4. Your Rights'**
+  String get privacySection4Title;
+
+  /// No description provided for @privacySection4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'You have the right to access, correct, or delete your personal data. To request deletion, go to Profile → Delete Account. For other requests, contact EHIA at info@ehia.gov.et.'**
+  String get privacySection4Body;
+
+  /// No description provided for @privacySection5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'5. Offline Data'**
+  String get privacySection5Title;
+
+  /// No description provided for @privacySection5Body.
+  ///
+  /// In en, this message translates to:
+  /// **'When you use the app offline, your data is stored locally on your device in an encrypted database. This data syncs to our servers when you reconnect to the internet.'**
+  String get privacySection5Body;
+
+  /// No description provided for @privacySection6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'6. Third-Party Services'**
+  String get privacySection6Title;
+
+  /// No description provided for @privacySection6Body.
+  ///
+  /// In en, this message translates to:
+  /// **'We use Chapa for payment processing and Africa\'s Talking for SMS delivery. These services have their own privacy policies. We share only the minimum data required for these services to function.'**
+  String get privacySection6Body;
+
+  /// No description provided for @privacySection7Title.
+  ///
+  /// In en, this message translates to:
+  /// **'7. Contact'**
+  String get privacySection7Title;
+
+  /// No description provided for @privacySection7Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Ethiopian Health Insurance Agency (EHIA)\nEmail: info@ehia.gov.et\nWebsite: www.ehia.gov.et\nAddress: Addis Ababa, Ethiopia'**
+  String get privacySection7Body;
+
   /// No description provided for @dataWeCollect.
   ///
   /// In en, this message translates to:
@@ -398,7 +493,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingBody2.
   ///
   /// In en, this message translates to:
-  /// **'Register your household in 4 simple steps. Capture your ID, add family members, and choose your membership type — even without internet.'**
+  /// **'Register your household in guided steps: personal details and ID, review, identity, membership, and optional indigent proof documents — even without internet.'**
   String get onboardingBody2;
 
   /// No description provided for @onboardingTitle3.
@@ -1352,7 +1447,7 @@ abstract class AppLocalizations {
   /// No description provided for @completePaymentOnChapa.
   ///
   /// In en, this message translates to:
-  /// **'Complete your payment on the Chapa checkout page, then tap \"Verify Payment\" below.'**
+  /// **'Complete your payment on the Chapa checkout page, then tap Verify Payment.'**
   String get completePaymentOnChapa;
 
   /// No description provided for @verifyPayment.
@@ -1610,7 +1705,7 @@ abstract class AppLocalizations {
   /// No description provided for @encryptedQrToken.
   ///
   /// In en, this message translates to:
-  /// **'Encrypted QR token • Tap card to verify'**
+  /// **'Encrypted QR token • Show to facility staff'**
   String get encryptedQrToken;
 
   /// No description provided for @completeSyncForQr.
@@ -1630,6 +1725,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Card details copied — share with facility staff if needed.'**
   String get cardDetailsCopied;
+
+  /// No description provided for @noDigitalCardCached.
+  ///
+  /// In en, this message translates to:
+  /// **'No digital card cached yet'**
+  String get noDigitalCardCached;
+
+  /// No description provided for @syncToGenerateCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync your account to generate your digital card.'**
+  String get syncToGenerateCard;
 
   /// No description provided for @myClaims.
   ///
@@ -1718,7 +1825,7 @@ abstract class AppLocalizations {
   /// No description provided for @noFacilitiesFound.
   ///
   /// In en, this message translates to:
-  /// **'No accredited facilities found'**
+  /// **'No facilities found.'**
   String get noFacilitiesFound;
 
   /// No description provided for @tryDifferentSearch.
@@ -1828,6 +1935,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'info@ehia.gov.et  |  Ethiopian Health Insurance Agency'**
   String get ehiaContact;
+
+  /// No description provided for @profileDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Details'**
+  String get profileDetails;
+
+  /// No description provided for @notSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Not synced'**
+  String get notSynced;
+
+  /// No description provided for @independentAccessLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Independent access'**
+  String get independentAccessLabel;
+
+  /// No description provided for @householdManagedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Household-managed'**
+  String get householdManagedLabel;
 
   /// No description provided for @faqQ1.
   ///
@@ -2081,6 +2212,234 @@ abstract class AppLocalizations {
   /// **'months'**
   String get months;
 
+  /// No description provided for @setupAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Up Your Account'**
+  String get setupAccountTitle;
+
+  /// No description provided for @setupAccountSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A setup code was sent to your phone. Enter it below to activate your account and create a password.'**
+  String get setupAccountSubtitle;
+
+  /// No description provided for @setupCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup Code'**
+  String get setupCode;
+
+  /// No description provided for @setupCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'6-digit code from SMS'**
+  String get setupCodeHint;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get newPassword;
+
+  /// No description provided for @confirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get confirmPassword;
+
+  /// No description provided for @passwordsDoNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordsDoNotMatch;
+
+  /// No description provided for @passwordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get passwordTooShort;
+
+  /// No description provided for @activateAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate Account'**
+  String get activateAccount;
+
+  /// No description provided for @accountActivated.
+  ///
+  /// In en, this message translates to:
+  /// **'Account activated! You are now signed in.'**
+  String get accountActivated;
+
+  /// No description provided for @resendSetupCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend setup code'**
+  String get resendSetupCode;
+
+  /// No description provided for @setupCodeSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup code sent to {target}'**
+  String setupCodeSent(String target);
+
+  /// No description provided for @backgroundSyncComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Coverage synced'**
+  String get backgroundSyncComplete;
+
+  /// No description provided for @offlineBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'OFFLINE'**
+  String get offlineBadge;
+
+  /// No description provided for @pleaseEnterAll6Digits.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter all 6 digits'**
+  String get pleaseEnterAll6Digits;
+
+  /// No description provided for @verifyOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify & Sign In'**
+  String get verifyOtp;
+
+  /// No description provided for @resendOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code'**
+  String get resendOtp;
+
+  /// No description provided for @otpExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Code expires in'**
+  String get otpExpiry;
+
+  /// No description provided for @newCodeSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'New code sent to {target}'**
+  String newCodeSentTo(String target);
+
+  /// No description provided for @enterCodeSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the code sent to {target}'**
+  String enterCodeSentTo(String target);
+
+  /// No description provided for @enterResetCodeSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the reset code sent to {target}'**
+  String enterResetCodeSentTo(String target);
+
+  /// No description provided for @verifyYourPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Your Phone'**
+  String get verifyYourPhone;
+
+  /// No description provided for @phonePlusOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone + OTP'**
+  String get phonePlusOtp;
+
+  /// No description provided for @otpPhoneSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll send a 6-digit code to your Ethiopian mobile number.'**
+  String get otpPhoneSubtitle;
+
+  /// No description provided for @credentialLoginSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with your email or phone and password.'**
+  String get credentialLoginSubtitle;
+
+  /// No description provided for @emailOrPhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Email or phone number'**
+  String get emailOrPhoneNumber;
+
+  /// No description provided for @signInWithBiometrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with biometrics'**
+  String get signInWithBiometrics;
+
+  /// No description provided for @biometricAuthenticationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication failed'**
+  String get biometricAuthenticationFailed;
+
+  /// No description provided for @familyLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Member Login'**
+  String get familyLogin;
+
+  /// No description provided for @register_action.
+  ///
+  /// In en, this message translates to:
+  /// **'New Registration'**
+  String get register_action;
+
+  /// No description provided for @demoSandboxAutoSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo Sandbox — No real money charged. Payment auto-succeeds.'**
+  String get demoSandboxAutoSuccess;
+
+  /// No description provided for @householdLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Household'**
+  String get householdLabel;
+
+  /// No description provided for @transactionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction'**
+  String get transactionLabel;
+
+  /// No description provided for @statusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get statusLabel;
+
+  /// No description provided for @amountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get amountLabel;
+
+  /// No description provided for @methodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Method'**
+  String get methodLabel;
+
+  /// No description provided for @successPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment successful! Coverage activated.'**
+  String get successPayment;
+
+  /// No description provided for @openChapaCheckout.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Chapa Checkout'**
+  String get openChapaCheckout;
+
   /// No description provided for @adminPortalTitle.
   ///
   /// In en, this message translates to:
@@ -2122,9 +2481,832 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Install: cbhi_facility_desktop'**
   String get installFacilityApp;
+
+  /// No description provided for @navFacilities.
+  ///
+  /// In en, this message translates to:
+  /// **'Facilities'**
+  String get navFacilities;
+
+  /// No description provided for @healthFacilities.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Facilities'**
+  String get healthFacilities;
+
+  /// No description provided for @addFacility.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Facility'**
+  String get addFacility;
+
+  /// No description provided for @facilityName.
+  ///
+  /// In en, this message translates to:
+  /// **'Facility Name'**
+  String get facilityName;
+
+  /// No description provided for @facilityCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Facility Code'**
+  String get facilityCode;
+
+  /// No description provided for @staffCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff'**
+  String get staffCount;
+
+  /// No description provided for @address.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get address;
+
+  /// No description provided for @addStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Staff'**
+  String get addStaff;
+
+  /// No description provided for @staffAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff member added successfully.'**
+  String get staffAdded;
+
+  /// No description provided for @create.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get create;
+
+  /// No description provided for @offline.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline'**
+  String get offline;
+
+  /// No description provided for @connected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get connected;
+
+  /// No description provided for @online.
+  ///
+  /// In en, this message translates to:
+  /// **'Online'**
+  String get online;
+
+  /// No description provided for @refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refresh;
+
+  /// No description provided for @maxDocumentsReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum 3 documents allowed.'**
+  String get maxDocumentsReached;
+
+  /// No description provided for @pleaseUploadAtLeastOneDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Please upload at least one supporting document.'**
+  String get pleaseUploadAtLeastOneDocument;
+
+  /// No description provided for @expiredDocumentError.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot submit: {docs} is expired. Please upload a valid document from your kebele.'**
+  String expiredDocumentError(String docs);
+
+  /// No description provided for @waitForValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait for all documents to finish validating.'**
+  String get waitForValidation;
+
+  /// No description provided for @invalidNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number'**
+  String get invalidNumber;
+
+  /// No description provided for @invalidIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income is required'**
+  String get invalidIncome;
+
+  /// No description provided for @selectDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date range'**
+  String get selectDateRange;
+
+  /// No description provided for @clearDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear date range'**
+  String get clearDateRange;
+
+  /// No description provided for @dateRangeActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Date range active'**
+  String get dateRangeActive;
+
+  /// No description provided for @searchClaimsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by claim # or beneficiary...'**
+  String get searchClaimsHint;
+
+  /// No description provided for @scanQrCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR Card'**
+  String get scanQrCard;
+
+  /// No description provided for @scanMemberCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Member Card'**
+  String get scanMemberCard;
+
+  /// No description provided for @pointCameraAtCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Point the camera at the member\'s QR code'**
+  String get pointCameraAtCard;
+
+  /// No description provided for @toggleFlash.
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle flash'**
+  String get toggleFlash;
+
+  /// No description provided for @attachDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach Document'**
+  String get attachDocument;
+
+  /// No description provided for @supportingDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Supporting Document'**
+  String get supportingDocument;
+
+  /// No description provided for @navAuditLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Audit Log'**
+  String get navAuditLog;
+
+  /// No description provided for @entityType.
+  ///
+  /// In en, this message translates to:
+  /// **'Entity Type'**
+  String get entityType;
+
+  /// No description provided for @entityId.
+  ///
+  /// In en, this message translates to:
+  /// **'Entity ID'**
+  String get entityId;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
+  /// No description provided for @records.
+  ///
+  /// In en, this message translates to:
+  /// **'records'**
+  String get records;
+
+  /// No description provided for @noAuditLogsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No audit logs found.'**
+  String get noAuditLogsFound;
+
+  /// No description provided for @timestamp.
+  ///
+  /// In en, this message translates to:
+  /// **'Timestamp'**
+  String get timestamp;
+
+  /// No description provided for @action.
+  ///
+  /// In en, this message translates to:
+  /// **'Action'**
+  String get action;
+
+  /// No description provided for @userRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get userRole;
+
+  /// No description provided for @ipAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'IP Address'**
+  String get ipAddress;
+
+  /// No description provided for @changePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get changePassword;
+
+  /// No description provided for @passwordChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed successfully.'**
+  String get passwordChanged;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account?'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone. All your personal data will be anonymised.'**
+  String get deleteAccountMessage;
+
+  /// No description provided for @recommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get recommended;
+
+  /// No description provided for @selectThisOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Select This Option'**
+  String get selectThisOption;
+
+  /// No description provided for @indigentFeature1.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload kebele / income proof'**
+  String get indigentFeature1;
+
+  /// No description provided for @indigentFeature2.
+  ///
+  /// In en, this message translates to:
+  /// **'No premium payment'**
+  String get indigentFeature2;
+
+  /// No description provided for @indigentFeature3.
+  ///
+  /// In en, this message translates to:
+  /// **'Same registration as paying members'**
+  String get indigentFeature3;
+
+  /// No description provided for @payingFeature1.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay annual premium'**
+  String get payingFeature1;
+
+  /// No description provided for @payingFeature2.
+  ///
+  /// In en, this message translates to:
+  /// **'Full coverage benefits'**
+  String get payingFeature2;
+
+  /// No description provided for @payingFeature3.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium: ETB 500 / household'**
+  String get payingFeature3;
+
+  /// No description provided for @indigentApplicationMenuTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Indigent Application'**
+  String get indigentApplicationMenuTitle;
+
+  /// No description provided for @indigentApplicationMenuSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply for subsidized coverage'**
+  String get indigentApplicationMenuSubtitle;
+
+  /// No description provided for @indigentApplicationSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Application submitted!'**
+  String get indigentApplicationSubmitted;
+
+  /// No description provided for @dobLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of birth'**
+  String get dobLabel;
+
+  /// No description provided for @genderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get genderLabel;
+
+  /// No description provided for @idLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'ID'**
+  String get idLabel;
+
+  /// No description provided for @setupTwoFactor.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Up Two-Factor Authentication'**
+  String get setupTwoFactor;
+
+  /// No description provided for @twoFactorRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Two-Factor Authentication Required'**
+  String get twoFactorRequired;
+
+  /// No description provided for @twoFactorRequiredSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin accounts must enable 2FA to protect sensitive health insurance data.'**
+  String get twoFactorRequiredSubtitle;
+
+  /// No description provided for @totpStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Install an Authenticator App'**
+  String get totpStep1Title;
+
+  /// No description provided for @totpStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Google Authenticator, Authy, or any TOTP-compatible app on your phone.'**
+  String get totpStep1Body;
+
+  /// No description provided for @totpStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan the QR Code'**
+  String get totpStep2Title;
+
+  /// No description provided for @totpStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Open your authenticator app and scan the QR code below, or enter the secret key manually.'**
+  String get totpStep2Body;
+
+  /// No description provided for @totpQrHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan this QR code with your authenticator app'**
+  String get totpQrHint;
+
+  /// No description provided for @totpManualEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Or enter this key manually in your authenticator app:'**
+  String get totpManualEntry;
+
+  /// No description provided for @copySecret.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy secret key'**
+  String get copySecret;
+
+  /// No description provided for @secretCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Secret key copied to clipboard'**
+  String get secretCopied;
+
+  /// No description provided for @totpStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Verification Code'**
+  String get totpStep3Title;
+
+  /// No description provided for @totpStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the 6-digit code shown in your authenticator app to confirm setup.'**
+  String get totpStep3Body;
+
+  /// No description provided for @totpTokenLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'6-digit code'**
+  String get totpTokenLabel;
+
+  /// No description provided for @activateTwoFactor.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate Two-Factor Authentication'**
+  String get activateTwoFactor;
+
+  /// No description provided for @totpActivated.
+  ///
+  /// In en, this message translates to:
+  /// **'Two-Factor Authentication Active'**
+  String get totpActivated;
+
+  /// No description provided for @totpActivatedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your admin account is now protected with two-factor authentication.'**
+  String get totpActivatedSubtitle;
+
+  /// No description provided for @continueToAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to Admin Panel'**
+  String get continueToAdmin;
+
+  /// No description provided for @benefitPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'Benefit Package'**
+  String get benefitPackage;
+
+  /// No description provided for @coveredServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Covered Services'**
+  String get coveredServices;
+
+  /// No description provided for @packageStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get packageStatus;
+
+  /// No description provided for @benefitPackageInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'These are the services covered by your CBHI membership. Co-payments and annual limits apply.'**
+  String get benefitPackageInfo;
+
+  /// No description provided for @noBenefitPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'No benefit package found'**
+  String get noBenefitPackage;
+
+  /// No description provided for @noBenefitPackageSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact your CBHI officer for benefit package information.'**
+  String get noBenefitPackageSubtitle;
+
+  /// No description provided for @grievances.
+  ///
+  /// In en, this message translates to:
+  /// **'Grievances'**
+  String get grievances;
+
+  /// No description provided for @myGrievances.
+  ///
+  /// In en, this message translates to:
+  /// **'My Grievances'**
+  String get myGrievances;
+
+  /// No description provided for @submitNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit New'**
+  String get submitNew;
+
+  /// No description provided for @noGrievancesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No grievances submitted'**
+  String get noGrievancesYet;
+
+  /// No description provided for @noGrievancesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t filed any grievances. If you have an issue, we\'re here to help.'**
+  String get noGrievancesSubtitle;
+
+  /// No description provided for @grievanceSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Grievance submitted successfully'**
+  String get grievanceSubmitted;
+
+  /// No description provided for @whatIsYourIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'What is your issue?'**
+  String get whatIsYourIssue;
+
+  /// No description provided for @grievanceSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject'**
+  String get grievanceSubject;
+
+  /// No description provided for @grievanceSubjectHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Brief description of your issue'**
+  String get grievanceSubjectHint;
+
+  /// No description provided for @grievanceDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get grievanceDescription;
+
+  /// No description provided for @grievanceDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please describe your issue in detail. Include dates, names, and any relevant information.'**
+  String get grievanceDescriptionHint;
+
+  /// No description provided for @referenceIdOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference ID (optional)'**
+  String get referenceIdOptional;
+
+  /// No description provided for @referenceIdHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim number, application ID, etc.'**
+  String get referenceIdHint;
+
+  /// No description provided for @submitGrievance.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Grievance'**
+  String get submitGrievance;
+
+  /// No description provided for @coverageHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Coverage History'**
+  String get coverageHistory;
+
+  /// No description provided for @benefitUtilization.
+  ///
+  /// In en, this message translates to:
+  /// **'Benefit Utilization'**
+  String get benefitUtilization;
+
+  /// No description provided for @claimsByStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Claims by Status'**
+  String get claimsByStatus;
+
+  /// No description provided for @claimsUtilizationBar.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim approval rate'**
+  String get claimsUtilizationBar;
+
+  /// No description provided for @approvalRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Approval Rate'**
+  String get approvalRate;
+
+  /// No description provided for @totalClaimed.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Claimed'**
+  String get totalClaimed;
+
+  /// No description provided for @totalApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Approved'**
+  String get totalApproved;
+
+  /// No description provided for @grievancesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Grievances & Appeals'**
+  String get grievancesTitle;
+
+  /// No description provided for @noGrievancesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Grievances Filed'**
+  String get noGrievancesTitle;
+
+  /// No description provided for @grievanceType.
+  ///
+  /// In en, this message translates to:
+  /// **'What is your grievance about?'**
+  String get grievanceType;
+
+  /// No description provided for @referenceId.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference ID (optional)'**
+  String get referenceId;
+
+  /// No description provided for @grievanceInfoBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Your grievance will be reviewed by a CBHI officer within 5 business days. You will be notified of the resolution.'**
+  String get grievanceInfoBanner;
+
+  /// No description provided for @fillRequiredFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill in the subject and description.'**
+  String get fillRequiredFields;
+
+  /// No description provided for @benefitPackageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Benefit Package'**
+  String get benefitPackageTitle;
+
+  /// No description provided for @noPackageConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'No benefit package configured. Contact your CBHI office.'**
+  String get noPackageConfigured;
+
+  /// No description provided for @filterByCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by Category'**
+  String get filterByCategory;
+
+  /// No description provided for @allCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get allCategories;
+
+  /// No description provided for @noServicesInCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'No services in this category'**
+  String get noServicesInCategory;
+
+  /// No description provided for @tryDifferentCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Try selecting a different category'**
+  String get tryDifferentCategory;
+
+  /// No description provided for @perMemberPerYear.
+  ///
+  /// In en, this message translates to:
+  /// **'per member / year'**
+  String get perMemberPerYear;
+
+  /// No description provided for @maxClaim.
+  ///
+  /// In en, this message translates to:
+  /// **'Max'**
+  String get maxClaim;
+
+  /// No description provided for @coPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Co-pay'**
+  String get coPay;
+
+  /// No description provided for @maxPerYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Max/yr'**
+  String get maxPerYear;
+
+  /// No description provided for @fullyCovered.
+  ///
+  /// In en, this message translates to:
+  /// **'Fully Covered'**
+  String get fullyCovered;
+
+  /// No description provided for @notCovered.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Covered'**
+  String get notCovered;
+
+  /// No description provided for @unlimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited'**
+  String get unlimited;
+
+  /// No description provided for @noCoverageHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No Coverage History'**
+  String get noCoverageHistory;
+
+  /// No description provided for @noCoverageHistorySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your coverage history will appear here after your first enrollment.'**
+  String get noCoverageHistorySubtitle;
+
+  /// No description provided for @benefitUtilizationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Benefit Utilization'**
+  String get benefitUtilizationTitle;
+
+  /// No description provided for @used.
+  ///
+  /// In en, this message translates to:
+  /// **'used'**
+  String get used;
+
+  /// No description provided for @limit.
+  ///
+  /// In en, this message translates to:
+  /// **'limit'**
+  String get limit;
+
+  /// No description provided for @remaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get remaining;
+
+  /// No description provided for @utilized.
+  ///
+  /// In en, this message translates to:
+  /// **'Utilized'**
+  String get utilized;
+
+  /// No description provided for @nearingBenefitLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'You are approaching your annual benefit limit. Consider preventive care.'**
+  String get nearingBenefitLimit;
+
+  /// No description provided for @renewalReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Renewal Reminder'**
+  String get renewalReminder;
+
+  /// No description provided for @coverageExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Coverage Expired'**
+  String get coverageExpired;
+
+  /// No description provided for @coverageExpiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your coverage has expired. Renew now to restore access to health services.'**
+  String get coverageExpiredMessage;
+
+  /// No description provided for @coverageExpiresInDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Your coverage expires in {days} days. Renew now to avoid interruption.'**
+  String coverageExpiresInDays(String days);
+
+  /// No description provided for @coverageExpiresSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Your coverage expires in {days} days. Consider renewing soon.'**
+  String coverageExpiresSoon(String days);
+
+  /// No description provided for @renewNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Renew Now'**
+  String get renewNow;
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -2133,25 +3315,28 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['am', 'en'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['am', 'en', 'om'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'am': return AppLocalizationsAm();
-    case 'en': return AppLocalizationsEn();
+    case 'am':
+      return AppLocalizationsAm();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'om':
+      return AppLocalizationsOm();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
+    'that was used.',
   );
 }

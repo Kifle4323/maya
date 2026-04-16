@@ -9,43 +9,43 @@ class AppLocalizationsAm extends AppLocalizations {
   AppLocalizationsAm([String locale = 'am']) : super(locale);
 
   @override
-  String get appTitle => 'Maya City CBHI';
+  String get appTitle => 'ማያ ሲቲ ሲቢኤችአይ';
 
   @override
-  String get appSubtitle => 'Community-Based Health Insurance';
+  String get appSubtitle => 'የማህበረሰብ ጤና መድን';
 
   @override
-  String get home => 'Home';
+  String get home => 'ቤት';
 
   @override
-  String get family => 'Family';
+  String get family => 'ቤተሰብ';
 
   @override
-  String get card => 'Card';
+  String get card => 'ካርድ';
 
   @override
-  String get claims => 'Claims';
+  String get claims => 'ጥያቄዎች';
 
   @override
   String get facilities => 'Facilities';
 
   @override
-  String get profile => 'Profile';
+  String get profile => 'መገለጫ';
 
   @override
-  String get settings => 'Settings';
+  String get settings => 'ቅንብሮች';
 
   @override
-  String get notifications => 'Notifications';
+  String get notifications => 'ማሳወቂያዎች';
 
   @override
-  String get signIn => 'Sign In';
+  String get signIn => 'ግባ';
 
   @override
-  String get signOut => 'Sign Out';
+  String get signOut => 'ውጣ';
 
   @override
-  String get register => 'Register';
+  String get register => 'ምዝገባ';
 
   @override
   String get startNewRegistration => 'Start New Registration';
@@ -54,10 +54,10 @@ class AppLocalizationsAm extends AppLocalizations {
   String get loginAsFamilyMember => 'Login as Family Member';
 
   @override
-  String get forgotPassword => 'Forgot password?';
+  String get forgotPassword => 'የይለፍ ቃል ረሳህ?';
 
   @override
-  String get sendOtp => 'Send OTP';
+  String get sendOtp => 'ኮድ ላክ';
 
   @override
   String get verifyAndSignIn => 'Verify and sign in';
@@ -69,64 +69,122 @@ class AppLocalizationsAm extends AppLocalizations {
   String get otpCodeExpiry => 'Code expires in';
 
   @override
-  String get password => 'Password';
+  String get password => 'የይለፍ ቃል';
 
   @override
   String get emailOrPhone => 'Email or phone number';
 
   @override
-  String get phoneNumber => 'Phone number';
+  String get phoneNumber => 'ስልክ ቁጥር';
 
   @override
-  String get oneTimePassword => 'One-Time Password';
+  String get oneTimePassword => 'አንድ ጊዜ የሚጠቅም ኮድ';
 
   @override
-  String get credentialLogin => 'Credential Login';
+  String get credentialLogin => 'በይለፍ ቃል ግባ';
 
   @override
-  String get forHouseholdHeads => 'For household heads, facility staff, and administrators.';
+  String get forHouseholdHeads =>
+      'For household heads, facility staff, and administrators.';
 
   @override
-  String get sendVerificationCode => 'We\'ll send a verification code to your Ethiopian mobile number.';
+  String get sendVerificationCode =>
+      'We\'ll send a verification code to your Ethiopian mobile number.';
 
   @override
-  String get developmentOtp => 'Development OTP';
+  String get developmentOtp => 'የልማት ኮድ';
 
   @override
   String get notShownInProduction => 'not shown in production';
 
   @override
-  String get welcomeSubtitle => 'Member-centered community-based health insurance for Ethiopian households, health facilities, and CBHI officers.';
+  String get welcomeSubtitle =>
+      'ለኢትዮጵያ ቤተሰቦች፣ ጤና ተቋማት እና ሲቢኤችአይ ባለሥልጣናት የሚሆን የማህበረሰብ ጤና መድን።';
 
   @override
-  String get multilingual => 'Multilingual';
+  String get multilingual => 'ብዙ ቋንቋ';
 
   @override
-  String get digitalCard => 'Digital Card';
+  String get digitalCard => 'ዲጂታል ካርድ';
 
   @override
-  String get claimsTracking => 'Claims Tracking';
+  String get claimsTracking => 'ጥያቄ ክትትል';
 
   @override
-  String get offlineReady => 'Offline Ready';
+  String get offlineReady => 'ያለ ኢንተርኔት ይሰራል';
 
   @override
-  String get householdHeadsUseSignIn => 'Household heads, facility staff, and administrators use Sign In. Adult beneficiaries use family member login.';
+  String get householdHeadsUseSignIn =>
+      'የቤተሰብ ራሶች፣ የጤና ተቋም ሠራተኞች እና አስተዳዳሪዎች \'ግባ\' ይጠቀሙ። ጎልማሳ ተጠቃሚዎች የቤተሰብ አባል ግቤት ይጠቀሙ።';
 
   @override
-  String get privacyConsent => 'Privacy & Data Consent';
+  String get privacyConsent => 'የግላዊነት ስምምነት';
 
   @override
-  String get privacyConsentSubtitle => 'Please read and accept before using Maya City CBHI';
+  String get privacyConsentSubtitle => 'ማያ ሲቲ ሲቢኤችአይ ከመጠቀምዎ በፊት ያንብቡ እና ይቀበሉ';
 
   @override
-  String get scrollToRead => 'Scroll down to read all terms';
+  String get scrollToRead => 'ሁሉንም ውሎች ለማንበብ ወደ ታች ይሸብልሉ';
 
   @override
-  String get iAcceptContinue => 'I Accept — Continue to App';
+  String get iAcceptContinue => 'ተቀበልኩ — ወደ መተግበሪያ ቀጥል';
 
   @override
-  String get byAccepting => 'By accepting, you consent to the collection and use of your data as described above.';
+  String get byAccepting =>
+      'By accepting, you consent to the collection and use of your data as described above.';
+
+  @override
+  String get consentFooter =>
+      'በመቀበልዎ ከላይ እንደተገለጸው ውሂብዎ እንዲሰበሰብ እና ጥቅም ላይ እንዲውል ይፈቅዳሉ።';
+
+  @override
+  String get privacySection1Title => '1. የምንሰበስበው ውሂብ';
+
+  @override
+  String get privacySection1Body =>
+      'ስምዎን፣ ስልክ ቁጥርዎን፣ የልደት ቀንዎን፣ አድራሻዎን (ክልል፣ ዞን፣ ወረዳ፣ ቀበሌ)፣ የቤተሰብ ቁጥርዎን፣ የማንነት ሰነድ ዝርዝሮችዎን እና የጤና መድን አባልነት መረጃዎን እንሰበስባለን።';
+
+  @override
+  String get privacySection2Title => '2. ውሂብዎን እንዴት እንጠቀምበታለን';
+
+  @override
+  String get privacySection2Body =>
+      'ውሂብዎ የሲቢኤችአይ አባልነትዎን ለማስተዳደር፣ ብቁነትዎን ለማረጋገጥ፣ ጥያቄዎችን ለማስኬድ እና ማሳወቂያዎችን ለመላክ ጥቅም ላይ ይውላል።';
+
+  @override
+  String get privacySection3Title => '3. ውሂብ ማከማቻ እና ደህንነት';
+
+  @override
+  String get privacySection3Body =>
+      'ውሂብ በኢትዮጵያ ጤና መድን ኤጀንሲ (EHIA) በሚተዳደሩ ደህንነቱ በተጠበቀ አገልጋዮች ላይ ይቀመጣል።';
+
+  @override
+  String get privacySection4Title => '4. መብቶችዎ';
+
+  @override
+  String get privacySection4Body =>
+      'ግላዊ ውሂብዎን የማግኘት፣ የማስተካከል ወይም የመሰረዝ መብት አለዎት። ለሰረዝ ወደ መገለጫ → መለያ ሰርዝ ይሂዱ።';
+
+  @override
+  String get privacySection5Title => '5. ከኢንተርኔት ውጭ ውሂብ';
+
+  @override
+  String get privacySection5Body =>
+      'ያለ ኢንተርኔት ሲጠቀሙ ውሂብዎ በመሣሪያዎ ላይ ይቀመጣል። ኢንተርኔት ሲገኝ ወደ አገልጋዮቻችን ይሳምናል።';
+
+  @override
+  String get privacySection6Title => '6. የሦስተኛ ወገን አገልግሎቶች';
+
+  @override
+  String get privacySection6Body =>
+      'ለክፍያ ቻፓ እና ለኤስኤምኤስ አፍሪካ ቶኪንግ እንጠቀማለን። እነዚህ አገልግሎቶች የራሳቸው የግላዊነት ፖሊሲ አላቸው።';
+
+  @override
+  String get privacySection7Title => '7. ያግኙን';
+
+  @override
+  String get privacySection7Body =>
+      'የኢትዮጵያ ጤና መድን ኤጀንሲ (EHIA)\nኢሜይል: info@ehia.gov.et\nድረ-ገጽ: www.ehia.gov.et';
 
   @override
   String get dataWeCollect => '1. Data We Collect';
@@ -150,37 +208,41 @@ class AppLocalizationsAm extends AppLocalizations {
   String get contact => '7. Contact';
 
   @override
-  String get onboardingTitle1 => 'Welcome to Maya City CBHI';
+  String get onboardingTitle1 => 'ወደ ማያ ሲቲ ሲቢኤችአይ እንኳን ደህና መጡ';
 
   @override
-  String get onboardingBody1 => 'Community-Based Health Insurance protects your family from unexpected medical costs. Register once and access healthcare services across accredited facilities.';
+  String get onboardingBody1 =>
+      'የማህበረሰብ ጤና መድን ቤተሰብዎን ከሚጠበቁ የህክምና ወጪዎች ይጠብቃል። አንድ ጊዜ ይመዝገቡ እና በተፈቀዱ ተቋማት ውስጥ አገልግሎት ያግኙ።';
 
   @override
-  String get onboardingTitle2 => 'Easy Registration';
+  String get onboardingTitle2 => 'ቀላል ምዝገባ';
 
   @override
-  String get onboardingBody2 => 'Register your household in 4 simple steps. Capture your ID, add family members, and choose your membership type — even without internet.';
+  String get onboardingBody2 =>
+      'ቤተሰብዎን በቀላል ደረጃዎች ይመዝገቡ፦ ግላዊ መረጃ፣ ማንነት፣ አባልነት — ያለ ኢንተርኔትም ይሰራል።';
 
   @override
-  String get onboardingTitle3 => 'Your Digital CBHI Card';
+  String get onboardingTitle3 => 'ዲጂታል ሲቢኤችአይ ካርድዎ';
 
   @override
-  String get onboardingBody3 => 'Your digital membership card is always in your pocket. Show the QR code at any accredited health facility to verify your coverage instantly.';
+  String get onboardingBody3 =>
+      'ዲጂታል አባልነት ካርድዎ ሁልጊዜ ኪሶ ውስጥ ነው። ሽፋንዎን ለማረጋገጥ QR ኮዱን ለጤና ተቋም ሠራተኞች ያሳዩ።';
 
   @override
-  String get onboardingTitle4 => 'Works Offline';
+  String get onboardingTitle4 => 'ያለ ኢንተርኔት ይሰራል';
 
   @override
-  String get onboardingBody4 => 'No internet? No problem. Register and manage your household offline. Your data syncs automatically when connectivity is restored.';
+  String get onboardingBody4 =>
+      'ኢንተርኔት የለም? ምንም ችግር የለም። ምዝገባ እና ለውጦች ሲቀመጡ ኢንተርኔት ሲገኝ ራሱ ያሳምናል።';
 
   @override
-  String get getStarted => 'Get Started';
+  String get getStarted => 'ጀምር';
 
   @override
-  String get next => 'Next';
+  String get next => 'ቀጣይ';
 
   @override
-  String get skip => 'Skip';
+  String get skip => 'ዝለል';
 
   @override
   String get step1PersonalInfo => 'Step 1 of 5';
@@ -198,64 +260,65 @@ class AppLocalizationsAm extends AppLocalizations {
   String get personalInformation => 'Personal information';
 
   @override
-  String get captureHouseholdDetails => 'Capture household head details and supporting documents before identity verification.';
+  String get captureHouseholdDetails =>
+      'Capture household head details and supporting documents before identity verification.';
 
   @override
-  String get firstName => 'First name';
+  String get firstName => 'የመጀመሪያ ስም';
 
   @override
-  String get middleName => 'Middle name';
+  String get middleName => 'የአባት ስም';
 
   @override
-  String get lastName => 'Last name';
+  String get lastName => 'የአያት ስም';
 
   @override
-  String get emailAddress => 'Email address';
+  String get emailAddress => 'ኢሜይል አድራሻ';
 
   @override
-  String get gender => 'Gender';
+  String get gender => 'ጾታ';
 
   @override
-  String get male => 'Male';
+  String get male => 'ወንድ';
 
   @override
-  String get female => 'Female';
+  String get female => 'ሴት';
 
   @override
-  String get other => 'Other';
+  String get other => 'ሌላ';
 
   @override
-  String get dateOfBirth => 'Date of birth';
+  String get dateOfBirth => 'የልደት ቀን';
 
   @override
-  String get preferredLanguage => 'Preferred language';
+  String get preferredLanguage => 'የሚፈለግ ቋንቋ';
 
   @override
-  String get english => 'English';
+  String get english => 'እንግሊዝኛ';
 
   @override
-  String get amharic => 'Amharic';
+  String get amharic => 'አማርኛ';
 
   @override
-  String get afaanOromo => 'Afaan Oromo';
+  String get afaanOromo => 'አፋን ኦሮሞ';
 
   @override
   String get householdAddress => 'Household address';
 
   @override
-  String get region => 'Region';
+  String get region => 'ክልል';
 
   @override
-  String get zone => 'Zone';
+  String get zone => 'ዞን';
 
   @override
-  String get woreda => 'Woreda';
+  String get woreda => 'ወረዳ';
 
   @override
-  String get kebele => 'Kebele';
+  String get kebele => 'ቀበሌ';
 
   @override
-  String get householdSize => 'Household size';
+  String get householdSize => 'የቤተሰብ ቁጥር';
 
   @override
   String get birthCertificate => 'Birth certificate';
@@ -267,13 +330,13 @@ class AppLocalizationsAm extends AppLocalizations {
   String get reviewInformation => 'Review information';
 
   @override
-  String get takePhoto => 'Take photo';
+  String get takePhoto => 'ፎቶ አንሳ';
 
   @override
-  String get chooseFromGallery => 'Choose from gallery';
+  String get chooseFromGallery => 'ከጋለሪ ምረጥ';
 
   @override
-  String get choosePdfOrImage => 'Choose PDF or image';
+  String get choosePdfOrImage => 'PDF ወይም ምስል ምረጥ';
 
   @override
   String get uploadDocument => 'Upload document';
@@ -285,7 +348,8 @@ class AppLocalizationsAm extends AppLocalizations {
   String get confirmDetails => 'Confirm your details';
 
   @override
-  String get reviewBeforeContinuing => 'Review your information before continuing to identity verification.';
+  String get reviewBeforeContinuing =>
+      'Review your information before continuing to identity verification.';
 
   @override
   String get editInformation => 'Edit information';
@@ -297,7 +361,8 @@ class AppLocalizationsAm extends AppLocalizations {
   String get identityVerification => 'Identity verification';
 
   @override
-  String get collectIdForScreening => 'Collect the member identification number and employment status needed for CBHI eligibility screening.';
+  String get collectIdForScreening =>
+      'Collect the member identification number and employment status needed for CBHI eligibility screening.';
 
   @override
   String get identityDocumentType => 'Identity document type';
@@ -321,7 +386,8 @@ class AppLocalizationsAm extends AppLocalizations {
   String get identityDocument => 'Identity document';
 
   @override
-  String get nationalIdOrPassportPhoto => 'National ID, local ID, or passport photo';
+  String get nationalIdOrPassportPhoto =>
+      'National ID, local ID, or passport photo';
 
   @override
   String get employmentStatus => 'Employment status';
@@ -366,22 +432,22 @@ class AppLocalizationsAm extends AppLocalizations {
   String get retryValidation => 'Retry validation';
 
   @override
-  String get membershipSelection => 'Membership selection';
+  String get membershipSelection => 'የአባልነት ምርጫ';
 
   @override
-  String get chooseMembershipPathway => 'Choose the household membership pathway. Paying members can enter a premium estimate while indigent members use employment screening.';
+  String get chooseMembershipPathway => 'የቤተሰብ አባልነት ዓይነት ይምረጡ።';
 
   @override
-  String get indigentMembership => 'Indigent membership';
+  String get indigentMembership => 'የድሃ አባልነት';
 
   @override
-  String get indigentMembershipSubtitle => 'Zero-touch eligibility screening with subsidized premium if approved.';
+  String get indigentMembershipSubtitle => 'ለዝቅተኛ ገቢ ቤተሰቦች ድጎማ ሽፋን።';
 
   @override
-  String get payingMembership => 'Paying membership';
+  String get payingMembership => 'ክፍያ አባልነት';
 
   @override
-  String get payingMembershipSubtitle => 'Standard membership with annual household premium payment.';
+  String get payingMembershipSubtitle => 'ዓመታዊ ዋጋ ያለው መደበኛ አባልነት።';
 
   @override
   String get estimatedPremiumAmount => 'Estimated premium amount (ETB)';
@@ -390,55 +456,56 @@ class AppLocalizationsAm extends AppLocalizations {
   String get completeRegistration => 'Complete registration';
 
   @override
-  String get indigentApplication => 'Indigent Application';
+  String get indigentApplication => 'የድሃ አባልነት ማመልከቻ';
 
   @override
-  String get indigentApplicationSubtitle => 'Qualifying households receive subsidized or free CBHI coverage. Upload supporting documents from your kebele. Documents are verified automatically by AI.';
+  String get indigentApplicationSubtitle =>
+      'Qualifying households receive subsidized or free CBHI coverage. Upload supporting documents from your kebele. Documents are verified automatically by AI.';
 
   @override
-  String get monthlyIncome => 'Monthly Income';
+  String get monthlyIncome => 'ወርሃዊ ገቢ';
 
   @override
-  String get monthlyIncomeSubtitle => 'Enter your household monthly income in ETB.';
+  String get monthlyIncomeSubtitle => 'የቤተሰብ ወርሃዊ ገቢ በብር ያስገቡ።';
 
   @override
-  String get monthlyIncomeEtb => 'Monthly income (ETB)';
+  String get monthlyIncomeEtb => 'ወርሃዊ ገቢ (ብር)';
 
   @override
-  String get householdStatus => 'Household Status';
+  String get householdStatus => 'የቤተሰብ ሁኔታ';
 
   @override
-  String get ownsProperty => 'Owns property (land, house, or business)';
+  String get ownsProperty => 'ቤት፣ መሬት ወይም ንግድ አለው';
 
   @override
-  String get hasMemberWithDisability => 'Has a household member with disability';
+  String get hasMemberWithDisability => 'አካል ጉዳተኛ የቤተሰብ አባል አለ';
 
   @override
-  String get supportingDocuments => 'Supporting Documents';
+  String get supportingDocuments => 'ድጋፍ ሰጪ ሰነዶች';
 
   @override
-  String get upload1To3Documents => 'Upload 1-3 documents from your kebele.';
+  String get upload1To3Documents => 'ከቀበሌዎ 1-3 ሰነዶች ያስቀምጡ።';
 
   @override
-  String get addDocument => 'Add';
+  String get addDocument => 'ጨምር';
 
   @override
   String get acceptedDocumentTypes => 'Accepted document types';
 
   @override
-  String get noDocumentsYet => 'No documents uploaded yet';
+  String get noDocumentsYet => 'ምንም ሰነድ አልተጫነም';
 
   @override
-  String get tapAddToUpload => 'Tap Add to upload a document';
+  String get tapAddToUpload => 'ሰነድ ለመጫን \'ጨምር\' ይጫኑ';
 
   @override
-  String get submitApplication => 'Submit Application';
+  String get submitApplication => 'ማመልከቻ አስገባ';
 
   @override
-  String get validatingDocuments => 'Validating documents...';
+  String get validatingDocuments => 'ሰነዶችን በማረጋገጥ ላይ...';
 
   @override
-  String get expiredDocumentsCannotSubmit => 'Expired documents — cannot submit';
+  String get expiredDocumentsCannotSubmit => 'ጊዜ ያለፈባቸው ሰነዶች — ማስገባት አይቻልም';
 
   @override
   String get documentExpired => 'EXPIRED';
@@ -450,7 +517,8 @@ class AppLocalizationsAm extends AppLocalizations {
   String get issueDetected => 'Issue detected';
 
   @override
-  String get documentExpiredMessage => 'This document has expired. Please obtain a new certificate from your kebele.';
+  String get documentExpiredMessage =>
+      'This document has expired. Please obtain a new certificate from your kebele.';
 
   @override
   String get incomeCertificate => 'Income Certificate';
@@ -489,13 +557,15 @@ class AppLocalizationsAm extends AppLocalizations {
   String get registrationCompleted => 'Registration completed';
 
   @override
-  String get offlineQueueMessage => 'Your household record is safely queued offline. As soon as the app syncs online, your member account will activate automatically.';
+  String get offlineQueueMessage =>
+      'Your household record is safely queued offline. As soon as the app syncs online, your member account will activate automatically.';
 
   @override
-  String get registrationSuccessMessage => 'Your Maya City household account is active and your digital CBHI card is now available from the home screen.';
+  String get registrationSuccessMessage =>
+      'Your Maya City household account is active and your digital CBHI card is now available from the home screen.';
 
   @override
-  String get syncNow => 'Sync now';
+  String get syncNow => 'አሁን አሳምን';
 
   @override
   String get openMyAccount => 'Open my account';
@@ -504,28 +574,28 @@ class AppLocalizationsAm extends AppLocalizations {
   String get startAnotherRegistration => 'Start another registration';
 
   @override
-  String get household => 'Household';
+  String get household => 'ቤተሰብ';
 
   @override
-  String get coverage => 'Coverage';
+  String get coverage => 'ሽፋን';
 
   @override
-  String get premium => 'Premium';
+  String get premium => 'ዋጋ';
 
   @override
-  String get paid => 'Paid';
+  String get paid => 'ተከፍሏል';
 
   @override
-  String get members => 'Members';
+  String get members => 'አባላት';
 
   @override
-  String get eligibility => 'Eligibility';
+  String get eligibility => 'ብቁነት';
 
   @override
-  String get eligible => 'Eligible';
+  String get eligible => 'ብቁ';
 
   @override
-  String get pending => 'Pending';
+  String get pending => 'በጥበቃ ላይ';
 
   @override
   String get noHouseholdSynced => 'No household synced yet';
@@ -552,31 +622,34 @@ class AppLocalizationsAm extends AppLocalizations {
   String get personalEligibility => 'Personal Eligibility';
 
   @override
-  String get coverageEligibilityDetails => 'Coverage eligibility details will appear after sync.';
+  String get coverageEligibilityDetails =>
+      'Coverage eligibility details will appear after sync.';
 
   @override
-  String get renewCoverage => 'Renew Coverage';
+  String get renewCoverage => 'ሽፋን አድስ';
 
   @override
-  String get confirmRenewal => 'Confirm Renewal';
+  String get confirmRenewal => 'ማደስ አረጋግጥ';
 
   @override
-  String get paymentHistory => 'Payment History';
+  String get paymentHistory => 'የክፍያ ታሪክ';
 
   @override
-  String get noPaymentsRecorded => 'No payments recorded';
+  String get noPaymentsRecorded => 'ምንም ክፍያ አልተመዘገበም';
 
   @override
-  String get renewalTransactionsHere => 'Renewal and contribution transactions will appear here.';
+  String get renewalTransactionsHere =>
+      'Renewal and contribution transactions will appear here.';
 
   @override
-  String get recentNotifications => 'Recent Notifications';
+  String get recentNotifications => 'የቅርብ ጊዜ ማሳወቂያዎች';
 
   @override
-  String get noNotificationsYet => 'No notifications yet';
+  String get noNotificationsYet => 'ምንም ማሳወቂያ የለም';
 
   @override
-  String get coverageAlertsHere => 'Coverage alerts and benefit updates will appear here.';
+  String get coverageAlertsHere =>
+      'Coverage alerts and benefit updates will appear here.';
 
   @override
   String get viewAllNotifications => 'View all notifications';
@@ -600,16 +673,17 @@ class AppLocalizationsAm extends AppLocalizations {
   String get confirmFreeRenewal => 'Confirm Free Renewal';
 
   @override
-  String get freeRenewalMessage => 'This household qualifies for subsidized coverage. Tap confirm to extend your coverage for another year at no cost.';
+  String get freeRenewalMessage =>
+      'This household qualifies for subsidized coverage. Tap confirm to extend your coverage for another year at no cost.';
 
   @override
   String get confirmFreeRenewalButton => 'Confirm Free Renewal';
 
   @override
-  String get payPremium => 'Pay Premium';
+  String get payPremium => 'ዋጋ ክፈል';
 
   @override
-  String get premiumAmount => 'Premium Amount';
+  String get premiumAmount => 'የዋጋ መጠን';
 
   @override
   String get acceptedPaymentMethods => 'Accepted Payment Methods';
@@ -634,11 +708,11 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String payViaChapa(String amount) {
-    return 'Pay $amount ETB via Chapa';
+    return '$amount ብር በቻፓ ክፈል';
   }
 
   @override
-  String get paymentInitiated => 'Payment Initiated';
+  String get paymentInitiated => 'ክፍያ ተጀምሯል';
 
   @override
   String transaction(String txRef) {
@@ -646,43 +720,47 @@ class AppLocalizationsAm extends AppLocalizations {
   }
 
   @override
-  String get completePaymentOnChapa => 'Complete your payment on the Chapa checkout page, then tap \"Verify Payment\" below.';
+  String get completePaymentOnChapa => 'ክፍያ ከጨረሱ በኋላ \'ክፍያ አረጋግጥ\' ይጫኑ።';
 
   @override
-  String get verifyPayment => 'Verify Payment';
+  String get verifyPayment => 'ክፍያ አረጋግጥ';
 
   @override
   String get paymentSuccessful => 'Payment successful! Coverage activated.';
 
   @override
-  String get paymentFailed => 'Payment could not be completed. Please try again.';
+  String get paymentFailed =>
+      'Payment could not be completed. Please try again.';
 
   @override
-  String get myFamily => 'My family';
+  String get myFamily => 'ቤተሰቤ';
 
   @override
   String get householdMembers => 'Household members';
 
   @override
-  String get viewHouseholdMembers => 'View your household members and their current coverage details.';
+  String get viewHouseholdMembers =>
+      'View your household members and their current coverage details.';
 
   @override
-  String get manageHouseholdBeneficiaries => 'Manage household beneficiaries, capture photos, and prepare family-member OTP access from one place.';
+  String get manageHouseholdBeneficiaries =>
+      'Manage household beneficiaries, capture photos, and prepare family-member OTP access from one place.';
 
   @override
-  String get addBeneficiary => 'Add beneficiary';
+  String get addBeneficiary => 'ተጠቃሚ ጨምር';
 
   @override
   String get noBeneficiariesAvailable => 'No beneficiaries available';
 
   @override
-  String get addFamilyMembersOnceActive => 'Add family members once the household account is active.';
+  String get addFamilyMembersOnceActive =>
+      'Add family members once the household account is active.';
 
   @override
-  String get edit => 'Edit';
+  String get edit => 'አርትዕ';
 
   @override
-  String get remove => 'Remove';
+  String get remove => 'አስወግድ';
 
   @override
   String get removeBeneficiary => 'Remove beneficiary?';
@@ -693,28 +771,30 @@ class AppLocalizationsAm extends AppLocalizations {
   }
 
   @override
-  String get cancel => 'Cancel';
+  String get cancel => 'ሰርዝ';
 
   @override
-  String get accessThroughHouseholdHead => 'Access through household head';
+  String get accessThroughHouseholdHead => 'በቤተሰብ ራስ ይደርሱ';
 
   @override
-  String get independentLoginNotEnabled => 'Independent login not yet enabled';
+  String get independentLoginNotEnabled => 'ነጻ ግቤት አልተነቃም';
 
   @override
-  String get otpEnabled => 'OTP enabled';
+  String get otpEnabled => 'OTP ነቅቷል';
 
   @override
   String get beneficiaryDetails => 'Beneficiary details';
 
   @override
-  String get captureBeneficiaryProfile => 'Capture the beneficiary profile, photo, and optional OTP access phone number.';
+  String get captureBeneficiaryProfile =>
+      'Capture the beneficiary profile, photo, and optional OTP access phone number.';
 
   @override
   String get beneficiaryPhoto => 'Beneficiary photo';
 
   @override
-  String get useCamera => 'Use the camera or gallery and confirm the preview before saving.';
+  String get useCamera =>
+      'Use the camera or gallery and confirm the preview before saving.';
 
   @override
   String get addOrChangePhoto => 'Add or change photo';
@@ -723,7 +803,8 @@ class AppLocalizationsAm extends AppLocalizations {
   String get fullName => 'Full name';
 
   @override
-  String get enterFirstAndLastName => 'Enter at least first name and last name.';
+  String get enterFirstAndLastName =>
+      'Enter at least first name and last name.';
 
   @override
   String get relationshipToHouseholdHead => 'Relationship to household head';
@@ -744,16 +825,19 @@ class AppLocalizationsAm extends AppLocalizations {
   String get independentAccessSection => 'Independent access';
 
   @override
-  String get independentAccessDescription => 'Non-child beneficiaries must have a phone number. Adult beneficiaries can then use OTP or a password for independent access.';
+  String get independentAccessDescription =>
+      'Non-child beneficiaries must have a phone number. Adult beneficiaries can then use OTP or a password for independent access.';
 
   @override
-  String get phoneRequired => 'Phone number is required for non-child beneficiaries.';
+  String get phoneRequired =>
+      'Phone number is required for non-child beneficiaries.';
 
   @override
   String get identityDetails => 'Identity details';
 
   @override
-  String get nationalIdOrLocalIdOptional => 'National ID or local ID is optional for beneficiaries.';
+  String get nationalIdOrLocalIdOptional =>
+      'National ID or local ID is optional for beneficiaries.';
 
   @override
   String get idTypeOptional => 'ID type (optional)';
@@ -774,34 +858,43 @@ class AppLocalizationsAm extends AppLocalizations {
   String get photoRequired => 'Beneficiary photo is required before saving.';
 
   @override
-  String get digitalCbhiCards => 'Digital CBHI Cards';
+  String get digitalCbhiCards => 'ዲጂታል ሲቢኤችአይ ካርዶች';
 
   @override
-  String get encryptedQrToken => 'Encrypted QR token • Tap card to verify';
+  String get encryptedQrToken => 'የተመሰጠረ QR ኮድ • ለጤና ተቋም ሠራተኞች ያሳዩ';
 
   @override
-  String get completeSyncForQr => 'Complete sync to generate QR token';
+  String get completeSyncForQr => 'ዲጂታል ካርድ ለማዘጋጀት ያሳምኑ';
 
   @override
-  String get shareCardInfo => 'Share Card Info';
+  String get shareCardInfo => 'የካርድ መረጃ አጋራ';
 
   @override
-  String get cardDetailsCopied => 'Card details copied — share with facility staff if needed.';
+  String get cardDetailsCopied => 'የካርድ ዝርዝሮች ተቀድተዋል።';
 
   @override
-  String get myClaims => 'My Claims';
+  String get noDigitalCardCached => 'ምንም ዲጂታል ካርድ አልተቀመጠም';
 
   @override
-  String get trackClaimsSubtitle => 'Track all health service claims submitted on your behalf by accredited facilities.';
+  String get syncToGenerateCard => 'ካርድዎን ለማዘጋጀት መለያዎን ያሳምኑ።';
 
   @override
-  String get claimsSubmittedByFacility => 'Claims are submitted by health facility staff when you receive services. Show your digital card at any accredited facility.';
+  String get myClaims => 'ጥያቄዎቼ';
 
   @override
-  String get noClaimsYet => 'No claims yet';
+  String get trackClaimsSubtitle =>
+      'Track all health service claims submitted on your behalf by accredited facilities.';
 
   @override
-  String get claimsWillAppearHere => 'Claims will appear here after you receive services at an accredited health facility.';
+  String get claimsSubmittedByFacility =>
+      'Claims are submitted by health facility staff when you receive services. Show your digital card at any accredited facility.';
+
+  @override
+  String get noClaimsYet => 'ምንም ጥያቄ የለም';
+
+  @override
+  String get claimsWillAppearHere =>
+      'Claims will appear here after you receive services at an accredited health facility.';
 
   @override
   String get serviceDate => 'Service Date';
@@ -831,121 +924,144 @@ class AppLocalizationsAm extends AppLocalizations {
   String get searchByFacilityName => 'Search by facility name...';
 
   @override
-  String get noFacilitiesFound => 'No accredited facilities found';
+  String get noFacilitiesFound => 'ምንም ተቋም አልተገኘም።';
 
   @override
   String get tryDifferentSearch => 'Try a different search term';
 
   @override
-  String get accredited => 'Accredited';
+  String get accredited => 'ተፈቅዷል';
 
   @override
-  String get serviceLevel => 'Service Level';
+  String get serviceLevel => 'የአገልግሎት ደረጃ';
 
   @override
-  String get language => 'Language';
+  String get language => 'ቋንቋ';
 
   @override
-  String get darkMode => 'Dark Mode';
+  String get darkMode => 'ጨለማ ሁነታ';
 
   @override
   String get easierOnEyes => 'Easier on the eyes in low light';
 
   @override
-  String get biometricLogin => 'Biometric Login';
+  String get biometricLogin => 'ባዮሜትሪክ ግቤት';
 
   @override
   String get useFingerprintOrFace => 'Use fingerprint or face ID to sign in';
 
   @override
-  String get about => 'About';
+  String get about => 'ስለ';
 
   @override
-  String get platform => 'Platform';
+  String get platform => 'መድረክ';
 
   @override
-  String get authority => 'Authority';
+  String get authority => 'ባለሥልጣን';
 
   @override
-  String get ministry => 'Ministry';
+  String get ministry => 'ሚኒስቴር';
 
   @override
-  String get ehia => 'Ethiopian Health Insurance Agency (EHIA)';
+  String get ehia => 'የኢትዮጵያ ጤና መድን ኤጀንሲ (EHIA)';
 
   @override
-  String get fmoh => 'Federal Ministry of Health (FMOH)';
+  String get fmoh => 'የፌዴራል ጤና ሚኒስቴር (FMOH)';
 
   @override
-  String get platformVersion => 'Maya City CBHI v1.0';
+  String get platformVersion => 'ማያ ሲቲ ሲቢኤችአይ v1.0';
 
   @override
-  String get helpAndFaq => 'Help & FAQ';
+  String get helpAndFaq => 'እርዳታ እና ጥያቄዎች';
 
   @override
   String get ehiaHelpline => 'EHIA Helpline';
 
   @override
-  String get ehiaContact => 'info@ehia.gov.et  |  Ethiopian Health Insurance Agency';
+  String get ehiaContact =>
+      'info@ehia.gov.et  |  Ethiopian Health Insurance Agency';
+
+  @override
+  String get profileDetails => 'የመገለጫ ዝርዝሮች';
+
+  @override
+  String get notSynced => 'አልተሳመነም';
+
+  @override
+  String get independentAccessLabel => 'ነጻ ግቤት';
+
+  @override
+  String get householdManagedLabel => 'በቤተሰብ ራስ ይተዳደራል';
 
   @override
   String get faqQ1 => 'How do I register my household?';
 
   @override
-  String get faqA1 => 'Tap \"Start New Registration\" on the welcome screen. Complete the 4 steps: personal info, identity verification, and membership selection. You can register offline — data syncs when you connect.';
+  String get faqA1 =>
+      'Tap \"Start New Registration\" on the welcome screen. Complete the 4 steps: personal info, identity verification, and membership selection. You can register offline — data syncs when you connect.';
 
   @override
   String get faqQ2 => 'What is a FAN Number?';
 
   @override
-  String get faqA2 => 'FAN stands for Fayda Authentication Number — your 12-digit Ethiopian National ID number. You can find it on your Fayda ID card.';
+  String get faqA2 =>
+      'FAN stands for Fayda Authentication Number — your 12-digit Ethiopian National ID number. You can find it on your Fayda ID card.';
 
   @override
   String get faqQ3 => 'How do I pay my premium?';
 
   @override
-  String get faqA3 => 'Tap \"Renew Coverage\" on the Home screen. You can pay via Telebirr, CBE Birr, Amole, HelloCash, or bank transfer through the Chapa payment page.';
+  String get faqA3 =>
+      'Tap \"Renew Coverage\" on the Home screen. You can pay via Telebirr, CBE Birr, Amole, HelloCash, or bank transfer through the Chapa payment page.';
 
   @override
   String get faqQ4 => 'How do I add family members?';
 
   @override
-  String get faqA4 => 'Go to the Family tab and tap \"Add beneficiary\". You need to capture a photo and provide basic details. Non-child members need a phone number for independent access.';
+  String get faqA4 =>
+      'Go to the Family tab and tap \"Add beneficiary\". You need to capture a photo and provide basic details. Non-child members need a phone number for independent access.';
 
   @override
   String get faqQ5 => 'How do I use my digital CBHI card?';
 
   @override
-  String get faqA5 => 'Go to the Card tab to view your digital membership card with QR code. Show this to health facility staff to verify your eligibility for services.';
+  String get faqA5 =>
+      'Go to the Card tab to view your digital membership card with QR code. Show this to health facility staff to verify your eligibility for services.';
 
   @override
   String get faqQ6 => 'What if I have no internet connection?';
 
   @override
-  String get faqA6 => 'The app works offline. Registration and changes are saved locally and sync automatically when you reconnect. Look for the \"Offline queue active\" indicator on the Home screen.';
+  String get faqA6 =>
+      'The app works offline. Registration and changes are saved locally and sync automatically when you reconnect. Look for the \"Offline queue active\" indicator on the Home screen.';
 
   @override
   String get faqQ7 => 'How do I track my claims?';
 
   @override
-  String get faqA7 => 'Go to the Claims tab to see all claims submitted by health facilities on your behalf. You will see the status (Submitted, Under Review, Approved, Paid, or Rejected).';
+  String get faqA7 =>
+      'Go to the Claims tab to see all claims submitted by health facilities on your behalf. You will see the status (Submitted, Under Review, Approved, Paid, or Rejected).';
 
   @override
   String get faqQ8 => 'How do I find accredited health facilities?';
 
   @override
-  String get faqA8 => 'Go to the Facilities tab and search by name. All listed facilities are accredited by EHIA and accept your CBHI membership card.';
+  String get faqA8 =>
+      'Go to the Facilities tab and search by name. All listed facilities are accredited by EHIA and accept your CBHI membership card.';
 
   @override
   String get faqQ9 => 'Who do I contact for help?';
 
   @override
-  String get faqA9 => 'Contact the Ethiopian Health Insurance Agency (EHIA) at info@ehia.gov.et or visit your local CBHI office. You can also call the EHIA helpline.';
+  String get faqA9 =>
+      'Contact the Ethiopian Health Insurance Agency (EHIA) at info@ehia.gov.et or visit your local CBHI office. You can also call the EHIA helpline.';
 
   @override
-  String get required => 'Required';
+  String get required => 'ያስፈልጋል';
 
   @override
-  String get invalidPhone => 'Enter a valid Ethiopian mobile number (+2519XXXXXXXX)';
+  String get invalidPhone =>
+      'Enter a valid Ethiopian mobile number (+2519XXXXXXXX)';
 
   @override
   String get invalidEmail => 'Enter a valid email address';
@@ -960,37 +1076,39 @@ class AppLocalizationsAm extends AppLocalizations {
   String get unknownError => 'An unexpected error occurred. Please try again.';
 
   @override
-  String get networkUnavailable => 'No internet connection. Changes saved offline.';
+  String get networkUnavailable =>
+      'No internet connection. Changes saved offline.';
 
   @override
-  String get sessionExpired => 'Your session has expired. Please sign in again.';
+  String get sessionExpired =>
+      'Your session has expired. Please sign in again.';
 
   @override
-  String get loading => 'Loading your health coverage...';
+  String get loading => 'ሽፋንዎን በመጫን ላይ...';
 
   @override
-  String get syncing => 'Syncing...';
+  String get syncing => 'በማሳመን ላይ...';
 
   @override
-  String get retry => 'Retry';
+  String get retry => 'እንደገና ሞክር';
 
   @override
-  String get save => 'Save';
+  String get save => 'አስቀምጥ';
 
   @override
-  String get confirm => 'Confirm';
+  String get confirm => 'አረጋግጥ';
 
   @override
-  String get close => 'Close';
+  String get close => 'ዝጋ';
 
   @override
-  String get yes => 'Yes';
+  String get yes => 'አዎ';
 
   @override
-  String get no => 'No';
+  String get no => 'አይ';
 
   @override
-  String get ok => 'OK';
+  String get ok => 'እሺ';
 
   @override
   String get success => 'Success';
@@ -1005,32 +1123,587 @@ class AppLocalizationsAm extends AppLocalizations {
   String get info => 'Info';
 
   @override
-  String get notAvailable => 'Not available';
+  String get notAvailable => 'አይገኝም';
 
   @override
-  String get etb => 'ETB';
+  String get etb => 'ብር';
 
   @override
   String get months => 'months';
 
   @override
+  String get setupAccountTitle => 'መለያ አዘጋጅ';
+
+  @override
+  String get setupAccountSubtitle =>
+      'ኮዱ ወደ ስልክዎ ተልኳል። ለማስገባት እና የይለፍ ቃል ለመፍጠር ያስገቡ።';
+
+  @override
+  String get setupCode => 'Setup Code';
+
+  @override
+  String get setupCodeHint => '6-digit code from SMS';
+
+  @override
+  String get newPassword => 'አዲስ የይለፍ ቃል';
+
+  @override
+  String get confirmPassword => 'የይለፍ ቃል አረጋግጥ';
+
+  @override
+  String get passwordsDoNotMatch => 'የይለፍ ቃሎቹ አይዛመዱም';
+
+  @override
+  String get passwordTooShort => 'የይለፍ ቃሉ ቢያንስ 6 ቁምፊ ሊኖረው ይገባል';
+
+  @override
+  String get activateAccount => 'መለያ አንቃ';
+
+  @override
+  String get accountActivated => 'መለያ ተነቅቷል! ገብተዋል።';
+
+  @override
+  String get resendSetupCode => 'ኮድ እንደገና ላክ';
+
+  @override
+  String setupCodeSent(String target) {
+    return 'ኮድ ወደ $target ተልኳል';
+  }
+
+  @override
+  String get backgroundSyncComplete => 'ሽፋን ተሳምኗል';
+
+  @override
+  String get offlineBadge => 'ኦፍላይን';
+
+  @override
+  String get pleaseEnterAll6Digits => 'ሁሉንም 6 ቁጥሮች ያስገቡ';
+
+  @override
+  String get verifyOtp => 'አረጋግጥ እና ግባ';
+
+  @override
+  String get resendOtp => 'ኮድ እንደገና ላክ';
+
+  @override
+  String get otpExpiry => 'ኮዱ ያልቃል';
+
+  @override
+  String newCodeSentTo(String target) {
+    return 'አዲስ ኮድ ወደ $target ተልኳል';
+  }
+
+  @override
+  String enterCodeSentTo(String target) {
+    return 'ወደ $target የተላከ ኮድ ያስገቡ';
+  }
+
+  @override
+  String enterResetCodeSentTo(String target) {
+    return 'ወደ $target የተላከ ኮድ ያስገቡ';
+  }
+
+  @override
+  String get verifyYourPhone => 'Verify Your Phone';
+
+  @override
+  String get phonePlusOtp => 'Phone + OTP';
+
+  @override
+  String get otpPhoneSubtitle =>
+      'We\'ll send a 6-digit code to your Ethiopian mobile number.';
+
+  @override
+  String get credentialLoginSubtitle =>
+      'Sign in with your email or phone and password.';
+
+  @override
+  String get emailOrPhoneNumber => 'ኢሜይል ወይም ስልክ ቁጥር';
+
+  @override
+  String get signInWithBiometrics => 'በባዮሜትሪክ ግባ';
+
+  @override
+  String get biometricAuthenticationFailed => 'ባዮሜትሪክ ማረጋገጫ አልተሳካም';
+
+  @override
+  String get familyLogin => 'የቤተሰብ አባል ግቤት';
+
+  @override
+  String get register_action => 'አዲስ ምዝገባ';
+
+  @override
+  String get demoSandboxAutoSuccess => 'ሙከራ ሁነታ — ምንም ክፍያ አይደረግም።';
+
+  @override
+  String get householdLabel => 'ቤተሰብ';
+
+  @override
+  String get transactionLabel => 'ግብይት';
+
+  @override
+  String get statusLabel => 'ሁኔታ';
+
+  @override
+  String get amountLabel => 'መጠን';
+
+  @override
+  String get methodLabel => 'ዘዴ';
+
+  @override
+  String get successPayment => 'ክፍያ ተሳክቷል! ሽፋን ተነቅቷል።';
+
+  @override
+  String get openChapaCheckout => 'ቻፓ ክፍያ ገጽ ክፈት';
+
+  @override
   String get adminPortalTitle => 'Admin Portal';
 
   @override
-  String get adminPortalSubtitle => 'For CBHI Officers and System Administrators.';
+  String get adminPortalSubtitle =>
+      'For CBHI Officers and System Administrators.';
 
   @override
   String get facilityPortalTitle => 'Facility Staff Portal';
 
   @override
-  String get facilityPortalSubtitle => 'Health Facility Staff use the dedicated desktop application.';
+  String get facilityPortalSubtitle =>
+      'Health Facility Staff use the dedicated desktop application.';
 
   @override
-  String get useDesktopApp => 'Please use the dedicated desktop application for your role.';
+  String get useDesktopApp =>
+      'Please use the dedicated desktop application for your role.';
 
   @override
   String get installAdminApp => 'Install: cbhi_admin_desktop';
 
   @override
   String get installFacilityApp => 'Install: cbhi_facility_desktop';
+
+  @override
+  String get navFacilities => 'ተቋማት';
+
+  @override
+  String get healthFacilities => 'ጤና ተቋማት';
+
+  @override
+  String get addFacility => 'ተቋም ጨምር';
+
+  @override
+  String get facilityName => 'የተቋም ስም';
+
+  @override
+  String get facilityCode => 'የተቋም ኮድ';
+
+  @override
+  String get staffCount => 'ሠራተኞች';
+
+  @override
+  String get address => 'አድራሻ';
+
+  @override
+  String get addStaff => 'ሠራተኛ ጨምር';
+
+  @override
+  String get staffAdded => 'ሠራተኛ ተጨምሯል።';
+
+  @override
+  String get create => 'ፍጠር';
+
+  @override
+  String get offline => 'ኦፍላይን';
+
+  @override
+  String get connected => 'ተገናኝቷል';
+
+  @override
+  String get online => 'ኦንላይን';
+
+  @override
+  String get refresh => 'አድስ';
+
+  @override
+  String get maxDocumentsReached => 'ከ3 ሰነዶች አይበልጥም።';
+
+  @override
+  String get pleaseUploadAtLeastOneDocument => 'ቢያንስ አንድ ድጋፍ ሰጪ ሰነድ ያስቀምጡ።';
+
+  @override
+  String expiredDocumentError(String docs) {
+    return 'ማስገባት አይቻልም፦ $docs ጊዜ አልፎበታል። ከቀበሌዎ ትክክለኛ ሰነድ ያስቀምጡ።';
+  }
+
+  @override
+  String get waitForValidation => 'ሁሉም ሰነዶች ማረጋገጫ እስኪጨርሱ ይጠብቁ።';
+
+  @override
+  String get invalidNumber => 'ትክክለኛ ቁጥር ያስገቡ';
+
+  @override
+  String get invalidIncome => 'ገቢ ያስፈልጋል';
+
+  @override
+  String get selectDateRange => 'የቀን ክልል ምረጥ';
+
+  @override
+  String get clearDateRange => 'ክልል አጽዳ';
+
+  @override
+  String get dateRangeActive => 'ክልል ንቁ ነው';
+
+  @override
+  String get searchClaimsHint => 'ጥያቄ ቁጥር ወይም ስም ፈልግ...';
+
+  @override
+  String get scanQrCard => 'QR ካርድ ቃኝ';
+
+  @override
+  String get scanMemberCard => 'የአባል ካርድ ቃኝ';
+
+  @override
+  String get pointCameraAtCard => 'ካሜራውን ወደ QR ኮዱ ያዙሩ';
+
+  @override
+  String get toggleFlash => 'ፍላሽ ቀያይር';
+
+  @override
+  String get attachDocument => 'ሰነድ አያይዝ';
+
+  @override
+  String get supportingDocument => 'ድጋፍ ሰጪ ሰነድ';
+
+  @override
+  String get navAuditLog => 'የኦዲት ምዝግብ';
+
+  @override
+  String get entityType => 'የአካል ዓይነት';
+
+  @override
+  String get entityId => 'የአካል መለያ';
+
+  @override
+  String get search => 'ፈልግ';
+
+  @override
+  String get records => 'መዝገቦች';
+
+  @override
+  String get noAuditLogsFound => 'ምንም የኦዲት ምዝግብ አልተገኘም';
+
+  @override
+  String get timestamp => 'ጊዜ';
+
+  @override
+  String get action => 'ድርጊት';
+
+  @override
+  String get userRole => 'የተጠቃሚ ሚና';
+
+  @override
+  String get ipAddress => 'አይፒ አድራሻ';
+
+  @override
+  String get changePassword => 'የይለፍ ቃል ቀይር';
+
+  @override
+  String get passwordChanged => 'የይለፍ ቃሉ ተቀይሯል።';
+
+  @override
+  String get deleteAccount => 'መለያ ሰርዝ';
+
+  @override
+  String get deleteAccountTitle => 'መለያ ሰርዝ?';
+
+  @override
+  String get deleteAccountMessage => 'ይህ ድርጊት ሊቀለበስ አይችልም። ሁሉም ግላዊ መረጃዎ ይሰረዛሉ።';
+
+  @override
+  String get recommended => 'የሚመከር';
+
+  @override
+  String get selectThisOption => 'ይህን ምረጥ';
+
+  @override
+  String get indigentFeature1 => 'ከቀበሌ ሰነዶች ያስቀምጡ';
+
+  @override
+  String get indigentFeature2 => 'ምንም ዋጋ አይከፈልም';
+
+  @override
+  String get indigentFeature3 => 'ከሚከፍሉ አባላት ጋር ተመሳሳይ ምዝገባ';
+
+  @override
+  String get payingFeature1 => 'ዓመታዊ ዋጋ ይክፈሉ';
+
+  @override
+  String get payingFeature2 => 'ሙሉ ሽፋን ጥቅሞች';
+
+  @override
+  String get payingFeature3 => 'ዋጋ፦ 500 ብር / ቤተሰብ';
+
+  @override
+  String get indigentApplicationMenuTitle => 'የድሃ አባልነት ማመልከቻ';
+
+  @override
+  String get indigentApplicationMenuSubtitle => 'ለድጎማ ሽፋን ያመልክቱ';
+
+  @override
+  String get indigentApplicationSubmitted => 'ማመልከቻ ተቀብሏል!';
+
+  @override
+  String get dobLabel => 'የልደት ቀን';
+
+  @override
+  String get genderLabel => 'ጾታ';
+
+  @override
+  String get idLabel => 'መታወቂያ';
+
+  @override
+  String get setupTwoFactor => 'Set Up Two-Factor Authentication';
+
+  @override
+  String get twoFactorRequired => 'Two-Factor Authentication Required';
+
+  @override
+  String get twoFactorRequiredSubtitle =>
+      'Admin accounts must enable 2FA to protect sensitive health insurance data.';
+
+  @override
+  String get totpStep1Title => 'Install an Authenticator App';
+
+  @override
+  String get totpStep1Body =>
+      'Download Google Authenticator, Authy, or any TOTP-compatible app on your phone.';
+
+  @override
+  String get totpStep2Title => 'Scan the QR Code';
+
+  @override
+  String get totpStep2Body =>
+      'Open your authenticator app and scan the QR code below, or enter the secret key manually.';
+
+  @override
+  String get totpQrHint => 'Scan this QR code with your authenticator app';
+
+  @override
+  String get totpManualEntry =>
+      'Or enter this key manually in your authenticator app:';
+
+  @override
+  String get copySecret => 'Copy secret key';
+
+  @override
+  String get secretCopied => 'Secret key copied to clipboard';
+
+  @override
+  String get totpStep3Title => 'Enter Verification Code';
+
+  @override
+  String get totpStep3Body =>
+      'Enter the 6-digit code shown in your authenticator app to confirm setup.';
+
+  @override
+  String get totpTokenLabel => '6-digit code';
+
+  @override
+  String get activateTwoFactor => 'Activate Two-Factor Authentication';
+
+  @override
+  String get totpActivated => 'Two-Factor Authentication Active';
+
+  @override
+  String get totpActivatedSubtitle =>
+      'Your admin account is now protected with two-factor authentication.';
+
+  @override
+  String get continueToAdmin => 'Continue to Admin Panel';
+
+  @override
+  String get benefitPackage => 'Benefit Package';
+
+  @override
+  String get coveredServices => 'Covered Services';
+
+  @override
+  String get packageStatus => 'Status';
+
+  @override
+  String get benefitPackageInfo =>
+      'These are the services covered by your CBHI membership. Co-payments and annual limits apply.';
+
+  @override
+  String get noBenefitPackage => 'No benefit package found';
+
+  @override
+  String get noBenefitPackageSubtitle =>
+      'Contact your CBHI officer for benefit package information.';
+
+  @override
+  String get grievances => 'Grievances';
+
+  @override
+  String get myGrievances => 'ቅሬታዎቼ';
+
+  @override
+  String get submitNew => 'አዲስ አስገባ';
+
+  @override
+  String get noGrievancesYet => 'No grievances submitted';
+
+  @override
+  String get noGrievancesSubtitle => 'ምንም ቅሬታ አላቀረቡም። ችግር ካለ ለመርዳት ዝግጁ ነን።';
+
+  @override
+  String get grievanceSubmitted => 'Grievance submitted successfully';
+
+  @override
+  String get whatIsYourIssue => 'What is your issue?';
+
+  @override
+  String get grievanceSubject => 'ርዕስ';
+
+  @override
+  String get grievanceSubjectHint => 'ችግርዎን በአጭሩ ይግለጹ';
+
+  @override
+  String get grievanceDescription => 'ዝርዝር';
+
+  @override
+  String get grievanceDescriptionHint =>
+      'ችግርዎን በዝርዝር ይግለጹ። ቀናት፣ ስሞች እና ማጣቀሻዎችን ያካትቱ።';
+
+  @override
+  String get referenceIdOptional => 'Reference ID (optional)';
+
+  @override
+  String get referenceIdHint => 'የጥያቄ ቁጥር፣ የቤተሰብ ኮድ ወዘተ';
+
+  @override
+  String get submitGrievance => 'ቅሬታ አስገባ';
+
+  @override
+  String get coverageHistory => 'Coverage History';
+
+  @override
+  String get benefitUtilization => 'Benefit Utilization';
+
+  @override
+  String get claimsByStatus => 'Claims by Status';
+
+  @override
+  String get claimsUtilizationBar => 'Claim approval rate';
+
+  @override
+  String get approvalRate => 'Approval Rate';
+
+  @override
+  String get totalClaimed => 'Total Claimed';
+
+  @override
+  String get totalApproved => 'Total Approved';
+
+  @override
+  String get grievancesTitle => 'ቅሬታዎች እና ይግባኞች';
+
+  @override
+  String get noGrievancesTitle => 'ምንም ቅሬታ አልቀረበም';
+
+  @override
+  String get grievanceType => 'ቅሬታዎ ምን ይመለከታል?';
+
+  @override
+  String get referenceId => 'ማጣቀሻ መለያ (አማራጭ)';
+
+  @override
+  String get grievanceInfoBanner =>
+      'ቅሬታዎ በ5 የሥራ ቀናት ውስጥ ይገመገማል። ስለ ውሳኔው ይነገርዎታል።';
+
+  @override
+  String get fillRequiredFields => 'ርዕስ እና ዝርዝር ያስፈልጋሉ።';
+
+  @override
+  String get benefitPackageTitle => 'የጥቅም ፓኬጅ';
+
+  @override
+  String get noPackageConfigured => 'ምንም ፓኬጅ አልተዋቀረም። ሲቢኤችአይ ጽ/ቤትዎን ያነጋግሩ።';
+
+  @override
+  String get filterByCategory => 'በምድብ ያጣሩ';
+
+  @override
+  String get allCategories => 'ሁሉም';
+
+  @override
+  String get noServicesInCategory => 'በዚህ ምድብ አገልግሎት የለም';
+
+  @override
+  String get tryDifferentCategory => 'ሌላ ምድብ ይምረጡ';
+
+  @override
+  String get perMemberPerYear => 'በአባል / በዓመት';
+
+  @override
+  String get maxClaim => 'ከፍተኛ';
+
+  @override
+  String get coPay => 'ተጋሪ ክፍያ';
+
+  @override
+  String get maxPerYear => 'ከፍ. / ዓ.';
+
+  @override
+  String get fullyCovered => 'ሙሉ ሽፋን';
+
+  @override
+  String get notCovered => 'አልተሸፈነም';
+
+  @override
+  String get unlimited => 'ያልተወሰነ';
+
+  @override
+  String get noCoverageHistory => 'የሽፋን ታሪክ የለም';
+
+  @override
+  String get noCoverageHistorySubtitle => 'ከተመዘገቡ በኋላ የሽፋን ታሪክዎ ይታያል።';
+
+  @override
+  String get benefitUtilizationTitle => 'Benefit Utilization';
+
+  @override
+  String get used => 'ጥቅም ላይ ዋለ';
+
+  @override
+  String get limit => 'ወሰን';
+
+  @override
+  String get remaining => 'ቀሪ';
+
+  @override
+  String get utilized => 'ጥቅም ላይ ዋለ';
+
+  @override
+  String get nearingBenefitLimit => 'ዓመታዊ ጥቅምዎ ወሰን ላይ ደርሷል። ቀዳሚ ጤና አገልግሎት ያስቡ።';
+
+  @override
+  String get renewalReminder => 'የታደሰ ማሳወቂያ';
+
+  @override
+  String get coverageExpired => 'ሽፋን አልቋል';
+
+  @override
+  String get coverageExpiredMessage => 'ሽፋንዎ አልቋል። አሁን ያድሱ።';
+
+  @override
+  String coverageExpiresInDays(String days) {
+    return 'ሽፋንዎ በ$days ቀናት ያልቃል። አሁን ያድሱ።';
+  }
+
+  @override
+  String coverageExpiresSoon(String days) {
+    return 'ሽፋንዎ በ$days ቀናት ያልቃል። ቶሎ ያድሱ።';
+  }
+
+  @override
+  String get renewNow => 'አሁን አድስ';
 }
