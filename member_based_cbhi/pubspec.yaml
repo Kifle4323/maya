@@ -12,8 +12,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  cupertino_icons: ^1.0.8
-  flutter_bloc: ^8.1.6
+  cupertino_icons: ^1.0.9
+  flutter_bloc: ^8.1.6        # stay on v8 — v9 has breaking BlocProvider API changes
   equatable: ^2.0.7
   http: ^1.2.2
   intl: ^0.20.2
@@ -21,7 +21,7 @@ dependencies:
   qr_flutter: ^4.1.0
   sqflite: ^2.4.1
   image_picker: ^1.1.2
-  file_picker: ^10.1.9
+  file_picker: ^10.1.9        # stay on v10 — v11 has breaking permission changes
   permission_handler: ^12.0.0+1
   google_fonts: ^8.0.2
   flutter_animate: ^4.5.2
@@ -31,23 +31,22 @@ dependencies:
   flutter_image_compress: ^2.3.0
   cached_network_image: ^3.4.1
   path_provider: ^2.1.4
-  local_auth: ^2.3.0
-  flutter_secure_storage: ^9.2.4
+  local_auth: ^2.3.0          # stay on v2 — v3 has breaking auth result API changes
+  flutter_secure_storage: ^9.2.4  # stay on v9 — v10 has breaking iOS keychain changes
   url_launcher: ^6.3.1
-  connectivity_plus: ^6.1.4
-  app_links: ^6.3.2
-  freezed_annotation: ^2.4.1
+  connectivity_plus: ^6.1.5
+  app_links: ^6.4.1           # stay on v6 — v7 has breaking stream API changes
+  freezed_annotation: ^2.4.4
   json_annotation: ^4.9.0
-  # FIX MJ-8: Sentry error tracking for Flutter
-  sentry_flutter: ^8.0.0
+  sentry_flutter: ^8.14.2     # v8.14 supports Kotlin 2.1 + AGP 8.9; v9 requires code changes
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  build_runner: ^2.4.9
-  json_serializable: ^6.8.0
-  freezed: ^2.5.2
+  build_runner: ^2.5.4
+  json_serializable: ^6.9.5
+  freezed: ^2.5.8
 
 flutter:
   uses-material-design: true

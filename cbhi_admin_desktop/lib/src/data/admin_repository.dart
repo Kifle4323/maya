@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 const String kAdminApiBase = String.fromEnvironment(
   'CBHI_API_BASE_URL',
-  defaultValue: 'https://member-based-cbhi-dwpejr0y4-figo-uis-projects.vercel.app/api/v1',
+  defaultValue: 'https://member-based-cbhi.vercel.app/api/v1',
 );
 
 class AdminRepository {
@@ -370,11 +370,28 @@ class AdminRepository {
   }
 
   Map<String, dynamic> _parse(http.Response response) {
-    final body = jsonDecode(response.body);
-    if (response.statusCode >= 400) {
-      throw Exception((body as Map)['message']?.toString() ?? 'Request failed');
+    final rawBody = response.body.trim();
+
+    // Guard against non-JSON responses (HTML error pages, gateway errors, etc.)
+    Map<String, dynamic> body;
+    try {
+      body = (jsonDecode(rawBody) as Map).cast<String, dynamic>();
+    } catch (_) {
+      throw Exception(
+        'Server returned an unexpected response (HTTP ${response.statusCode}). '
+        'Check that the API is reachable.',
+      );
     }
-    return (body as Map).cast<String, dynamic>();
+
+    if (response.statusCode >= 400) {
+      final msg = body['message'];
+      throw Exception(
+        msg is List
+            ? msg.join(', ')
+            : msg?.toString() ?? 'Request failed (${response.statusCode})',
+      );
+    }
+    return body;
   }
 
   List<Map<String, dynamic>> _asList(dynamic value) {

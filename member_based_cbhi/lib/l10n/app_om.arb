@@ -357,7 +357,6 @@
   "userRole": "Gahee",
   "ipAddress": "Teessoo IP",
 
-  "maxDocumentsReached": "Galmee 3 ol hin ta'u.",
   "invalidIncome": "Galii barbaachisaa dha",
   "accessThroughHouseholdHead": "Hogganaa maatii dhaan seeni",
   "independentLoginNotEnabled": "Seensa of-danda'aa hin dandeeffamne",
@@ -602,5 +601,13 @@
   "installFacilityApp": "Fe'i: cbhi_facility_desktop",
   "coverageHistory": "Seenaa tajaajilaa",
   "referenceIdHint": "Lakkoofsa klaayimii, ID iyyannoo, kkf",
-  "noGrievancesTitle": "Komiin hin galmoofne"
+  "noGrievancesTitle": "Komiin hin galmoofne",
+
+  "facilities": "Dhaabbilee fayyaa",
+  "acceptedPaymentMethods": "Malawwan kaffaltiiwwanii fuudha",
+  "relationshipToHouseholdHead": "Hogganaa maatii waliin diinaggee",
+  "beneficiary": "Fayyadamaa",
+  "facility": "Dhaabbata fayyaa",
+  "accredited": "Raggaafameera",
+  "serviceLevel": "Sadarkaa tajaajilaa"
 }

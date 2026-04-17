@@ -109,7 +109,6 @@
   "ehia": "የኢትዮጵያ ጤና መድን ኤጀንሲ (EHIA)",
   "fmoh": "የፌዴራል ጤና ሚኒስቴር (FMOH)",
   "platformVersion": "ማያ ሲቲ ሲቢኤችአይ v1.0",
-  "helpAndFaq": "እርዳታ እና ጥያቄዎች",
   "privacyConsent": "የግላዊነት ስምምነት",
   "privacyConsentSubtitle": "ማያ ሲቲ ሲቢኤችአይ ከመጠቀምዎ በፊት ያንብቡ እና ይቀበሉ",
   "scrollToRead": "ሁሉንም ውሎች ለማንበብ ወደ ታች ይሸብልሉ",
@@ -246,7 +245,6 @@
   "online": "ኦንላይን",
   "refresh": "አድስ",
 
-  "maxDocumentsReached": "ከ3 ሰነዶች አይበልጥም።",
   "invalidIncome": "ገቢ ያስፈልጋል",
 
   "selectDateRange": "የቀን ክልል ምረጥ",
@@ -362,7 +360,6 @@
   "@coverageExpiresSoon": {"placeholders": {"days": {"type": "String"}}},
   "renewNow": "አሁን አድስ",
 
-  "backgroundSyncComplete": "ሽፋን ተሳምኗል",
   "otpPhoneSubtitle": "ወደ ኢትዮጵያ ስልክ ቁጥርዎ 6-አሃዝ ኮድ እንልካለን።",
   "credentialLoginSubtitle": "ኢሜይል ወይም ስልክ እና የይለፍ ቃልዎን ይጠቀሙ።",
   "phonePlusOtp": "ስልክ + OTP",
@@ -601,5 +598,12 @@
   "installFacilityApp": "ጫን: cbhi_facility_desktop",
   "coverageHistory": "የሽፋን ታሪክ",
   "referenceIdHint": "የጥያቄ ቁጥር፣ ማመልከቻ መለያ ወዘተ",
-  "noGrievancesTitle": "ምንም ቅሬታ አልቀረበም"
+  "noGrievancesTitle": "ምንም ቅሬታ አልቀረበም",
+
+  "facilities": "ጤና ተቋማት",
+  "beneficiaryProfile": "የተጠቃሚ መገለጫ",
+  "acceptedPaymentMethods": "የሚቀበሉ የክፍያ ዘዴዎች",
+  "relationshipToHouseholdHead": "ከቤተሰብ ራስ ጋር ያለ ዝምድና",
+  "beneficiary": "ተጠቃሚ",
+  "facility": "ጤና ተቋም"
 }

@@ -205,7 +205,6 @@
   "registrationCompleted": "Registration completed",
   "offlineQueueMessage": "Your household record is safely queued offline. As soon as the app syncs online, your member account will activate automatically.",
   "registrationSuccessMessage": "Your Maya City household account is active and your digital CBHI card is now available from the home screen.",
-  "syncNow": "Sync now",
   "openMyAccount": "Open my account",
   "startAnotherRegistration": "Start another registration",
 
@@ -459,13 +458,7 @@
   "amountLabel": "Amount",
   "methodLabel": "Method",
   "successPayment": "Payment successful! Coverage activated.",
-  "premiumAmount": "Premium Amount",
-  "payPremium": "Pay Premium",
-  "acceptedPaymentMethods": "Accepted Payment Methods",
-  "paymentInitiated": "Payment Initiated",
-  "completePaymentOnChapa": "Complete your payment on the Chapa checkout page, then tap Verify Payment.",
   "openChapaCheckout": "Open Chapa Checkout",
-  "verifyPayment": "Verify Payment",
   "adminPortalTitle": "Admin Portal",
   "adminPortalSubtitle": "For CBHI Officers and System Administrators.",
   "facilityPortalTitle": "Facility Staff Portal",
@@ -546,11 +539,6 @@
   "dobLabel": "Date of birth",
   "genderLabel": "Gender",
   "idLabel": "ID",
-
-  "otpPhoneSubtitle": "We'll send a 6-digit code to your Ethiopian mobile number.",
-  "credentialLoginSubtitle": "Sign in with your email or phone and password.",
-  "phonePlusOtp": "Phone + OTP",
-  "verifyYourPhone": "Verify Your Phone",
 
   "setupTwoFactor": "Set Up Two-Factor Authentication",
   "twoFactorRequired": "Two-Factor Authentication Required",

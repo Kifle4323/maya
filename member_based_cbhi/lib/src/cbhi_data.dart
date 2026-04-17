@@ -16,7 +16,7 @@ import 'shared/secure_storage_service.dart';
 String get kDefaultApiBaseUrl {
   const envUrl = String.fromEnvironment('CBHI_API_BASE_URL');
   if (envUrl.isNotEmpty) return envUrl;
-  return 'https://member-based-cbhi-dwpejr0y4-figo-uis-projects.vercel.app/api/v1';
+  return 'https://member-based-cbhi.vercel.app/api/v1';
 }
 
 @immutable

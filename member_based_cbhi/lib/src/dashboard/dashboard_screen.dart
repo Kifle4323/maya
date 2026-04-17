@@ -14,7 +14,7 @@ import '../shared/animated_widgets.dart';
 import '../shared/skeleton_widgets.dart';
 import '../theme/app_theme.dart';
 
-/// Home / Dashboard screen — shows household coverage status, metrics,
+/// Home / Dashboard screen — shows househol   d coverage status, metrics,
 /// payment history, and recent notifications.
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});

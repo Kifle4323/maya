@@ -1,0 +1,20 @@
+{
+  "am": [
+    "facilities",
+    "beneficiaryProfile",
+    "acceptedPaymentMethods",
+    "relationshipToHouseholdHead",
+    "beneficiary",
+    "facility"
+  ],
+
+  "om": [
+    "facilities",
+    "acceptedPaymentMethods",
+    "relationshipToHouseholdHead",
+    "beneficiary",
+    "facility",
+    "accredited",
+    "serviceLevel"
+  ]
+}

@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 const String kFacilityApiBase = String.fromEnvironment(
   'CBHI_API_BASE_URL',
-  defaultValue: 'https://member-based-cbhi-dwpejr0y4-figo-uis-projects.vercel.app/api/v1',
+  defaultValue: 'https://member-based-cbhi.vercel.app/api/v1',
 );
 
 class FacilityRepository {
