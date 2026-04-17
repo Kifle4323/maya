@@ -35,7 +35,7 @@ async function createApp(): Promise<NestExpressApplication> {
 
   const allowedOrigins = (
     process.env.CORS_ALLOWED_ORIGINS ??
-    'https://member-based-cbhi-dwpejr0y4-figo-uis-projects.vercel.app'
+    'https://member-based-cbhi.vercel.app'
   )
     .split(',')
     .map((o) => o.trim())
@@ -68,6 +68,18 @@ async function createApp(): Promise<NestExpressApplication> {
 
 // Vercel serverless handler
 export default async function handler(req: Request, res: Response) {
+  // Root path — return API info without going through NestJS
+  if (req.url === '/' || req.url === '') {
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).json({
+      name: 'Maya City CBHI API',
+      version: '1.0.0',
+      status: 'ok',
+      docs: '/api/v1/health',
+    });
+    return;
+  }
+
   const app = await createApp();
   const expressApp = app.getHttpAdapter().getInstance();
   return expressApp(req, res);
