@@ -7,7 +7,17 @@ FLUTTER_ROOT="$HOME/flutter"
 if [ ! -x "$FLUTTER_ROOT/bin/flutter" ]; then
   echo "Installing Flutter SDK..."
   RELEASES_JSON="$(curl -fsSL "$RELEASES_URL")"
-  ARCHIVE_PATH="$(node -e 'const data = JSON.parse(process.argv[1]); const hash = data.current_release.stable; const release = data.releases.find((item) => item.hash === hash); if (!release) process.exit(1); process.stdout.write(release.archive);' "$RELEASES_JSON")"
+  ARCHIVE_PATH="$(echo "$RELEASES_JSON" | node -e '
+    let raw = "";
+    process.stdin.on("data", d => raw += d);
+    process.stdin.on("end", () => {
+      const data = JSON.parse(raw);
+      const hash = data.current_release.stable;
+      const release = data.releases.find(r => r.hash === hash);
+      if (!release) process.exit(1);
+      process.stdout.write(release.archive);
+    });
+  ')"
   curl -fsSL "https://storage.googleapis.com/flutter_infra_release/releases/${ARCHIVE_PATH}" -o /tmp/flutter.tar.xz
   rm -rf "$FLUTTER_ROOT"
   tar -xf /tmp/flutter.tar.xz -C "$HOME"
