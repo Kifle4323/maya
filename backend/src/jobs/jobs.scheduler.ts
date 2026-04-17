@@ -1,10 +1,10 @@
-import { InjectQueue } from '@nestjs/bull';
+import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import type { Queue } from 'bull';
+import { Queue } from 'bullmq';
 import { CBHI_JOBS_QUEUE, JOB_DAILY } from './jobs.processor';
 
 /**
- * JobsScheduler — uses Bull cron scheduling so only one instance in a
+ * JobsScheduler — uses BullMQ cron scheduling so only one instance in a
  * multi-container deployment runs the job at any given time.
  *
  * Gracefully degrades when Redis is unavailable (dev without Redis).
@@ -22,7 +22,7 @@ export class JobsScheduler implements OnModuleInit {
     // Skip scheduling if Redis is not configured
     if (!process.env.REDIS_HOST) {
       this.logger.warn(
-        'REDIS_HOST not set — Bull job scheduling disabled. ' +
+        'REDIS_HOST not set — BullMQ job scheduling disabled. ' +
         'Set REDIS_HOST to enable background jobs.',
       );
       return;
@@ -40,15 +40,15 @@ export class JobsScheduler implements OnModuleInit {
         JOB_DAILY,
         {},
         {
-          repeat: { cron: '5 0 * * *' },
-          removeOnComplete: 10,
-          removeOnFail: 20,
+          repeat: { pattern: '5 0 * * *' },
+          removeOnComplete: { count: 10 },
+          removeOnFail: { count: 20 },
           attempts: 3,
           backoff: { type: 'exponential', delay: 60_000 },
         },
       );
 
-      this.logger.log('Daily job scheduled via Bull (cron: 5 0 * * *)');
+      this.logger.log('Daily job scheduled via BullMQ (cron: 5 0 * * *)');
 
       // Run once on startup after 30s to catch up on missed jobs
       await this.jobsQueue.add(
@@ -60,7 +60,7 @@ export class JobsScheduler implements OnModuleInit {
       this.logger.log('Startup job queued (runs in 30s)');
     } catch (err) {
       this.logger.error(
-        `Failed to schedule Bull jobs (Redis may be unavailable): ${(err as Error).message}`,
+        `Failed to schedule BullMQ jobs (Redis may be unavailable): ${(err as Error).message}`,
       );
       // Don't crash the app — jobs will be scheduled on next restart
     }

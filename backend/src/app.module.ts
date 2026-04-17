@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
-import { BullModule } from '@nestjs/bull';
+import { BullMQModule } from '@nestjs/bullmq';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AdminModule } from './admin/admin.module';
@@ -124,19 +124,14 @@ const redisEnabled = !!process.env.REDIS_HOST;
 
     // Bull queue — only connect to Redis if REDIS_HOST is set
     // In dev without Redis, JobsModule gracefully degrades
-    BullModule.forRoot({
-      redis: {
+    BullMQModule.forRoot({
+      connection: {
         host: redisHost,
         port: redisPort,
         password: redisPassword,
-        // Retry strategy: don't crash the app if Redis is unavailable
-        retryStrategy: (times: number) => {
-          if (!redisEnabled) return null; // stop retrying if no Redis configured
-          return Math.min(times * 500, 5000);
-        },
-        maxRetriesPerRequest: null,
-        enableReadyCheck: false,
         lazyConnect: !redisEnabled,
+        enableOfflineQueue: false,
+        maxRetriesPerRequest: null,
       },
     }),
 
