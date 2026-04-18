@@ -56,11 +56,23 @@ async function bootstrap() {
     .map((o) => o.trim())
     .filter(Boolean);
 
+  // Wildcard patterns (e.g. "*.vercel.app") extracted separately
+  const wildcardPatterns = allowedOrigins
+    .filter((o) => o.startsWith('*.'))
+    .map((o) => new RegExp(`^https?://${o.slice(2).replace(/\./g, '\\.')}$`));
+
+  const exactOrigins = allowedOrigins.filter((o) => !o.startsWith('*.'));
+
   app.enableCors({
     origin: (origin, callback) => {
       // Allow requests with no origin (mobile apps, curl, Postman)
       if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+      // Exact match or wildcard '*'
+      if (exactOrigins.includes(origin) || exactOrigins.includes('*')) {
+        return callback(null, true);
+      }
+      // Wildcard pattern match (e.g. *.vercel.app)
+      if (wildcardPatterns.some((re) => re.test(origin))) {
         return callback(null, true);
       }
       return callback(new Error(`CORS: origin ${origin} not allowed`), false);
