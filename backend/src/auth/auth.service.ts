@@ -383,98 +383,7 @@ export class AuthService {
 
     return { message: 'Account data anonymised and deactivated.' };
   }
-
-  // ── TOTP 2FA ────────────────────────────────────────────────────────────────
-
-  async setupTotp(userId: string, totpService: import('./totp.service').TotpService) {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) throw new NotFoundException('User not found.');
-
-    const secret = totpService.generateSecret();
-    const accountName = user.email ?? user.phoneNumber ?? user.firstName;
-    const qrUri = totpService.generateQrUri(secret, accountName ?? 'Admin');
-
-    // Store secret (not yet activated — user must verify first)
-    const userWithSecrets = await this.userRepository
-      .createQueryBuilder('user')
-      .addSelect(['user.totpSecret'])
-      .where('user.id = :id', { id: userId })
-      .getOne();
-
-    if (userWithSecrets) {
-      userWithSecrets.totpSecret = secret;
-      userWithSecrets.totpEnabled = false;
-      await this.userRepository.save(userWithSecrets);
-    }
-
-    return {
-      secret,
-      qrUri,
-      message: 'Scan the QR code with your authenticator app, then call /auth/totp/activate with a valid token.',
-    };
-  }
-
-  async activateTotp(userId: string, token: string, totpService: import('./totp.service').TotpService) {
-    const userWithSecrets = await this.userRepository
-      .createQueryBuilder('user')
-      .addSelect(['user.totpSecret'])
-      .where('user.id = :id', { id: userId })
-      .getOne();
-
-    if (!userWithSecrets?.totpSecret) {
-      throw new BadRequestException('TOTP setup not initiated. Call /auth/totp/setup first.');
-    }
-
-    if (!totpService.verifyToken(userWithSecrets.totpSecret, token)) {
-      throw new UnauthorizedException('Invalid TOTP token. Please check your authenticator app.');
-    }
-
-    userWithSecrets.totpEnabled = true;
-    await this.userRepository.save(userWithSecrets);
-
-    return { message: 'Two-factor authentication activated successfully.' };
-  }
-
-  async verifyTotp(userId: string, token: string, totpService: import('./totp.service').TotpService) {
-    const userWithSecrets = await this.userRepository
-      .createQueryBuilder('user')
-      .addSelect(['user.totpSecret'])
-      .where('user.id = :id', { id: userId })
-      .getOne();
-
-    if (!userWithSecrets?.totpEnabled || !userWithSecrets.totpSecret) {
-      throw new BadRequestException('Two-factor authentication is not enabled for this account.');
-    }
-
-    if (!totpService.verifyToken(userWithSecrets.totpSecret, token)) {
-      throw new UnauthorizedException('Invalid TOTP token.');
-    }
-
-    return { verified: true, message: 'Two-factor authentication verified.' };
-  }
-
-  async disableTotp(userId: string, token: string, totpService: import('./totp.service').TotpService) {
-    const userWithSecrets = await this.userRepository
-      .createQueryBuilder('user')
-      .addSelect(['user.totpSecret'])
-      .where('user.id = :id', { id: userId })
-      .getOne();
-
-    if (!userWithSecrets?.totpEnabled || !userWithSecrets.totpSecret) {
-      throw new BadRequestException('Two-factor authentication is not enabled.');
-    }
-
-    if (!totpService.verifyToken(userWithSecrets.totpSecret, token)) {
-      throw new UnauthorizedException('Invalid TOTP token. Provide a valid token to disable 2FA.');
-    }
-
-    userWithSecrets.totpSecret = null;
-    userWithSecrets.totpEnabled = false;
-    await this.userRepository.save(userWithSecrets);
-
-    return { message: 'Two-factor authentication disabled.' };
-  }
-
+ 
   hashPassword(password: string) {
     const salt = createHash('sha256')
       .update(`${Date.now()}:${Math.random()}`)
@@ -526,8 +435,6 @@ export class AuthService {
       beneficiaryId: user.beneficiaryProfile?.id ?? null,
       membershipId: user.beneficiaryProfile?.memberNumber ?? null,
       lastLoginAt: user.lastLoginAt?.toISOString() ?? null,
-      // FIX: Include TOTP status so admin clients know whether to prompt for 2FA setup
-      totpEnabled: user.totpEnabled ?? false,
     };
   }
 

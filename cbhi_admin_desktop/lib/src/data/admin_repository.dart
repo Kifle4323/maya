@@ -12,22 +12,15 @@ class AdminRepository {
 
   final http.Client _client;
   String? _token;
-  // FIX: Track TOTP status after login
-  bool _totpEnabled = false;
 
   static const _tokenKey = 'cbhi_admin_token';
-  static const _totpKey = 'cbhi_admin_totp_enabled';
 
   Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
     _token = prefs.getString(_tokenKey);
-    _totpEnabled = prefs.getBool(_totpKey) ?? false;
   }
 
   bool get isAuthenticated => _token != null && _token!.isNotEmpty;
-
-  /// Whether the current admin has TOTP 2FA enabled
-  bool get totpEnabled => _totpEnabled;
 
   Future<Map<String, dynamic>> login({
     required String identifier,
@@ -38,21 +31,15 @@ class AdminRepository {
       'password': password,
     });
     _token = response['accessToken']?.toString();
-    // Extract totpEnabled from the user profile in the login response
-    final user = (response['user'] as Map?)?.cast<String, dynamic>() ?? {};
-    _totpEnabled = user['totpEnabled'] == true;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_tokenKey, _token ?? '');
-    await prefs.setBool(_totpKey, _totpEnabled);
     return response;
   }
 
   Future<void> logout() async {
     _token = null;
-    _totpEnabled = false;
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_tokenKey);
-    await prefs.remove(_totpKey);
   }
 
   /// Returns true if the backend is reachable
@@ -192,28 +179,6 @@ class AdminRepository {
     );
     if (response.statusCode != 200) throw Exception('Export failed');
     return response.body;
-  }
-
-  // ── TOTP 2FA ──────────────────────────────────────────────────────────────
-
-  /// Initiate TOTP setup — returns secret and QR URI
-  Future<Map<String, dynamic>> setupTotp() async {
-    return _post('/auth/totp/setup', {});
-  }
-
-  /// Activate TOTP after scanning QR code — verifies the first token
-  Future<Map<String, dynamic>> activateTotp(String token) async {
-    return _post('/auth/totp/activate', {'token': token});
-  }
-
-  /// Verify a TOTP token during login (second factor check)
-  Future<Map<String, dynamic>> verifyTotp(String token) async {
-    return _post('/auth/totp/verify', {'token': token});
-  }
-
-  /// Disable TOTP — requires a valid token to confirm
-  Future<Map<String, dynamic>> disableTotp(String token) async {
-    return _post('/auth/totp/disable', {'token': token});
   }
 
   // ── Benefit Packages ──────────────────────────────────────────────────────

@@ -1,0 +1,43 @@
+name: Build & Release APK
+
+on:
+  push:
+    tags:
+      - 'v*'          # triggers on v1.0.0, v1.2.3, etc.
+  workflow_dispatch:  # allows manual trigger from GitHub Actions UI
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+          channel: 'stable'
+
+      - name: Install dependencies
+        working-directory: member_based_cbhi
+        run: flutter pub get
+
+      - name: Build APK
+        working-directory: member_based_cbhi
+        run: |
+          flutter build apk --release \
+            --dart-define=CBHI_API_BASE_URL=https://member-based-cbhi.vercel.app/api/v1 \
+            --dart-define=APP_ENV=production
+
+      - name: Rename APK
+        run: |
+          mv member_based_cbhi/build/app/outputs/flutter-apk/app-release.apk \
+             member_based_cbhi/build/app/outputs/flutter-apk/cbhi-member-${{ github.ref_name }}.apk
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: member_based_cbhi/build/app/outputs/flutter-apk/cbhi-member-${{ github.ref_name }}.apk
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

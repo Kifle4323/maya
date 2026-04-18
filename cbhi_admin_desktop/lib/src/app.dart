@@ -4,7 +4,6 @@ import 'data/admin_repository.dart';
 import 'i18n/app_localizations.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_shell.dart';
-import 'screens/totp_setup_screen.dart';
 import 'theme/admin_theme.dart';
 
 class CbhiAdminApp extends StatefulWidget {
@@ -19,8 +18,6 @@ class CbhiAdminApp extends StatefulWidget {
 class _CbhiAdminAppState extends State<CbhiAdminApp> {
   bool _isLoading = true;
   bool _isAuthenticated = false;
-  // FIX: Track whether TOTP setup is needed after first login
-  bool _needsTotpSetup = false;
   Locale _locale = AppLocalizations.resolveAppLocale(
     WidgetsBinding.instance.platformDispatcher.locale,
   );
@@ -40,13 +37,7 @@ class _CbhiAdminAppState extends State<CbhiAdminApp> {
   }
 
   void _onLogin() {
-    // After login, check if TOTP needs to be set up
-    // totpEnabled is returned in the login response via repository
-    final totpEnabled = widget.repository.totpEnabled;
-    setState(() {
-      _isAuthenticated = true;
-      _needsTotpSetup = !totpEnabled;
-    });
+    setState(() => _isAuthenticated = true);
   }
 
   @override
@@ -73,18 +64,9 @@ class _CbhiAdminAppState extends State<CbhiAdminApp> {
               locale: _locale,
               onLocaleChanged: (locale) => setState(() => _locale = locale),
             )
-          : _needsTotpSetup
-          // Show TOTP setup screen for admins who haven't enabled 2FA yet
-          ? TotpSetupScreen(
-              repository: widget.repository,
-              onComplete: () => setState(() => _needsTotpSetup = false),
-            )
           : MainShell(
               repository: widget.repository,
-              onLogout: () => setState(() {
-                _isAuthenticated = false;
-                _needsTotpSetup = false;
-              }),
+              onLogout: () => setState(() => _isAuthenticated = false),
               locale: _locale,
               onLocaleChanged: (locale) => setState(() => _locale = locale),
             ),

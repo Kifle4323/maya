@@ -1,4 +1,4 @@
-/**
+  /**
  * Vercel serverless entry point for NestJS.
  * Wraps the NestJS app as an Express handler for Vercel's serverless runtime.
  *
@@ -45,7 +45,12 @@ async function createApp(): Promise<NestExpressApplication> {
   app.enableCors({
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
+      // Allow exact matches
       if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+        return callback(null, true);
+      }
+      // Allow all Vercel preview deployments for this project
+      if (origin.match(/^https:\/\/member-based-cbhi.*\.vercel\.app$/)) {
         return callback(null, true);
       }
       return callback(new Error(`CORS: origin ${origin} not allowed`), false);

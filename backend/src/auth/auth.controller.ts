@@ -1,9 +1,7 @@
-import { Body, Controller, Get, Headers, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { Public } from '../common/decorators/public.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
-import { Roles } from '../common/decorators/roles.decorator';
-import { UserRole } from '../common/enums/cbhi.enums';
 import { User } from '../users/user.entity';
 import {
   FamilyPasswordLoginDto,
@@ -17,13 +15,11 @@ import {
   VerifyOtpDto,
 } from './auth.dto';
 import { AuthService } from './auth.service';
-import { TotpService } from './totp.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly totpService: TotpService,
   ) {}
 
   @Public()
@@ -105,58 +101,5 @@ export class AuthController {
   @Post('delete-account')
   async deleteAccount(@CurrentUser() user: User) {
     return this.authService.anonymiseAccount(user.id);
-  }
-
-  // ── TOTP 2FA (admin accounts) ─────────────────────────────────────────────
-
-  /**
-   * Generate a new TOTP secret and QR URI for the current admin user.
-   * The QR URI should be rendered as a QR code in the admin UI.
-   * Restricted to CBHI_OFFICER and SYSTEM_ADMIN roles.
-   */
-  @Post('totp/setup')
-  @Roles(UserRole.CBHI_OFFICER, UserRole.SYSTEM_ADMIN)
-  async setupTotp(@CurrentUser() user: User) {
-    return this.authService.setupTotp(user.id, this.totpService);
-  }
-
-  /**
-   * Verify and activate TOTP for the current admin user.
-   * Must be called with a valid token from the authenticator app
-   * after scanning the QR code from /auth/totp/setup.
-   */
-  @Post('totp/activate')
-  @Roles(UserRole.CBHI_OFFICER, UserRole.SYSTEM_ADMIN)
-  async activateTotp(
-    @CurrentUser() user: User,
-    @Body() body: { token: string },
-  ) {
-    return this.authService.activateTotp(user.id, body.token, this.totpService);
-  }
-
-  /**
-   * Verify a TOTP token during login (second factor).
-   * Called after successful password login for admin accounts.
-   */
-  @Post('totp/verify')
-  @Roles(UserRole.CBHI_OFFICER, UserRole.SYSTEM_ADMIN)
-  async verifyTotp(
-    @CurrentUser() user: User,
-    @Body() body: { token: string },
-  ) {
-    return this.authService.verifyTotp(user.id, body.token, this.totpService);
-  }
-
-  /**
-   * Disable TOTP for the current admin user.
-   * Requires a valid TOTP token to prevent accidental disabling.
-   */
-  @Post('totp/disable')
-  @Roles(UserRole.CBHI_OFFICER, UserRole.SYSTEM_ADMIN)
-  async disableTotp(
-    @CurrentUser() user: User,
-    @Body() body: { token: string },
-  ) {
-    return this.authService.disableTotp(user.id, body.token, this.totpService);
   }
 }
