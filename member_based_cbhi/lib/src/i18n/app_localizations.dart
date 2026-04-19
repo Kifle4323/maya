@@ -26,8 +26,8 @@ class AppLocalizations {
         _ => const Locale('en'),
       };
 
-  static LocalizationsDelegate<AppLocalizations> delegateFor(Locale locale) =>
-      _AppLocalizationsDelegate(locale);
+  static LocalizationsDelegate<AppLocalizations> get delegate =>
+      const _AppLocalizationsDelegate();
 
   static AppLocalizations of(BuildContext context) =>
       Localizations.of<AppLocalizations>(context, AppLocalizations) ??
@@ -51,8 +51,7 @@ class AppLocalizations {
 
 class _AppLocalizationsDelegate
     extends LocalizationsDelegate<AppLocalizations> {
-  const _AppLocalizationsDelegate(this.preferredLocale);
-  final Locale preferredLocale;
+  const _AppLocalizationsDelegate();
 
   @override
   bool isSupported(Locale locale) => AppLocalizations.supportedLocales
@@ -60,19 +59,19 @@ class _AppLocalizationsDelegate
 
   @override
   Future<AppLocalizations> load(Locale locale) async =>
-      AppLocalizations(preferredLocale);
+      AppLocalizations(locale);
 
   @override
-  bool shouldReload(_AppLocalizationsDelegate old) =>
-      old.preferredLocale.languageCode != preferredLocale.languageCode;
+  bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// String tables
+// String tables — populated from ARB files
 // ─────────────────────────────────────────────────────────────────────────────
 
-const _strings = <String, Map<String, String>>{
+final _strings = <String, Map<String, String>>{
   'en': _en,
   'am': _am,
   'om': _om,
 };
+

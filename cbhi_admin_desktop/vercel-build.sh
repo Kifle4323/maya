@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Fix git "dubious ownership" error in Vercel's build environment
+git config --global --add safe.directory '*'
+
 RELEASES_URL="https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json"
 FLUTTER_ROOT="$HOME/flutter"
 
