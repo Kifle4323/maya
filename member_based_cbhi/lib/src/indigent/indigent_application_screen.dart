@@ -1,5 +1,3 @@
-import 'dart:io' if (dart.library.html) '../shared/web_stubs.dart';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -8,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../cbhi_data.dart';
 import '../cbhi_localizations.dart';
+import '../shared/file_image_widget.dart';
 import '../shared/image_utils.dart';
 import '../shared/local_attachment_store.dart';
 import '../theme/app_theme.dart';
@@ -619,14 +618,15 @@ class _DocumentCard extends StatelessWidget {
                           child: const Icon(Icons.picture_as_pdf,
                               color: AppTheme.primary, size: 28),
                         )
-                      : Image.file(
-                          File(doc.localPath),
+                      : NativeFileImage(
+                          path: doc.localPath,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Container(
+                          width: 52,
+                          height: 52,
+                          errorWidget: Container(
                             color: AppTheme.surfaceLight,
-                            child: const Icon(
-                                Icons.broken_image_outlined,
-                                color: AppTheme.textSecondary),
+                            child: const Icon(Icons.description_outlined,
+                                color: AppTheme.textSecondary, size: 28),
                           ),
                         ),
                 ),

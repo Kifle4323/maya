@@ -1,4 +1,3 @@
-import 'dart:io' if (dart.library.html) '../../shared/web_stubs.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:file_picker/file_picker.dart';
@@ -10,6 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../models/personal_info_model.dart';
 import '../../cbhi_data.dart';
 import '../../cbhi_localizations.dart';
+import '../../shared/file_image_widget.dart';
 import '../../shared/local_attachment_store.dart';
 import '../../shared/location_service.dart';
 import '../../shared/ethiopic_date_picker.dart';
@@ -654,8 +654,8 @@ class _DocumentPickerCard extends StatelessWidget {
                     : isImage
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: Image.file(
-                              File(path!),
+                            child: NativeFileImage(
+                              path: path!,
                               height: 180,
                               fit: BoxFit.cover,
                             ),
@@ -665,7 +665,7 @@ class _DocumentPickerCard extends StatelessWidget {
                               const Icon(Icons.description_outlined),
                               const SizedBox(width: 12),
                               Expanded(
-                                child: Text(path!.split(Platform.pathSeparator).last),
+                                child: Text(path!.split('/').last),
                               ),
                             ],
                           ),
