@@ -20,6 +20,7 @@ import { AppModule } from '../src/app.module';
 import { GlobalExceptionFilter } from '../src/common/filters/global-exception.filter';
 import { TimeoutInterceptor } from '../src/common/interceptors/timeout.interceptor';
 import { CbhiLogger } from '../src/common/logger/cbhi-logger.service';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
 
 let cachedApp: NestExpressApplication | null = null;
@@ -67,6 +68,29 @@ async function createApp(): Promise<NestExpressApplication> {
     new ValidationPipe({ whitelist: true, transform: true, forbidUnknownValues: false }),
   );
 
+  // --- Swagger Configuration ---
+  const config = new DocumentBuilder()
+    .setTitle('Maya City CBHI API')
+    .setDescription('Community-Based Health Insurance Digital Platform API')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .addTag('auth', 'Authentication & session management')
+    .addTag('cbhi', 'Member registration & household management')
+    .addTag('facility', 'Health facility staff operations')
+    .addTag('admin', 'CBHI officer & admin operations')
+    .addTag('indigent', 'Indigent application management')
+    .addTag('vision', 'Document text extraction & validation')
+    .addTag('health', 'System health checks')
+    .build();
+  
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/v1/docs', app, document, {
+    customSiteTitle: 'Maya City CBHI API Docs',
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
+
   await app.init();
   cachedApp = app;
   return app;
@@ -81,7 +105,7 @@ export default async function handler(req: Request, res: Response) {
       name: 'Maya City CBHI API',
       version: '1.0.0',
       status: 'ok',
-      docs: '/api/v1/health',
+      docs: '/api/v1/docs',
     });
     return;
   }
