@@ -1,5 +1,6 @@
 import 'dart:io' if (dart.library.html) '../shared/web_stubs.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:path/path.dart' as p;
 
 
 import 'package:file_picker/file_picker.dart';
@@ -130,7 +131,7 @@ class _IndigentProofScreenState extends State<IndigentProofScreen> {
             const SizedBox(height: 20),
             ..._paths.asMap().entries.map((e) {
               final path = e.value;
-              final name = path.split(kIsWeb ? '/' : Platform.pathSeparator).last;
+              final name = p.basename(path);
               return Card(
                 margin: const EdgeInsets.only(bottom: 8),
                 child: ListTile(

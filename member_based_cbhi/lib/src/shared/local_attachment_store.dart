@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:path/path.dart' as p;
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite/sqflite.dart' if (dart.library.html) 'db_stubs.dart';
 
 // Import dart:io only for non-web platforms.
-// We use a conditional import trick or just guard it carefully.
 import 'dart:io' if (dart.library.html) 'web_stubs.dart'; 
 
 class LocalAttachmentStore {
