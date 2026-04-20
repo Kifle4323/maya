@@ -18,3 +18,6 @@ Widget buildFileImage({
         errorWidget ?? const Icon(Icons.broken_image_outlined, color: Colors.grey),
   );
 }
+ImageProvider getFileImageProvider(String path) {
+  return FileImage(File(path));
+}

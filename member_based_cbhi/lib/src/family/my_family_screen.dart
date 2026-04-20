@@ -1,5 +1,7 @@
 import 'dart:io' if (dart.library.html) '../shared/web_stubs.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import '../shared/native_file_image_impl.dart'
+    if (dart.library.html) '../shared/native_file_image_web.dart' as impl;
 
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -407,7 +409,7 @@ class _MemberAvatar extends StatelessWidget {
     if (hasLocalFile) {
       return CircleAvatar(
         radius: 28,
-        backgroundImage: FileImage(File(member.photoPath!)),
+        backgroundImage: impl.getFileImageProvider(member.photoPath!),
       );
     }
 

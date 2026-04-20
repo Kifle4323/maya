@@ -1,5 +1,7 @@
 import 'dart:io' if (dart.library.html) '../shared/web_stubs.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import '../shared/native_file_image_impl.dart'
+    if (dart.library.html) '../shared/native_file_image_web.dart' as impl;
 
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -502,7 +504,7 @@ class _PhotoPreview extends StatelessWidget {
     if (hasLocalFile) {
       avatar = CircleAvatar(
         radius: 42,
-        backgroundImage: FileImage(File(photoPath!)),
+        backgroundImage: impl.getFileImageProvider(photoPath!),
       );
     } else if (resolvedUrl.startsWith('http://') ||
         resolvedUrl.startsWith('https://')) {
