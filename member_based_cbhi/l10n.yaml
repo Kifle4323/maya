@@ -1,6 +1,7 @@
-arb-dir: lib/l10n
-template-arb-file: app_en.arb
-output-localization-file: app_localizations.dart
-output-class: AppLocalizations
-output-dir: lib/src/l10n
-nullable-getter: false
+# l10n config — disabled, using hand-written i18n/app_localizations.dart
+# arb-dir: lib/l10n
+# template-arb-file: app_en.arb
+# output-localization-file: app_localizations.dart
+# output-class: AppLocalizations
+# output-dir: lib/src/l10n
+# nullable-getter: false

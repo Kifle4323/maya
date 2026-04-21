@@ -44,10 +44,17 @@ class CbhiApp extends StatelessWidget {
       child: BlocBuilder<AppCubit, AppState>(
         builder: (context, state) {
           final appLocale = state.locale;
+          // GlobalMaterialLocalizations doesn't support 'om'.
+          // Pass 'en' as the framework locale for om users so TextField,
+          // Dropdown, DatePicker etc. render correctly.
+          // Our AppLocalizations delegate still loads om strings.
+          final frameworkLocale = appLocale.languageCode == 'om'
+              ? const Locale('en')
+              : appLocale;
 
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            locale: appLocale,
+            locale: frameworkLocale,
             supportedLocales: CbhiLocalizations.supportedLocales,
             localeResolutionCallback: (locale, supportedLocales) {
               if (locale == null) return const Locale('en');

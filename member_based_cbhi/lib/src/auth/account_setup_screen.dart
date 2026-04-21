@@ -63,7 +63,9 @@ class _AccountSetupScreenState extends State<AccountSetupScreen> {
         password: _passwordController.text,
       );
 
-      // Adopt the session that was stored during registration
+      // Adopt the session that was stored during registration —
+      // this emits AuthStatus.authenticated which the RegistrationFlow
+      // listener picks up and calls regCubit.reset()
       await widget.authCubit.adoptRegisteredSession();
 
       if (mounted) {
@@ -75,7 +77,13 @@ class _AccountSetupScreenState extends State<AccountSetupScreen> {
         );
       }
     } catch (e) {
-      setState(() => _error = e.toString().replaceFirst('Exception: ', ''));
+      // If setInitialPassword fails (e.g. no session yet), try to
+      // adopt the session anyway so the user can still log in
+      if (e.toString().contains('401') || e.toString().contains('sign in')) {
+        await widget.authCubit.adoptRegisteredSession();
+      } else {
+        setState(() => _error = e.toString().replaceFirst('Exception: ', ''));
+      }
     } finally {
       if (mounted) setState(() => _isActivating = false);
     }

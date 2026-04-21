@@ -30,10 +30,26 @@ class _CbhiAdminAppState extends State<CbhiAdminApp> {
 
   Future<void> _init() async {
     await widget.repository.init();
-    setState(() {
-      _isAuthenticated = widget.repository.isAuthenticated;
-      _isLoading = false;
-    });
+    // Validate the stored token against the backend — don't trust it blindly
+    if (widget.repository.isAuthenticated) {
+      final valid = await widget.repository.ping();
+      if (!valid) {
+        // Backend unreachable — still show main shell (offline mode)
+        setState(() { _isAuthenticated = true; _isLoading = false; });
+        return;
+      }
+      // Try a lightweight auth check
+      try {
+        await widget.repository.getSummaryReport();
+        setState(() { _isAuthenticated = true; _isLoading = false; });
+      } catch (e) {
+        // Token invalid/expired — force re-login
+        await widget.repository.logout();
+        setState(() { _isAuthenticated = false; _isLoading = false; });
+      }
+    } else {
+      setState(() { _isAuthenticated = false; _isLoading = false; });
+    }
   }
 
   void _onLogin() {
