@@ -52,6 +52,15 @@ class CbhiApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             locale: frameworkLocale,
             supportedLocales: CbhiLocalizations.frameworkSupportedLocales,
+            localeResolutionCallback: (locale, supportedLocales) {
+              if (locale == null) return supportedLocales.first;
+              for (final supportedLocale in supportedLocales) {
+                if (supportedLocale.languageCode == locale.languageCode) {
+                  return supportedLocale;
+                }
+              }
+              return supportedLocales.first;
+            },
             localizationsDelegates: CbhiLocalizations.delegates,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,

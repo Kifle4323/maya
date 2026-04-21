@@ -33,8 +33,11 @@ def run_sync():
             if val is None:
                 val = data['en'].get(k, k)
             
+            if not isinstance(val, str):
+                val = str(val)
+                
             # Escape for Dart string
-            escaped_val = val.replace('\\', '\\\\').replace("'", "\\'").replace('\n', '\\n')
+            escaped_val = val.replace('\\', '\\\\').replace("'", "\\'").replace('\n', '\\n').replace('$', '\\$')
             lines.append(f"  '{k}': '{escaped_val}',")
         return "\n".join(lines)
 
@@ -58,12 +61,13 @@ class AppLocalizations {
     Locale('om'),
   ];
 
-  static Locale resolveFrameworkLocale(Locale locale) =>
-      switch (locale.languageCode) {
-        'am' => const Locale('am'),
-        'om' => const Locale('om'),
-        _ => const Locale('en'),
-      };
+  static Locale resolveFrameworkLocale(Locale locale) {
+    return switch (locale.languageCode) {
+      'am' => const Locale('am'),
+      'om' || 'orm' => const Locale('om'),
+      _ => const Locale('en'),
+    };
+  }
 
   static const LocalizationsDelegate<AppLocalizations> delegate =
       _AppLocalizationsDelegate();
@@ -99,14 +103,20 @@ class _AppLocalizationsDelegate
       .any((l) => l.languageCode == locale.languageCode);
 
   @override
-  Future<AppLocalizations> load(Locale locale) async =>
-      AppLocalizations(preferredLocale ?? locale);
-
-  @override
   bool shouldReload(_AppLocalizationsDelegate old) =>
       old.preferredLocale?.languageCode != preferredLocale?.languageCode;
-}
 
+  @override
+  Future<AppLocalizations> load(Locale locale) async =>
+      AppLocalizations(preferredLocale ?? locale);
+}
+"""
+
+    en_map = f"const _en = <String, String>{{\n{get_map_content('en')}\n}};"
+    am_map = f"const _am = <String, String>{{\n{get_map_content('am')}\n}};"
+    om_map = f"const _om = <String, String>{{\n{get_map_content('om')}\n}};"
+
+    strings_map = """
 final _strings = <String, Map<String, String>>{
   'en': _en,
   'am': _am,
@@ -114,12 +124,7 @@ final _strings = <String, Map<String, String>>{
 };
 """
 
-    footer = "\n"
-    en_map = f"const _en = <String, String>{{\n{get_map_content('en')}\n}};"
-    am_map = f"const _am = <String, String>{{\n{get_map_content('am')}\n}};"
-    om_map = f"const _om = <String, String>{{\n{get_map_content('om')}\n}};"
-
-    full_output = header + "\n" + en_map + "\n\n" + am_map + "\n\n" + om_map + footer
+    full_output = header + "\n" + en_map + "\n\n" + am_map + "\n\n" + om_map + "\n" + strings_map
     
     with open(target_file, 'w', encoding='utf-8') as f:
         f.write(full_output)

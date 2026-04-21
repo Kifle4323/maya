@@ -18,12 +18,13 @@ class AppLocalizations {
     Locale('om'),
   ];
 
-  static Locale resolveFrameworkLocale(Locale locale) =>
-      switch (locale.languageCode) {
-        'am' => const Locale('am'),
-        'om' => const Locale('om'),
-        _ => const Locale('en'),
-      };
+  static Locale resolveFrameworkLocale(Locale locale) {
+    return switch (locale.languageCode) {
+      'am' => const Locale('am'),
+      'om' || 'orm' => const Locale('om'),
+      _ => const Locale('en'),
+    };
+  }
 
   static const LocalizationsDelegate<AppLocalizations> delegate =
       _AppLocalizationsDelegate();
@@ -59,19 +60,13 @@ class _AppLocalizationsDelegate
       .any((l) => l.languageCode == locale.languageCode);
 
   @override
-  Future<AppLocalizations> load(Locale locale) async =>
-      AppLocalizations(preferredLocale ?? locale);
-
-  @override
   bool shouldReload(_AppLocalizationsDelegate old) =>
       old.preferredLocale?.languageCode != preferredLocale?.languageCode;
-}
 
-final _strings = <String, Map<String, String>>{
-  'en': _en,
-  'am': _am,
-  'om': _om,
-};
+  @override
+  Future<AppLocalizations> load(Locale locale) async =>
+      AppLocalizations(preferredLocale ?? locale);
+}
 
 const _en = <String, String>{
   'about': 'About',
@@ -1850,4 +1845,10 @@ const _om = <String, String>{
   'yes': 'Eeyyee',
   'yourRights': '4. Mirga Kee',
   'zone': 'Godina',
+};
+
+final _strings = <String, Map<String, String>>{
+  'en': _en,
+  'am': _am,
+  'om': _om,
 };

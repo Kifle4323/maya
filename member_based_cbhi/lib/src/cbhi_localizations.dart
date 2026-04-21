@@ -11,8 +11,13 @@ abstract final class CbhiLocalizations {
   static AppLocalizations of(BuildContext context) =>
       AppLocalizations.of(context);
 
-  static Locale resolveFrameworkLocale(Locale locale) =>
-      AppLocalizations.resolveFrameworkLocale(locale);
+  static Locale resolveFrameworkLocale(Locale locale) {
+    try {
+      return AppLocalizations.resolveFrameworkLocale(locale);
+    } catch (_) {
+      return const Locale('en');
+    }
+  }
 
   static List<Locale> get frameworkSupportedLocales =>
       AppLocalizations.supportedLocales;
