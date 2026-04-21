@@ -61,7 +61,7 @@ class CbhiApp extends StatelessWidget {
               }
               return supportedLocales.first;
             },
-            localizationsDelegates: CbhiLocalizations.delegates,
+            localizationsDelegates: CbhiLocalizations.delegatesFor(frameworkLocale),
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: state.isDarkMode ? ThemeMode.dark : ThemeMode.light,
@@ -189,7 +189,7 @@ class _BootstrapScreenState extends State<_BootstrapScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      strings.t('loadingHealthCoverage'),
+                      strings.t('loading'),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
@@ -238,7 +238,10 @@ class _HomeShellState extends State<_HomeShell> {
       BlocBuilder<AppCubit, AppState>(
         builder: (context, state) {
           final snapshot = state.snapshot ?? CbhiSnapshot.empty();
-          return MemberClaimsScreen(snapshot: snapshot);
+          return MemberClaimsScreen(
+            snapshot: snapshot,
+            repository: context.read<AppCubit>().repository,
+          );
         },
       ),
       const ProfileScreen(),

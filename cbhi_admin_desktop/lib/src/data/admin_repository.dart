@@ -281,6 +281,24 @@ class AdminRepository {
     await _post('/admin/users/$userId/reset-password', {});
   }
 
+  // ── Claim Appeals ─────────────────────────────────────────────────────────
+
+  Future<List<Map<String, dynamic>>> getAllAppeals() async {
+    final response = await _get('/admin/claims/appeals');
+    return _asList(response['appeals'] ?? response);
+  }
+
+  Future<Map<String, dynamic>> reviewAppeal({
+    required String appealId,
+    required String status,
+    String? reviewNote,
+  }) async {
+    return _patch('/admin/claims/appeals/$appealId/review', {
+      'status': status,
+      if (reviewNote != null && reviewNote.isNotEmpty) 'reviewNote': reviewNote,
+    });
+  }
+
   // ── Financial Dashboard ───────────────────────────────────────────────────
 
   Future<Map<String, dynamic>> getFinancialDashboard({String? from, String? to}) async {

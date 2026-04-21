@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -27,9 +25,9 @@ class _SubmitClaimScreenState extends State<SubmitClaimScreen> {
   final List<_ServiceItem> _items = [_ServiceItem()];
 
   // Supporting document attachment
-  String? _attachmentPath;
   String? _attachmentName;
   String? _attachmentMime;
+  List<int>? _attachmentBytes; // bytes from FilePicker (withData: true)
 
   bool _submitting = false;
   String? _message;
@@ -56,15 +54,17 @@ class _SubmitClaimScreenState extends State<SubmitClaimScreen> {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf', 'png', 'jpg', 'jpeg'],
+      withData: true, // always load bytes — works on web and native
     );
-    if (result?.files.single.path == null) return;
+    if (result?.files.single == null) return;
     final file = result!.files.single;
     setState(() {
-      _attachmentPath = file.path;
       _attachmentName = file.name;
       _attachmentMime = file.extension == 'pdf'
           ? 'application/pdf'
           : 'image/${file.extension ?? 'jpeg'}';
+      // Store bytes for web
+      _attachmentBytes = file.bytes;
     });
   }
 
@@ -159,11 +159,10 @@ class _SubmitClaimScreenState extends State<SubmitClaimScreen> {
     try {
       // Encode attachment as base64 if present
       Map<String, dynamic>? attachmentUpload;
-      if (_attachmentPath != null && _attachmentName != null) {
-        final bytes = await File(_attachmentPath!).readAsBytes();
+      if (_attachmentName != null && _attachmentBytes != null) {
         attachmentUpload = {
           'fileName': _attachmentName,
-          'contentBase64': base64Encode(bytes),
+          'contentBase64': base64Encode(_attachmentBytes!),
           'mimeType': _attachmentMime ?? 'application/octet-stream',
         };
       }
@@ -203,9 +202,9 @@ class _SubmitClaimScreenState extends State<SubmitClaimScreen> {
         _phoneCtrl.text = '+2519';
         _householdCodeCtrl.clear();
         _fullNameCtrl.clear();
-        _attachmentPath = null;
         _attachmentName = null;
         _attachmentMime = null;
+        _attachmentBytes = null;
       });
     } catch (e) {
       setState(() {
@@ -354,9 +353,9 @@ class _SubmitClaimScreenState extends State<SubmitClaimScreen> {
                             IconButton(
                               icon: const Icon(Icons.close, size: 16, color: kError),
                               onPressed: () => setState(() {
-                                _attachmentPath = null;
                                 _attachmentName = null;
                                 _attachmentMime = null;
+                                _attachmentBytes = null;
                               }),
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),

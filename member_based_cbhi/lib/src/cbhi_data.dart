@@ -1661,6 +1661,28 @@ class CbhiRepository {
     }
   }
 
+  // ── Claim Appeals ─────────────────────────────────────────────────────────
+
+  Future<Map<String, dynamic>> submitClaimAppeal({
+    required String claimId,
+    required String reason,
+  }) async {
+    return _postJson('/cbhi/claims/$claimId/appeal', {
+      'reason': reason,
+    }, authorized: true);
+  }
+
+  Future<List<Map<String, dynamic>>> getMyAppeals() async {
+    try {
+      final response = await _getJson('/cbhi/claims/appeals', authorized: true);
+      return (response['appeals'] as List? ?? [])
+          .map((item) => (item as Map).cast<String, dynamic>())
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
   // ── Coverage History ──────────────────────────────────────────────────────
 
   Future<List<Map<String, dynamic>>> getCoverageHistory() async {

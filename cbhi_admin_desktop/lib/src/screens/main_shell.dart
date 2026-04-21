@@ -10,6 +10,7 @@ import '../i18n/app_localizations.dart';
 import '../theme/admin_theme.dart';
 import 'audit_log_screen.dart';
 import 'benefit_packages_screen.dart';
+import 'claim_appeals_screen.dart';
 import 'facility_performance_screen.dart';
 import 'financial_screen.dart';
 import 'grievances_admin_screen.dart';
@@ -81,6 +82,7 @@ class _MainShellState extends State<MainShell> {
       _NavItem(icon: Icons.people_outlined, selectedIcon: Icons.people, label: strings.t('navUsers')),
       _NavItem(icon: Icons.inventory_2_outlined, selectedIcon: Icons.inventory_2, label: strings.t('benefitPackages')),
       _NavItem(icon: Icons.gavel_outlined, selectedIcon: Icons.gavel, label: strings.t('memberGrievances')),
+      _NavItem(icon: Icons.assignment_late_outlined, selectedIcon: Icons.assignment_late, label: strings.t('claimAppeals')),
       _NavItem(icon: Icons.bar_chart_outlined, selectedIcon: Icons.bar_chart, label: strings.t('navReports')),
       _NavItem(icon: Icons.history_outlined, selectedIcon: Icons.history, label: strings.t('navAuditLog')),
       _NavItem(icon: Icons.settings_outlined, selectedIcon: Icons.settings, label: strings.t('navSettings')),
@@ -97,6 +99,7 @@ class _MainShellState extends State<MainShell> {
       UserManagementScreen(repository: widget.repository),
       BenefitPackagesScreen(repository: widget.repository),
       GrievancesAdminScreen(repository: widget.repository),
+      ClaimAppealsScreen(repository: widget.repository),
       ReportsScreen(repository: widget.repository),
       AuditLogScreen(repository: widget.repository),
       SettingsScreen(repository: widget.repository),

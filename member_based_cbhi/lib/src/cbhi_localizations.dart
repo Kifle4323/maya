@@ -30,4 +30,11 @@ abstract final class CbhiLocalizations {
     GlobalWidgetsLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
   ];
+
+  static List<LocalizationsDelegate<dynamic>> delegatesFor(Locale locale) => [
+    AppLocalizations.delegateFor(locale),
+    GlobalMaterialLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+  ];
 }

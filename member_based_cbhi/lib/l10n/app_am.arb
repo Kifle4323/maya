@@ -666,5 +666,15 @@
   "woreda": "ወረዳ",
   "yes": "አዎ",
   "yourRights": "4. መብቶችዎ",
-  "zone": "ዞን"
+  "zone": "ዞን",
+
+  "submitAppeal": "ይግባኝ አስገባ",
+  "appealReason": "ለይግባኝ ምክንያት",
+  "appealReasonHint": "ይህ የጥያቄ ውሳኔ ለምን እንደገና ሊታሰብ እንደሚገባ ያብራሩ...",
+  "appealForClaim": "ለጥያቄ {claimNumber} ይግባኝ",
+  "@appealForClaim": {
+    "placeholders": { "claimNumber": {"type": "String"} }
+  },
+  "appealSubmitted": "ይግባኝ በተሳካ ሁኔታ ቀርቧል",
+  "appealPending": "ይግባኝ በግምገማ ላይ ነው"
 }

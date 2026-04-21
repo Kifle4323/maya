@@ -670,5 +670,15 @@
   "beneficiaryPhoneRequired": "Phone number is required",
   "membershipOrHouseholdRequired": "Enter membership ID or household code + full name",
   "passwordRequired": "Password is required",
-  "markAllRead": "Mark all read"
+  "markAllRead": "Mark all read",
+
+  "submitAppeal": "Submit Appeal",
+  "appealReason": "Reason for Appeal",
+  "appealReasonHint": "Explain why you believe this claim decision should be reconsidered...",
+  "appealForClaim": "Appeal for claim {claimNumber}",
+  "@appealForClaim": {
+    "placeholders": { "claimNumber": {"type": "String"} }
+  },
+  "appealSubmitted": "Appeal submitted successfully",
+  "appealPending": "Appeal Pending Review"
 }

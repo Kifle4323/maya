@@ -266,8 +266,10 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
   }
 
   Future<void> _pickBirthCertificate() async {
-    await Permission.camera.request();
-    await Permission.photos.request();
+    if (!kIsWeb) {
+      await Permission.camera.request();
+      await Permission.photos.request();
+    }
     if (!mounted) return;
     final strings = CbhiLocalizations.of(context);
     final choice = await showModalBottomSheet<String>(
@@ -275,16 +277,18 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
       builder: (ctx) => SafeArea(
         child: Wrap(
           children: [
-            ListTile(
-              leading: const Icon(Icons.camera_alt_outlined),
-              title: Text(strings.t('takePhoto')),
-              onTap: () => Navigator.pop(ctx, 'camera'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.photo_library_outlined),
-              title: Text(strings.t('chooseFromGallery')),
-              onTap: () => Navigator.pop(ctx, 'gallery'),
-            ),
+            if (!kIsWeb) ...[
+              ListTile(
+                leading: const Icon(Icons.camera_alt_outlined),
+                title: Text(strings.t('takePhoto')),
+                onTap: () => Navigator.pop(ctx, 'camera'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library_outlined),
+                title: Text(strings.t('chooseFromGallery')),
+                onTap: () => Navigator.pop(ctx, 'gallery'),
+              ),
+            ],
             ListTile(
               leading: const Icon(Icons.picture_as_pdf_outlined),
               title: Text(strings.t('choosePdfOrImage')),
@@ -296,13 +300,20 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
     );
     if (choice == null) return;
     if (choice == 'file') {
-      final file = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: const ['pdf', 'png', 'jpg', 'jpeg'],
+        withData: kIsWeb,
       );
-      if (file?.files.single.path != null) {
+      if (result == null) return;
+      final file = result.files.single;
+      if (kIsWeb) {
+        if (file.bytes != null && mounted) {
+          setState(() => _birthCertificatePath = 'web:${file.name}');
+        }
+      } else if (file.path != null) {
         final persisted = await LocalAttachmentStore.persist(
-          file!.files.single.path!,
+          file.path!,
           category: 'registration_birth_certificate',
         );
         if (mounted) setState(() => _birthCertificatePath = persisted);

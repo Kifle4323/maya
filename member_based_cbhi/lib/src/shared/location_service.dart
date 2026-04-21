@@ -10,12 +10,14 @@ class LocationItem {
     required this.name,
     required this.code,
     this.nameAmharic,
+    this.nameOromo,
   });
 
   final String id;
   final String name;
   final String code;
   final String? nameAmharic;
+  final String? nameOromo;
 
   factory LocationItem.fromJson(Map<String, dynamic> json) {
     return LocationItem(
@@ -23,12 +25,16 @@ class LocationItem {
       name: json['name']?.toString() ?? '',
       code: json['code']?.toString() ?? '',
       nameAmharic: json['nameAmharic']?.toString(),
+      nameOromo: json['nameOromo']?.toString(),
     );
   }
 
   String displayName(String languageCode) {
     if (languageCode == 'am' && (nameAmharic?.isNotEmpty ?? false)) {
       return nameAmharic!;
+    }
+    if (languageCode == 'om' && (nameOromo?.isNotEmpty ?? false)) {
+      return nameOromo!;
     }
     return name;
   }
@@ -56,20 +62,18 @@ class LocationService {
   }
 
   Future<List<LocationItem>> _fetch(String path) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$apiBaseUrl$path'),
-        headers: {'Content-Type': 'application/json'},
-      ).timeout(const Duration(seconds: 10));
+    final response = await http.get(
+      Uri.parse('$apiBaseUrl$path'),
+      headers: {'Content-Type': 'application/json'},
+    ).timeout(const Duration(seconds: 10));
 
-      if (response.statusCode != 200) return [];
-
-      final data = jsonDecode(response.body) as List;
-      return data
-          .map((item) => LocationItem.fromJson((item as Map).cast<String, dynamic>()))
-          .toList();
-    } catch (_) {
-      return [];
+    if (response.statusCode != 200) {
+      throw Exception('Location API error: ${response.statusCode}');
     }
+
+    final data = jsonDecode(response.body) as List;
+    return data
+        .map((item) => LocationItem.fromJson((item as Map).cast<String, dynamic>()))
+        .toList();
   }
 }

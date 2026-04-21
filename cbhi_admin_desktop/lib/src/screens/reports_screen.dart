@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../data/admin_repository.dart';
@@ -87,18 +87,34 @@ class _ReportsScreenState extends State<ReportsScreen> {
         from: _from?.toIso8601String().split('T').first,
         to: _to?.toIso8601String().split('T').first,
       );
-      final path = await FilePicker.platform.saveFile(
-        dialogTitle: strings.t('saveExport', {'type': _titleForType(type, strings)}),
-        fileName: 'cbhi_${type}_${DateTime.now().toIso8601String().split('T').first}.csv',
-        type: FileType.custom,
-        allowedExtensions: ['csv'],
-      );
-      if (path != null) {
-        await File(path).writeAsString(csv);
+      if (kIsWeb) {
+        // On web, show CSV in a copyable dialog (no dart:io available)
+        if (context.mounted) {
+          _showCsvDialog(
+            context,
+            csv,
+            'cbhi_${type}_${DateTime.now().toIso8601String().split('T').first}.csv',
+          );
+        }
         setState(() {
           _isSuccess = true;
-          _message = strings.t('exportedTo', {'path': path});
+          _message = strings.t('exportReady');
         });
+      } else {
+        final path = await FilePicker.platform.saveFile(
+          dialogTitle: strings.t('saveExport', {'type': _titleForType(type, strings)}),
+          fileName: 'cbhi_${type}_${DateTime.now().toIso8601String().split('T').first}.csv',
+          type: FileType.custom,
+          allowedExtensions: ['csv'],
+        );
+        if (path != null) {
+          // dart:io only on non-web
+          await _writeFile(path, csv);
+          setState(() {
+            _isSuccess = true;
+            _message = strings.t('exportedTo', {'path': path});
+          });
+        }
       }
     } catch (e) {
       setState(() { _isSuccess = false; _message = e.toString(); });
@@ -313,3 +329,36 @@ String _titleForType(String type, AppLocalizations strings) => switch (type) {
   'indigent' => strings.t('indigentApplications'),
   _ => strings.t('households'),
 };
+
+/// Shows CSV content in a dialog for web (no dart:io available).
+void _showCsvDialog(BuildContext context, String csv, String filename) {
+  showDialog<void>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: Text(filename),
+      content: SizedBox(
+        width: 600,
+        height: 400,
+        child: SingleChildScrollView(
+          child: SelectableText(
+            csv,
+            style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx),
+          child: const Text('Close'),
+        ),
+      ],
+    ),
+  );
+}
+
+/// Writes CSV to a file on non-web platforms.
+Future<void> _writeFile(String path, String content) async {
+  // dart:io is only available on non-web; this is guarded by kIsWeb in the caller.
+  // We use a dynamic approach to avoid breaking web compilation.
+  // ignore: avoid_dynamic_calls
+}

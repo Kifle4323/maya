@@ -684,5 +684,15 @@
   "woreda": "Aanaa",
   "yes": "Eeyyee",
   "yourRights": "4. Mirga Kee",
-  "zone": "Godina"
+  "zone": "Godina",
+
+  "submitAppeal": "Iyyannoo Dhiyeessi",
+  "appealReason": "Sababa Iyyannoo",
+  "appealReasonHint": "Murtiin klaayimii kun maaliif irra deebi'amee ilaalamuu akka qabu ibsi...",
+  "appealForClaim": "Klaayimii {claimNumber} irratti iyyannoo",
+  "@appealForClaim": {
+    "placeholders": { "claimNumber": {"type": "String"} }
+  },
+  "appealSubmitted": "Iyyannoon milkaa'inaan dhiyaate",
+  "appealPending": "Iyyannoon ilaalamaa jira"
 }
