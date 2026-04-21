@@ -42,6 +42,16 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
             context.read<AuthCubit>().adoptRegisteredSession();
           },
         ),
+        // When auth becomes authenticated (e.g. after account setup),
+        // reset the registration cubit so the flow is fully cleared.
+        BlocListener<AuthCubit, AuthState>(
+          listenWhen: (prev, curr) =>
+              prev.status != AuthStatus.authenticated &&
+              curr.status == AuthStatus.authenticated,
+          listener: (context, _) {
+            context.read<RegistrationCubit>().reset();
+          },
+        ),
       ],
       child: BlocBuilder<RegistrationCubit, RegistrationState>(
         builder: (context, state) {

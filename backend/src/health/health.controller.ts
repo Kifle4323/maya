@@ -33,13 +33,20 @@ export class HealthController {
         vision: process.env.GOOGLE_VISION_API_KEY ? 'configured' : 'not_configured',
         storage: process.env.GCS_BUCKET ? 'gcs' : 'local',
         fcm: process.env.FCM_PROJECT_ID ? 'configured' : 'not_configured',
+        chapa: process.env.CHAPA_SECRET_KEY ? 'configured' : 'demo_mode',
       },
     };
   }
 
   private async checkDatabase(): Promise<boolean> {
     try {
-      await this.dataSource.query('SELECT 1');
+      // 5-second timeout — Vercel serverless cold starts can be slow
+      await Promise.race([
+        this.dataSource.query('SELECT 1'),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('DB timeout')), 5000),
+        ),
+      ]);
       return true;
     } catch {
       return false;

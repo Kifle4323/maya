@@ -62,6 +62,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
   double get _premiumAmount => widget.snapshot.premiumAmount;
 
   Future<void> _initiatePayment() async {
+    if (_premiumAmount <= 0) {
+      setState(() => _error = 'No premium amount set for this household.');
+      return;
+    }
     setState(() {
       _isLoading = true;
       _error = null;

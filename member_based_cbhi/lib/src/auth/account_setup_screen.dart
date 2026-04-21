@@ -63,6 +63,9 @@ class _AccountSetupScreenState extends State<AccountSetupScreen> {
         password: _passwordController.text,
       );
 
+      // Adopt the session that was stored during registration
+      await widget.authCubit.adoptRegisteredSession();
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -70,7 +73,6 @@ class _AccountSetupScreenState extends State<AccountSetupScreen> {
             backgroundColor: AppTheme.success,
           ),
         );
-        Navigator.of(context).popUntil((r) => r.isFirst);
       }
     } catch (e) {
       setState(() => _error = e.toString().replaceFirst('Exception: ', ''));
