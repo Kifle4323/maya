@@ -29,6 +29,7 @@ import { PaymentGatewayModule } from './payment-gateway/payment-gateway.module';
 import { SmsModule } from './sms/sms.module';
 import { StorageModule } from './storage/storage.module';
 import { VisionModule } from './vision/vision.module';
+import { VerificationModule } from './verification/verification.module';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -157,6 +158,7 @@ const redisEnabled = !!process.env.REDIS_HOST;
     SmsModule,
     StorageModule,
     VisionModule,
+    VerificationModule,
 
     TypeOrmModule.forRoot(buildTypeOrmConfig()),
   ],

@@ -62,13 +62,21 @@ flutter precache --web --suppress-analytics
 echo ">>> Running pub get..."
 flutter pub get
 
+# --- Fix 3: Memory & Build Optimization ---
+# Increase memory limits for the build process
+export NODE_OPTIONS="--max-old-space-size=4096"
+
 API_URL="${CBHI_API_BASE_URL:-https://member-based-cbhi.vercel.app/api/v1}"
 echo ">>> Building for production..."
 echo ">>> API Base URL: $API_URL"
 
+# We use -O2 instead of default -O4 to reduce memory usage during compilation on Vercel.
+# Added --verbose to help debug the "Failed to compile" error if it persists.
 flutter build web --release --no-source-maps --base-href / \
   --dart-define=CBHI_API_BASE_URL="$API_URL" \
   --dart-define=APP_ENV="production" \
+  --dart2js-optimization=O2 \
+  --verbose \
   --no-pub
 
 echo ">>> Build complete."
