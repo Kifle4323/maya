@@ -52,6 +52,7 @@ export PATH="$FLUTTER_ROOT/bin:$PATH"
 
 # Configuration
 echo ">>> Configuring Flutter..."
+flutter --version
 flutter config --no-analytics
 flutter config --enable-web
 flutter doctor -v
@@ -74,15 +75,8 @@ echo ">>> API Base URL: $API_URL"
 # Ensure a clean slate
 flutter clean
 
-# We use --web-renderer html to reduce memory usage and avoid CanvasKit overhead.
-# We also keep -O2 optimization and verbose logging.
-flutter build web --release --no-source-maps --base-href / \
-  --web-renderer html \
-  --dart-define=CBHI_API_BASE_URL="$API_URL" \
-  --dart-define=APP_ENV="production" \
-  --dart2js-optimization=O2 \
-  --verbose \
-  --no-pub
+# Use a single-line command to avoid shell escaping issues
+flutter build web --release --no-source-maps --base-href / --dart-define=CBHI_API_BASE_URL="$API_URL" --dart-define=APP_ENV="production" --dart2js-optimization=O2 --verbose --no-pub
 
 echo ">>> Build complete."
 
