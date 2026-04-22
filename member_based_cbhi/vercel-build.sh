@@ -14,27 +14,8 @@ if [ ! -x "$FLUTTER_ROOT/bin/flutter" ]; then
   echo ">>> Installing Flutter SDK..."
   RELEASES_URL="https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json"
   
-  # More robust Node script to get the latest stable archive path
-  ARCHIVE_PATH=$(curl -fssL "$RELEASES_URL" | node -e '
-    let raw = "";
-    process.stdin.on("data", chunk => raw += chunk);
-    process.stdin.on("end", () => {
-      try {
-        const data = JSON.parse(raw);
-        const stableHash = data.current_release.stable;
-        const release = data.releases.find(r => r.hash === stableHash || r.version === stableHash);
-        if (release && release.archive) {
-          process.stdout.write(release.archive);
-        } else {
-          console.error("No release found for hash:", stableHash);
-          process.exit(1);
-        }
-      } catch (e) {
-        console.error("Error parsing JSON:", e.message);
-        process.exit(1);
-      }
-    });
-  ')
+  # Pin to a specific stable version (3.24.3) known for stability on Vercel
+  ARCHIVE_PATH="stable/linux/flutter_linux_3.24.3-stable.tar.xz"
 
   if [ -z "$ARCHIVE_PATH" ]; then
     echo "ERROR: Failed to determine Flutter archive path."
