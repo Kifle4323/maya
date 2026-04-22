@@ -57,8 +57,8 @@ flutter config --no-analytics
 flutter config --enable-web
 flutter doctor -v
 
-echo ">>> Pre-caching web artifacts..."
-flutter precache --web --suppress-analytics
+echo ">>> Running flutter create to refresh platform files..."
+flutter create . --platforms web
 
 echo ">>> Running pub get..."
 flutter pub get
