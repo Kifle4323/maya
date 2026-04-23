@@ -13,8 +13,8 @@ FLUTTER_ROOT="$HOME/flutter"
 if [ ! -x "$FLUTTER_ROOT/bin/flutter" ]; then
   echo ">>> Installing Flutter SDK..."
 
-  # Pin to a specific stable version (3.24.3) known for stability on Vercel
-  ARCHIVE_PATH="stable/linux/flutter_linux_3.24.3-stable.tar.xz"
+  # Pin to Flutter 3.38.0 (ships Dart SDK 3.10.x — matches pubspec sdk: ^3.10.1)
+  ARCHIVE_PATH="stable/linux/flutter_linux_3.38.0-stable.tar.xz"
 
   echo ">>> Downloading $ARCHIVE_PATH..."
   curl -fssL "https://storage.googleapis.com/flutter_infra_release/releases/${ARCHIVE_PATH}" -o /tmp/flutter.tar.xz
