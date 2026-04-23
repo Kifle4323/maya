@@ -54,7 +54,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  # generate: false — using hand-written i18n/app_localizations.dart instead of gen-l10n
+  generate: false
 
   assets:
     - assets/

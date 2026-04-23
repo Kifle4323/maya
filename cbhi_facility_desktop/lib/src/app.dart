@@ -39,7 +39,7 @@ class _CbhiFacilityAppState extends State<CbhiFacilityApp> {
 
   Future<void> _init() async {
     await widget.repository.init();
-    if (widget.repository.isAuthenticated) {
+     if (widget.repository.isAuthenticated) {
       final valid = await widget.repository.ping();
       if (!valid) {
         setState(() { _authenticated = true; _loading = false; });
