@@ -1,8 +1,0 @@
-# l10n config — using hand-written i18n/app_localizations.dart
-# This file is intentionally left empty but must contain a valid YAML map to prevent Flutter tool crashes.
-# To enable auto-generation, uncomment the lines below.
-
-unused_config: true
-# arb-dir: lib/l10n
-# template-arb-file: app_en.arb
-# output-localization-file: app_localizations.dart

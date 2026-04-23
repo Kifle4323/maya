@@ -11,17 +11,6 @@ abstract final class CbhiLocalizations {
   static AppLocalizations of(BuildContext context) =>
       AppLocalizations.of(context);
 
-  static Locale resolveFrameworkLocale(Locale locale) {
-    try {
-      return AppLocalizations.resolveFrameworkLocale(locale);
-    } catch (_) {
-      return const Locale('en');
-    }
-  }
-
-  static List<Locale> get frameworkSupportedLocales =>
-      AppLocalizations.supportedLocales;
-
   static List<Locale> get supportedLocales => AppLocalizations.supportedLocales;
 
   static List<LocalizationsDelegate<dynamic>> get delegates => [
