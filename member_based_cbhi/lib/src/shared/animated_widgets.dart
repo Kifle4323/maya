@@ -267,7 +267,7 @@ class SectionHeader extends StatelessWidget {
           Expanded(
             child: Text(title, style: Theme.of(context).textTheme.titleLarge),
           ),
-          ?trailing,
+          if (trailing != null) trailing!,
         ],
       ),
     );

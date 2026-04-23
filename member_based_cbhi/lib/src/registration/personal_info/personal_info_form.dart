@@ -4,7 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart'
-    if (dart.library.html) '../shared/permission_handler_stub.dart';
+    if (dart.library.html) '../../shared/permission_handler_stub.dart';
 
 
 import '../models/personal_info_model.dart';

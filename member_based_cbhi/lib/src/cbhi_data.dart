@@ -925,7 +925,7 @@ class CbhiRepository {
       'eligibilitySignals': {
         'employmentStatus': identity.employmentStatusForApi,
       },
-      'indigentProofUploads': ?indigentProofUploads,
+      'indigentProofUploads': indigentProofUploads,
     };
     final fullPayload = {
       'personalInfo': personalInfo.toJson(),
@@ -1046,7 +1046,7 @@ class CbhiRepository {
   }) async {
     return _postJson('/vision/validate-id', {
       'imageBase64': imageBase64,
-      'expectedIdNumber': ?expectedIdNumber,
+      'expectedIdNumber': expectedIdNumber,
     });
   }
 
@@ -1078,7 +1078,7 @@ class CbhiRepository {
       'hasProperty': hasProperty,
       'disabilityStatus': disabilityStatus,
       'documents': documents,
-      'documentMeta': ?documentMeta,
+      'documentMeta': documentMeta,
     });
   }
 
@@ -1251,7 +1251,7 @@ class CbhiRepository {
       'eligibilitySignals': {
         'employmentStatus': identity.employmentStatusForApi,
       },
-      'indigentProofUploads': ?indigentProofUploads,
+      'indigentProofUploads': indigentProofUploads,
     };
 
     try {
@@ -1638,8 +1638,8 @@ class CbhiRepository {
       'type': type,
       'subject': subject,
       'description': description,
-      'referenceId': ?referenceId,
-      'referenceType': ?referenceType,
+      'referenceId': referenceId,
+      'referenceType': referenceType,
     }, authorized: true);
   }
 

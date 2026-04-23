@@ -11,6 +11,7 @@ import 'identity/identity_verification_screen.dart';
 import 'membership/membership_selection_screen.dart';
 import 'indigent_proof_screen.dart';
 import '../payment/payment_screen.dart';
+import '../cbhi_localizations.dart';
 
 class RegistrationFlow extends StatefulWidget {
   const RegistrationFlow({super.key});

@@ -668,6 +668,7 @@
   "utilized": "Fayyadamame",
   "validFor": "Ji'a {months}f ni hojjata",
   "validForMonths": "Ji'a {months}f ni hojjata",
+  "months": "ji'oota",
   "validatingDocument": "Galmee AI waliin mirkaneessaa jira...",
   "validatingDocuments": "Galmee mirkaneessaa jira...",
   "verifyAndSignIn": "Mirkaneessi fi Seeni",
