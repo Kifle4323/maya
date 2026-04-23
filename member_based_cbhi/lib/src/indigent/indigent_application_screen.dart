@@ -1,8 +1,10 @@
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:permission_handler/permission_handler.dart'
+    if (dart.library.html) '../shared/permission_handler_stub.dart';
 
 import '../cbhi_data.dart';
 import '../cbhi_localizations.dart';
@@ -68,8 +70,10 @@ class _IndigentApplicationScreenState
       return;
     }
 
-    await Permission.camera.request();
-    await Permission.photos.request();
+    if (!kIsWeb) {
+      await Permission.camera.request();
+      await Permission.photos.request();
+    }
     if (!mounted) return;
 
     final strings = CbhiLocalizations.of(context);

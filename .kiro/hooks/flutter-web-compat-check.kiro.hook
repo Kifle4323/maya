@@ -12,5 +12,7 @@
   "then": {
     "type": "askAgent",
     "prompt": "A Dart file in member_based_cbhi was just edited. Check if it contains any web-incompatible patterns that would break Vercel deployment: (1) bare 'import dart:io' without 'if (dart.library.html)' guard, (2) direct import of flutter_image_compress or local_auth without conditional import, (3) Platform.isX calls outside kIsWeb guard, (4) sqflite imports without conditional guard. If any issues found, fix them immediately following the patterns in .kiro/steering/vercel-web-compat.md"
-  }
+  },
+  "workspaceFolderName": "Member_Based_CBHI",
+  "shortName": "flutter-web-compat-check"
 }

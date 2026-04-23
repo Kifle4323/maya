@@ -13,6 +13,7 @@ inclusion: always
 - `sqflite_common_ffi` → use `db_stubs.dart` conditional import
 - `dart:io` → always add `if (dart.library.html) 'shared/web_stubs.dart'`
 - `Platform.isX` → always wrap in `if (!kIsWeb)` or use web_stubs.dart Platform stub
+- `permission_handler` → use `if (dart.library.html) 'shared/permission_handler_stub.dart'`
 
 ## Web-safe plugins (no stubs needed)
 - `flutter_secure_storage` — has web support

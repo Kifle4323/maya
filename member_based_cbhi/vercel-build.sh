@@ -40,6 +40,9 @@ echo ">>> Cleaning and fetching dependencies..."
 flutter clean
 flutter pub get
 
+echo ">>> Running dart analyze to surface compile errors early..."
+flutter analyze --no-fatal-infos 2>&1 | tail -80 || true
+
 API_URL="${CBHI_API_BASE_URL:-https://member-based-cbhi.vercel.app/api/v1}"
 echo ">>> Building for production..."
 echo ">>> API Base URL: $API_URL"
