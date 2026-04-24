@@ -52,12 +52,7 @@ flutter pub get
 # Use a single-line command to avoid shell escaping issues
 flutter build web --release --no-tree-shake-icons --no-source-maps --no-pub --base-href / \
   --dart-define=CBHI_API_BASE_URL="$API_URL" \
-  --dart-define=APP_ENV="production" \
-  --dart-define=FIREBASE_API_KEY="${FIREBASE_API_KEY:-AIzaSyPlaceholderKeyReplaceWithReal}" \
-  --dart-define=FIREBASE_APP_ID_WEB="${FIREBASE_APP_ID_WEB:-1:000000000000:web:0000000000000000000000}" \
-  --dart-define=FIREBASE_MESSAGING_SENDER_ID="${FIREBASE_MESSAGING_SENDER_ID:-000000000000}" \
-  --dart-define=FIREBASE_PROJECT_ID="${FIREBASE_PROJECT_ID:-maya-city-cbhi}" \
-  --dart-define=FIREBASE_STORAGE_BUCKET="${FIREBASE_STORAGE_BUCKET:-maya-city-cbhi.appspot.com}"
+  --dart-define=APP_ENV="production"
 
 echo ">>> Build complete."
 
