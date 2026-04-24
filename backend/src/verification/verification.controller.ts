@@ -7,6 +7,8 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type { File as MulterFile } from 'multer';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { User } from '../users/user.entity';
 import { VerificationResultDto, VerifyDocumentDto } from './verification.dto';
@@ -38,7 +40,7 @@ export class VerificationController {
     }),
   )
   async verifyDocument(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: MulterFile,
     @Body() dto: VerifyDocumentDto,
     @CurrentUser() user?: User,
   ): Promise<VerificationResultDto> {
