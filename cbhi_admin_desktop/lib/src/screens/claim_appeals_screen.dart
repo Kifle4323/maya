@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/admin_repository.dart';
 import '../i18n/app_localizations.dart';
 import '../theme/admin_theme.dart';
+import '../widgets/error_state_widget.dart';
 import '../widgets/status_chip.dart';
 
 /// Admin Claim Appeals Screen — review and resolve member claim appeals.
@@ -211,9 +212,7 @@ class _ClaimAppealsScreenState extends State<ClaimAppealsScreen> {
               ? const Center(
                   child: CircularProgressIndicator(color: AdminTheme.primary))
               : _error != null
-                  ? Center(
-                      child: Text(_error!,
-                          style: const TextStyle(color: AdminTheme.error)))
+                  ? ErrorStateWidget(message: _error!, onRetry: _load)
                   : _appeals.isEmpty
                       ? Center(
                           child: Column(

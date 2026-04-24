@@ -4,6 +4,7 @@ import '../../cbhi_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../shared/language_selector.dart';
 import '../registration_cubit.dart';
+import '../registration_step_indicator.dart';
 import 'identity_cubit.dart';
 import '../models/identity_model.dart';
 
@@ -99,10 +100,12 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                 child: Form(
                   key: _formKey,
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(AppTheme.spacingL),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const RegistrationStepIndicator(currentStep: 3, totalSteps: 7),
+                        const SizedBox(height: AppTheme.spacingM),
                         // Header
                         Container(
                           width: double.infinity,

@@ -20,6 +20,8 @@ import 'notifications/notification_inbox_screen.dart';
 import 'profile/profile_screen.dart';
 import 'registration/registration_cubit.dart';
 import 'registration/registration_flow.dart';
+import 'shared/connectivity_banner.dart';
+import 'shared/connectivity_cubit.dart';
 import 'theme/app_theme.dart';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -35,6 +37,7 @@ class CbhiApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<ConnectivityCubit>(create: (_) => ConnectivityCubit()),
         BlocProvider<AppCubit>(create: (_) => AppCubit(repository)),
         BlocProvider<AuthCubit>(create: (_) => AuthCubit(repository)),
         BlocProvider<RegistrationCubit>(
@@ -99,6 +102,8 @@ class _BootstrapScreenState extends State<_BootstrapScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final appCubit = context.read<AppCubit>();
       final authCubit = context.read<AuthCubit>();
+      final connectivityCubit = context.read<ConnectivityCubit>();
+      await connectivityCubit.initialize();
       await appCubit.load();
       await authCubit.bootstrap();
 
@@ -293,7 +298,14 @@ class _HomeShellState extends State<_HomeShell> {
       const ProfileScreen(),
     ];
 
-    return Scaffold(
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<ConnectivityCubit, ConnectivityState>(
+          listenWhen: (prev, curr) => !prev.isOnline && curr.isOnline,
+          listener: (context, _) => context.read<AppCubit>().sync(),
+        ),
+      ],
+      child: Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
@@ -390,26 +402,33 @@ class _HomeShellState extends State<_HomeShell> {
           ),
         ],
       ),
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 350),
-        switchInCurve: Curves.easeOutCubic,
-        switchOutCurve: Curves.easeInCubic,
-        transitionBuilder: (child, animation) {
-          return FadeTransition(
-            opacity: animation,
-            child: SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(0.03, 0),
-                end: Offset.zero,
-              ).animate(animation),
-              child: child,
+      body: Column(
+        children: [
+          const ConnectivityBanner(),
+          Expanded(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 350),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
+              transitionBuilder: (child, animation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(0.03, 0),
+                      end: Offset.zero,
+                    ).animate(animation),
+                    child: child,
+                  ),
+                );
+              },
+              child: KeyedSubtree(
+                key: ValueKey(_index),
+                child: pages[_index],
+              ),
             ),
-          );
-        },
-        child: KeyedSubtree(
-          key: ValueKey(_index),
-          child: pages[_index],
-        ),
+          ),
+        ],
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
@@ -453,6 +472,7 @@ class _HomeShellState extends State<_HomeShell> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

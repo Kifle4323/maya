@@ -93,6 +93,20 @@ class FacilityRepository {
     return _asList(response['claims']);
   }
 
+  /// Fetch the active benefit package catalog for service selection
+  Future<List<Map<String, dynamic>>> getBenefitPackageItems() async {
+    try {
+      final response = await _get('/benefit-packages');
+      final packages = _asList(response['packages'] ?? response);
+      if (packages.isEmpty) return [];
+      // Return items from the first active package
+      final items = packages.first['items'];
+      return _asList(items);
+    } catch (_) {
+      return [];
+    }
+  }
+
   // ── Notifications ─────────────────────────────────────────────────────────
 
   Future<List<Map<String, dynamic>>> getNotifications() async {

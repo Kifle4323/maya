@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/admin_repository.dart';
 import '../i18n/app_localizations.dart';
 import '../theme/admin_theme.dart';
+import '../widgets/error_state_widget.dart';
 
 /// Benefit Package Management Screen
 /// Allows CBHI officers to define covered services, max claim amounts,
@@ -169,7 +170,7 @@ class _BenefitPackagesScreenState extends State<BenefitPackagesScreen> {
     final strings = AppLocalizations.of(context);
 
     if (_loading) return const Center(child: CircularProgressIndicator(color: AdminTheme.primary));
-    if (_error != null) return Center(child: Text(_error!, style: const TextStyle(color: AdminTheme.error)));
+    if (_error != null) return ErrorStateWidget(message: _error!, onRetry: _load);
 
     return Row(
       children: [

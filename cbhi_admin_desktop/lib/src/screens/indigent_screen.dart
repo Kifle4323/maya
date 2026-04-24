@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/admin_repository.dart';
 import '../i18n/app_localizations.dart';
 import '../theme/admin_theme.dart';
+import '../widgets/error_state_widget.dart';
 import '../widgets/status_chip.dart';
 
 class IndigentScreen extends StatefulWidget {
@@ -182,12 +183,7 @@ class _IndigentScreenState extends State<IndigentScreen> {
                   child: CircularProgressIndicator(color: AdminTheme.primary),
                 )
               : _error != null
-              ? Center(
-                  child: Text(
-                    _error!,
-                    style: const TextStyle(color: AdminTheme.error),
-                  ),
-                )
+              ? ErrorStateWidget(message: _error!, onRetry: _load)
               : _applications.isEmpty
               ? Center(
                   child: Column(

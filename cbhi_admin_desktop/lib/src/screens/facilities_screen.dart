@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/admin_repository.dart';
 import '../i18n/app_localizations.dart';
 import '../theme/admin_theme.dart';
+import '../widgets/error_state_widget.dart';
 
 class FacilitiesScreen extends StatefulWidget {
   const FacilitiesScreen({super.key, required this.repository});
@@ -201,7 +202,7 @@ class _FacilitiesScreenState extends State<FacilitiesScreen> {
           child: _loading
               ? const Center(child: CircularProgressIndicator(color: AdminTheme.primary))
               : _error != null
-              ? Center(child: Text(_error!, style: const TextStyle(color: AdminTheme.error)))
+              ? ErrorStateWidget(message: _error!, onRetry: _load)
               : _facilities.isEmpty
               ? Center(child: Text(strings.t('noFacilitiesFound')))
               : LayoutBuilder(

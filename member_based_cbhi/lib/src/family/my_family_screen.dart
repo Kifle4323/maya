@@ -12,6 +12,8 @@ import '../auth/auth_cubit.dart';
 import '../cbhi_data.dart';
 import '../cbhi_localizations.dart';
 import '../i18n/app_localizations.dart' as i18n;
+import '../shared/animated_widgets.dart';
+import '../theme/app_theme.dart';
 import 'add_beneficiary_screen.dart';
 import 'my_family_cubit.dart';
 
@@ -106,7 +108,7 @@ class _MyFamilyBodyState extends State<_MyFamilyBody> {
     return RefreshIndicator(
         onRefresh: familyCubit.load,
         child: ListView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AppTheme.spacingM),
           children: [
             Row(
               children: [
@@ -140,14 +142,15 @@ class _MyFamilyBodyState extends State<_MyFamilyBody> {
                   ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppTheme.spacingS),
             Text(
               isFamilyMember
                   ? strings.t('viewHouseholdMembers')
                   : strings.t('manageHouseholdBeneficiaries'),
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
-            const SizedBox(height: 12),
-            // F9: Search bar
+            const SizedBox(height: AppTheme.spacingM),
+            // Search bar
             if (state.members.isNotEmpty) ...[
               TextField(
                 decoration: InputDecoration(
@@ -155,26 +158,25 @@ class _MyFamilyBodyState extends State<_MyFamilyBody> {
                   prefixIcon: const Icon(Icons.search),
                   isDense: true,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusM),
                   ),
                 ),
                 onChanged: (v) => setState(() => _searchQuery = v),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppTheme.spacingS),
               Text(
                 'Showing ${filtered.length} of ${state.members.length} members',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppTheme.spacingM),
             ],
             if (state.isLoading)
               const Center(child: CircularProgressIndicator())
             else if (state.members.isEmpty)
-              Card(
-                child: ListTile(
-                  title: Text(strings.t('noBeneficiariesAvailable')),
-                  subtitle: Text(strings.t('addFamilyMembersOnceActive')),
-                ),
+              EmptyState(
+                icon: Icons.family_restroom_outlined,
+                title: strings.t('noBeneficiariesAvailable'),
+                subtitle: strings.t('addFamilyMembersOnceActive'),
               )
             else
               ...filtered.map(
@@ -230,25 +232,22 @@ class _MemberCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      // F10: Left border colored by coverage status
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: statusBorderColor.withValues(alpha: 0.4), width: 1),
-      ),
+    return GlassCard(
+      padding: EdgeInsets.zero,
       child: Container(
+        margin: const EdgeInsets.only(bottom: AppTheme.spacingM),
+        // Left border colored by coverage status
         decoration: BoxDecoration(
           border: Border(
             left: BorderSide(color: statusBorderColor, width: 4),
           ),
           borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(12),
-            bottomLeft: Radius.circular(12),
+            topLeft: Radius.circular(AppTheme.radiusM),
+            bottomLeft: Radius.circular(AppTheme.radiusM),
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppTheme.spacingM),
           child: Column(
             children: [
               Row(

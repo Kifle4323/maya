@@ -150,7 +150,7 @@ class _IndigentProofScreenState extends State<IndigentProofScreen> {
                       Text(
                         strings.t('indigentProofDescription'),
                         style: textTheme.bodyMedium?.copyWith(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                         ),
                       ),
                     ],
@@ -191,7 +191,7 @@ class _IndigentProofScreenState extends State<IndigentProofScreen> {
                               child: Column(
                                 children: [
                                   Icon(Icons.cloud_upload_outlined, 
-                                      size: 48, color: AppTheme.textSecondary.withOpacity(0.4)),
+                                      size: 48, color: AppTheme.textSecondary.withValues(alpha: 0.4)),
                                   const SizedBox(height: 12),
                                   Text(
                                     strings.t('noDocumentsYet'),

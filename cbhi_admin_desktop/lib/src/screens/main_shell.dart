@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../blocs/claims_cubit.dart';
 import '../blocs/indigent_cubit.dart';
 import '../blocs/overview_cubit.dart';
@@ -21,6 +22,10 @@ import 'indigent_screen.dart';
 import 'settings_screen.dart';
 import 'reports_screen.dart';
 import 'user_management_screen.dart';
+
+const _kSidebarExpandedWidth = 240.0;
+const _kSidebarCollapsedWidth = 64.0;
+const _kSidebarPrefKey = 'cbhi_admin_sidebar_expanded';
 
 class MainShell extends StatefulWidget {
   const MainShell({
@@ -43,13 +48,14 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _selectedIndex = 0;
   bool _isOnline = true;
+  bool _sidebarExpanded = true;
   Timer? _pingTimer;
 
   @override
   void initState() {
     super.initState();
+    _loadSidebarState();
     _checkConnectivity();
-    // Ping every 30 seconds
     _pingTimer = Timer.periodic(
       const Duration(seconds: 30),
       (_) => _checkConnectivity(),
@@ -62,6 +68,22 @@ class _MainShellState extends State<MainShell> {
     super.dispose();
   }
 
+  Future<void> _loadSidebarState() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        _sidebarExpanded = prefs.getBool(_kSidebarPrefKey) ?? true;
+      });
+    }
+  }
+
+  Future<void> _toggleSidebar() async {
+    final next = !_sidebarExpanded;
+    setState(() => _sidebarExpanded = next);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_kSidebarPrefKey, next);
+  }
+
   Future<void> _checkConnectivity() async {
     final online = await widget.repository.ping();
     if (mounted && online != _isOnline) {
@@ -72,90 +94,27 @@ class _MainShellState extends State<MainShell> {
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
-    final navItems = [
-      _NavItem(icon: Icons.space_dashboard_outlined, selectedIcon: Icons.space_dashboard, label: strings.t('navOverview')),
-      _NavItem(icon: Icons.rule_folder_outlined, selectedIcon: Icons.rule_folder, label: strings.t('navClaims')),
-      _NavItem(icon: Icons.volunteer_activism_outlined, selectedIcon: Icons.volunteer_activism, label: strings.t('navIndigent')),
-      _NavItem(icon: Icons.local_hospital_outlined, selectedIcon: Icons.local_hospital, label: strings.t('navFacilities')),
-      _NavItem(icon: Icons.account_balance_outlined, selectedIcon: Icons.account_balance, label: strings.t('navFinancial')),
-      _NavItem(icon: Icons.analytics_outlined, selectedIcon: Icons.analytics, label: strings.t('navFacilityPerformance')),
-      _NavItem(icon: Icons.people_outlined, selectedIcon: Icons.people, label: strings.t('navUsers')),
-      _NavItem(icon: Icons.inventory_2_outlined, selectedIcon: Icons.inventory_2, label: strings.t('benefitPackages')),
-      _NavItem(icon: Icons.gavel_outlined, selectedIcon: Icons.gavel, label: strings.t('memberGrievances')),
-      _NavItem(icon: Icons.assignment_late_outlined, selectedIcon: Icons.assignment_late, label: strings.t('claimAppeals')),
-      _NavItem(icon: Icons.bar_chart_outlined, selectedIcon: Icons.bar_chart, label: strings.t('navReports')),
-      _NavItem(icon: Icons.history_outlined, selectedIcon: Icons.history, label: strings.t('navAuditLog')),
-      _NavItem(icon: Icons.settings_outlined, selectedIcon: Icons.settings, label: strings.t('navSettings')),
-    ];
-    final pages = [
-      BlocProvider(create: (_) => OverviewCubit(widget.repository)..load(), child: OverviewScreen(repository: widget.repository)),
-      BlocProvider(create: (_) => ClaimsCubit(widget.repository)..load(), child: ClaimsScreen(repository: widget.repository)),
-      BlocProvider(create: (_) => IndigentCubit(widget.repository)..load(),
-        child: IndigentScreen(repository: widget.repository),
-      ),
-      FacilitiesScreen(repository: widget.repository),
-      FinancialScreen(repository: widget.repository),
-      FacilityPerformanceScreen(repository: widget.repository),
-      UserManagementScreen(repository: widget.repository),
-      BenefitPackagesScreen(repository: widget.repository),
-      GrievancesAdminScreen(repository: widget.repository),
-      ClaimAppealsScreen(repository: widget.repository),
-      ReportsScreen(repository: widget.repository),
-      AuditLogScreen(repository: widget.repository),
-      SettingsScreen(repository: widget.repository),
-    ];
+    final navItems = _buildNavItems(strings);
+    final pages = _buildPages();
 
     return Scaffold(
       body: Row(
         children: [
-          // ── Sidebar ──────────────────────────────────────────────────────
-          Container(
-            width: 240,
+          // ── Collapsible Sidebar ───────────────────────────────────────────
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+            width: _sidebarExpanded
+                ? _kSidebarExpandedWidth
+                : _kSidebarCollapsedWidth,
             color: AdminTheme.sidebarBg,
             child: Column(
               children: [
-                // Logo
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: AdminTheme.primary.withValues(alpha: 0.3),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(
-                          Icons.health_and_safety,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              strings.t('appTitle'),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 15,
-                              ),
-                            ),
-                            Text(
-                              'Maya City',
-                              style: TextStyle(
-                                color: AdminTheme.sidebarText,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                // Toggle button row at top of sidebar
+                _SidebarHeader(
+                  expanded: _sidebarExpanded,
+                  onToggle: _toggleSidebar,
+                  strings: strings,
                 ),
 
                 const Divider(color: Color(0xFF1E3530), height: 1),
@@ -165,110 +124,32 @@ class _MainShellState extends State<MainShell> {
                 Expanded(
                   child: ListView.builder(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
+                      horizontal: 8,
                       vertical: 4,
                     ),
                     itemCount: navItems.length,
                     itemBuilder: (context, index) {
                       final item = navItems[index];
                       final isSelected = _selectedIndex == index;
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: Material(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(10),
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(10),
-                            onTap: () => setState(() => _selectedIndex = index),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 14,
-                                vertical: 12,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? AdminTheme.sidebarSelected.withValues(
-                                        alpha: 0.15,
-                                      )
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(10),
-                                border: isSelected
-                                    ? Border.all(
-                                        color: AdminTheme.sidebarSelected
-                                            .withValues(alpha: 0.3),
-                                      )
-                                    : null,
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    isSelected ? item.selectedIcon : item.icon,
-                                    color: isSelected
-                                        ? AdminTheme.sidebarSelected
-                                        : AdminTheme.sidebarText,
-                                    size: 20,
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    item.label,
-                                    style: TextStyle(
-                                      color: isSelected
-                                          ? AdminTheme.sidebarSelected
-                                          : AdminTheme.sidebarText,
-                                      fontWeight: isSelected
-                                          ? FontWeight.w700
-                                          : FontWeight.w500,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
+                      return _SidebarNavItem(
+                        item: item,
+                        isSelected: isSelected,
+                        expanded: _sidebarExpanded,
+                        onTap: () => setState(() => _selectedIndex = index),
                       );
                     },
                   ),
                 ),
 
-                // Bottom — logout
+                // Bottom — user info + logout
                 const Divider(color: Color(0xFF1E3530), height: 1),
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Material(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(10),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(10),
-                      onTap: () async {
-                        await widget.repository.logout();
-                        widget.onLogout();
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 12,
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.logout,
-                              color: AdminTheme.sidebarText,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              strings.t('signOut'),
-                              style: const TextStyle(
-                                color: AdminTheme.sidebarText,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                _SidebarFooter(
+                  expanded: _sidebarExpanded,
+                  strings: strings,
+                  onLogout: () async {
+                    await widget.repository.logout();
+                    widget.onLogout();
+                  },
                 ),
               ],
             ),
@@ -294,7 +175,6 @@ class _MainShellState extends State<MainShell> {
                         ),
                       ),
                       const Spacer(),
-                      // Notification bell
                       _AdminNotificationBell(repository: widget.repository),
                       const SizedBox(width: 8),
                       PopupMenuButton<Locale>(
@@ -321,16 +201,12 @@ class _MainShellState extends State<MainShell> {
                           ),
                           child: Row(
                             children: [
-                              const Icon(
-                                Icons.translate,
-                                size: 16,
-                                color: AdminTheme.primary,
-                              ),
+                              const Icon(Icons.translate,
+                                  size: 16, color: AdminTheme.primary),
                               const SizedBox(width: 6),
                               Text(
                                 strings.languageLabel(
-                                  widget.locale.languageCode,
-                                ),
+                                    widget.locale.languageCode),
                                 style: const TextStyle(
                                   color: AdminTheme.primary,
                                   fontSize: 12,
@@ -342,7 +218,6 @@ class _MainShellState extends State<MainShell> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      // FIX: Add Semantics for accessibility
                       Semantics(
                         label: _isOnline
                             ? 'Connected to server'
@@ -394,7 +269,7 @@ class _MainShellState extends State<MainShell> {
                 // Page content
                 Expanded(
                   child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 250),
+                    duration: const Duration(milliseconds: 200),
                     child: KeyedSubtree(
                       key: ValueKey(_selectedIndex),
                       child: pages[_selectedIndex],
@@ -408,7 +283,102 @@ class _MainShellState extends State<MainShell> {
       ),
     );
   }
+
+  List<_NavItem> _buildNavItems(AppLocalizations strings) => [
+        _NavItem(
+          icon: Icons.space_dashboard_outlined,
+          selectedIcon: Icons.space_dashboard,
+          label: strings.t('navOverview'),
+        ),
+        _NavItem(
+          icon: Icons.rule_folder_outlined,
+          selectedIcon: Icons.rule_folder,
+          label: strings.t('navClaims'),
+        ),
+        _NavItem(
+          icon: Icons.volunteer_activism_outlined,
+          selectedIcon: Icons.volunteer_activism,
+          label: strings.t('navIndigent'),
+        ),
+        _NavItem(
+          icon: Icons.local_hospital_outlined,
+          selectedIcon: Icons.local_hospital,
+          label: strings.t('navFacilities'),
+        ),
+        _NavItem(
+          icon: Icons.account_balance_outlined,
+          selectedIcon: Icons.account_balance,
+          label: strings.t('navFinancial'),
+        ),
+        _NavItem(
+          icon: Icons.analytics_outlined,
+          selectedIcon: Icons.analytics,
+          label: strings.t('navFacilityPerformance'),
+        ),
+        _NavItem(
+          icon: Icons.people_outlined,
+          selectedIcon: Icons.people,
+          label: strings.t('navUsers'),
+        ),
+        _NavItem(
+          icon: Icons.inventory_2_outlined,
+          selectedIcon: Icons.inventory_2,
+          label: strings.t('benefitPackages'),
+        ),
+        _NavItem(
+          icon: Icons.gavel_outlined,
+          selectedIcon: Icons.gavel,
+          label: strings.t('memberGrievances'),
+        ),
+        _NavItem(
+          icon: Icons.assignment_late_outlined,
+          selectedIcon: Icons.assignment_late,
+          label: strings.t('claimAppeals'),
+        ),
+        _NavItem(
+          icon: Icons.bar_chart_outlined,
+          selectedIcon: Icons.bar_chart,
+          label: strings.t('navReports'),
+        ),
+        _NavItem(
+          icon: Icons.history_outlined,
+          selectedIcon: Icons.history,
+          label: strings.t('navAuditLog'),
+        ),
+        _NavItem(
+          icon: Icons.settings_outlined,
+          selectedIcon: Icons.settings,
+          label: strings.t('navSettings'),
+        ),
+      ];
+
+  List<Widget> _buildPages() => [
+        BlocProvider(
+          create: (_) => OverviewCubit(widget.repository)..load(),
+          child: OverviewScreen(repository: widget.repository),
+        ),
+        BlocProvider(
+          create: (_) => ClaimsCubit(widget.repository)..load(),
+          child: ClaimsScreen(repository: widget.repository),
+        ),
+        BlocProvider(
+          create: (_) => IndigentCubit(widget.repository)..load(),
+          child: IndigentScreen(repository: widget.repository),
+        ),
+        FacilitiesScreen(repository: widget.repository),
+        FinancialScreen(repository: widget.repository),
+        FacilityPerformanceScreen(repository: widget.repository),
+        UserManagementScreen(repository: widget.repository),
+        BenefitPackagesScreen(repository: widget.repository),
+        GrievancesAdminScreen(repository: widget.repository),
+        ClaimAppealsScreen(repository: widget.repository),
+        ReportsScreen(repository: widget.repository),
+        AuditLogScreen(repository: widget.repository),
+        SettingsScreen(repository: widget.repository),
+      ];
 }
+
+// ── Sidebar sub-widgets ────────────────────────────────────────────────────
 
 class _NavItem {
   const _NavItem({
@@ -421,8 +391,303 @@ class _NavItem {
   final String label;
 }
 
-/// Notification bell for the admin top bar — shows unread count badge
-/// and opens a popover with recent notifications.
+/// Top section of the sidebar: logo + toggle button.
+class _SidebarHeader extends StatelessWidget {
+  const _SidebarHeader({
+    required this.expanded,
+    required this.onToggle,
+    required this.strings,
+  });
+
+  final bool expanded;
+  final VoidCallback onToggle;
+  final AppLocalizations strings;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 64,
+      child: Row(
+        children: [
+          // Logo icon — always visible
+          Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AdminTheme.primary.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.health_and_safety,
+                color: Colors.white,
+                size: 22,
+              ),
+            ),
+          ),
+
+          // Title — only when expanded
+          if (expanded) ...[
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Maya City',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    'CBHI Admin',
+                    style: TextStyle(
+                      color: AdminTheme.sidebarText,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ] else
+            const Spacer(),
+
+          // Toggle button — always visible
+          Tooltip(
+            message: expanded ? 'Collapse sidebar' : 'Expand sidebar',
+            child: InkWell(
+              onTap: onToggle,
+              borderRadius: BorderRadius.circular(8),
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Icon(
+                  // Split-panel / sidebar icon
+                  expanded
+                      ? Icons.view_sidebar
+                      : Icons.view_sidebar_outlined,
+                  color: AdminTheme.sidebarText,
+                  size: 20,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+        ],
+      ),
+    );
+  }
+}
+
+/// A single nav item in the sidebar.
+class _SidebarNavItem extends StatelessWidget {
+  const _SidebarNavItem({
+    required this.item,
+    required this.isSelected,
+    required this.expanded,
+    required this.onTap,
+  });
+
+  final _NavItem item;
+  final bool isSelected;
+  final bool expanded;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final tile = Padding(
+      padding: const EdgeInsets.only(bottom: 2),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(8),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(8),
+          onTap: onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: EdgeInsets.symmetric(
+              horizontal: expanded ? 12 : 0,
+              vertical: 11,
+            ),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? const Color(0xFF2D3748)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(8),
+              border: isSelected
+                  ? const Border(
+                      left: BorderSide(
+                        color: Color(0xFF1A73E8),
+                        width: 3,
+                      ),
+                    )
+                  : null,
+            ),
+            child: Row(
+              mainAxisAlignment: expanded
+                  ? MainAxisAlignment.start
+                  : MainAxisAlignment.center,
+              children: [
+                if (isSelected && expanded) const SizedBox(width: 1),
+                Icon(
+                  isSelected ? item.selectedIcon : item.icon,
+                  color: isSelected
+                      ? Colors.white
+                      : AdminTheme.sidebarText,
+                  size: 20,
+                ),
+                if (expanded) ...[
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      item.label,
+                      style: TextStyle(
+                        color: isSelected
+                            ? Colors.white
+                            : AdminTheme.sidebarText,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                        fontSize: 13,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    if (!expanded) {
+      return Tooltip(
+        message: item.label,
+        preferBelow: false,
+        child: tile,
+      );
+    }
+    return tile;
+  }
+}
+
+/// Bottom section of the sidebar: user avatar + logout.
+class _SidebarFooter extends StatelessWidget {
+  const _SidebarFooter({
+    required this.expanded,
+    required this.strings,
+    required this.onLogout,
+  });
+
+  final bool expanded;
+  final AppLocalizations strings;
+  final VoidCallback onLogout;
+
+  @override
+  Widget build(BuildContext context) {
+    final logoutTile = Padding(
+      padding: const EdgeInsets.all(8),
+      child: Tooltip(
+        message: expanded ? '' : strings.t('signOut'),
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: onLogout,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: expanded ? 12 : 0,
+                vertical: 11,
+              ),
+              child: Row(
+                mainAxisAlignment: expanded
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.logout,
+                    color: AdminTheme.sidebarText,
+                    size: 20,
+                  ),
+                  if (expanded) ...[
+                    const SizedBox(width: 12),
+                    Text(
+                      strings.t('signOut'),
+                      style: const TextStyle(
+                        color: AdminTheme.sidebarText,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    if (!expanded) return logoutTile;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // User avatar row
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 10, 16, 4),
+          child: Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: AdminTheme.primary.withValues(alpha: 0.4),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.admin_panel_settings,
+                  color: Colors.white,
+                  size: 18,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Admin',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      'CBHI Officer',
+                      style: TextStyle(
+                        color: AdminTheme.sidebarText,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        logoutTile,
+      ],
+    );
+  }
+}
+
+// ── Notification Bell ──────────────────────────────────────────────────────
+
 class _AdminNotificationBell extends StatefulWidget {
   const _AdminNotificationBell({required this.repository});
   final AdminRepository repository;
@@ -448,7 +713,7 @@ class _AdminNotificationBellState extends State<_AdminNotificationBell> {
       final list = await widget.repository.getNotifications();
       if (mounted) setState(() => _notifications = list);
     } catch (_) {
-      // Non-fatal — bell just shows 0
+      // Non-fatal
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -570,9 +835,7 @@ class _AdminNotificationBellState extends State<_AdminNotificationBell> {
                             dense: true,
                             leading: Icon(
                               _iconFor(n['type']?.toString() ?? ''),
-                              color: isRead
-                                  ? Colors.grey
-                                  : AdminTheme.primary,
+                              color: isRead ? Colors.grey : AdminTheme.primary,
                               size: 20,
                             ),
                             title: Text(
@@ -626,16 +889,10 @@ class _AdminNotificationBellState extends State<_AdminNotificationBell> {
     );
   }
 
-  IconData _iconFor(String type) {
-    switch (type) {
-      case 'CLAIM_UPDATE':
-        return Icons.receipt_long_outlined;
-      case 'PAYMENT_CONFIRMATION':
-        return Icons.payments_outlined;
-      case 'SYSTEM_ALERT':
-        return Icons.info_outline;
-      default:
-        return Icons.notifications_outlined;
-    }
-  }
+  IconData _iconFor(String type) => switch (type) {
+        'CLAIM_UPDATE' => Icons.receipt_long_outlined,
+        'PAYMENT_CONFIRMATION' => Icons.payments_outlined,
+        'SYSTEM_ALERT' => Icons.info_outline,
+        _ => Icons.notifications_outlined,
+      };
 }
