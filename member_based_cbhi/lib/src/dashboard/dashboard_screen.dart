@@ -12,6 +12,7 @@ import '../coverage/renewal_reminder_widget.dart';
 import '../family/my_family_cubit.dart';
 import '../payment/payment_screen.dart';
 import '../shared/animated_widgets.dart';
+import '../shared/premium_widgets.dart';
 import '../shared/skeleton_widgets.dart';
 import '../theme/app_theme.dart';
 
@@ -314,38 +315,38 @@ class _QuickStatsRow extends StatelessWidget {
     final strings = CbhiLocalizations.of(context);
     final eligibility = snapshot.eligibility ?? const <String, dynamic>{};
 
-    // Left card: always coverage status
-    final leftCard = MetricCard(
+    // Left tile: always coverage status
+    final leftTile = MetricTile(
       label: strings.t('coverage'),
       value: snapshot.coverageStatus,
       icon: Icons.verified_outlined,
-      color: AppTheme.success,
+      color: _coverageColor(snapshot.coverageStatus),
     );
 
-    // Right card: role/type dependent
-    Widget rightCard;
+    // Right tile: role/type dependent
+    Widget rightTile;
     if (isFamilyMember) {
-      rightCard = MetricCard(
+      rightTile = MetricTile(
         label: strings.t('eligibility'),
         value: eligibility['approved'] == true
             ? strings.t('eligible')
             : strings.t('pending'),
         icon: Icons.verified_user_outlined,
-        color: AppTheme.primary,
+        color: eligibility['approved'] == true ? AppTheme.success : AppTheme.warning,
       );
     } else if (isIndigent) {
       final indigentStatus =
           snapshot.household['indigentStatus']?.toString() ??
               snapshot.household['indigentApplicationStatus']?.toString() ??
               strings.t('pending');
-      rightCard = MetricCard(
+      rightTile = MetricTile(
         label: strings.t('indigentApplication'),
         value: indigentStatus,
         icon: Icons.volunteer_activism_outlined,
         color: AppTheme.accent,
       );
     } else {
-      rightCard = MetricCard(
+      rightTile = MetricTile(
         label: strings.t('members'),
         value: snapshot.familyMembers.length.toString(),
         icon: Icons.family_restroom_outlined,
@@ -355,12 +356,19 @@ class _QuickStatsRow extends StatelessWidget {
 
     return Row(
       children: [
-        Expanded(child: leftCard),
+        Expanded(child: leftTile),
         const SizedBox(width: 12),
-        Expanded(child: rightCard),
+        Expanded(child: rightTile),
       ],
     );
   }
+
+  Color _coverageColor(String status) => switch (status.toUpperCase()) {
+        'ACTIVE' => AppTheme.success,
+        'EXPIRED' => AppTheme.error,
+        'PENDING_RENEWAL' || 'WAITING_PERIOD' => AppTheme.warning,
+        _ => AppTheme.textSecondary,
+      };
 }
 
 // ─── _RenewalSection ─────────────────────────────────────────────────────────
@@ -613,6 +621,7 @@ class _IndigentStatusSection extends StatelessWidget {
 }
 
 // ─── _SyncStatusCard ─────────────────────────────────────────────────────────
+// Shows sync status only — renewal button removed (lives in _RenewalSection).
 
 class _SyncStatusCard extends StatelessWidget {
   const _SyncStatusCard({
@@ -645,7 +654,7 @@ class _SyncStatusCard extends StatelessWidget {
         ? _formatDateLabel(syncedDate.toIso8601String())
         : '';
 
-    return GlassCard(
+    return PremiumCard(
       padding: const EdgeInsets.all(AppTheme.spacingM),
       child: Row(
         children: [
@@ -669,6 +678,7 @@ class _SyncStatusCard extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
+                  overflow: TextOverflow.ellipsis,
                 ),
                 if (syncLabel.isNotEmpty) ...[
                   const SizedBox(height: 2),
@@ -680,20 +690,14 @@ class _SyncStatusCard extends StatelessWidget {
               ],
             ),
           ),
-          // Show renew button only when coverage needs renewal
-          if (canRenew &&
-              snapshot.coverageStatus != 'ACTIVE' &&
-              snapshot.premiumAmount >= 0)
-            FilledButton(
-              onPressed: isSyncing ? null : onRenew,
-              style: FilledButton.styleFrom(
-                minimumSize: const Size(80, 36),
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-              ),
-              child: Text(
-                strings.t('renewNow'),
-                style: const TextStyle(
-                    fontSize: 12, fontWeight: FontWeight.w700),
+          // Sync spinner when actively syncing
+          if (isSyncing)
+            const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppTheme.primary,
               ),
             ),
         ],
@@ -709,6 +713,20 @@ class _PaymentHistorySection extends StatelessWidget {
 
   final CbhiSnapshot snapshot;
 
+  String _formatPaymentMethodLabel(String? method) {
+    if (method == null || method.isEmpty) return 'Payment';
+    return switch (method.toLowerCase()) {
+      'telebirr' => 'Telebirr',
+      'cbe_birr' || 'cbebirr' => 'CBE Birr',
+      'amole' => 'Amole',
+      'mpesa' || 'm_pesa' => 'M-Pesa',
+      'bank_transfer' || 'bank' => 'Bank Transfer',
+      'chapa' => 'Chapa',
+      'cash' => 'Cash',
+      _ => method,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final strings = CbhiLocalizations.of(context);
@@ -716,10 +734,13 @@ class _PaymentHistorySection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SectionHeader(title: strings.t('paymentHistory')),
+        SectionTitle(
+          title: strings.t('paymentHistory'),
+          icon: Icons.payments_outlined,
+        ),
         const SizedBox(height: 4),
         if (snapshot.payments.isEmpty)
-          EmptyState(
+          EmptyView(
             icon: Icons.payments_outlined,
             title: strings.t('noPaymentsRecorded'),
             subtitle: strings.t('renewalTransactionsHere'),
@@ -727,9 +748,10 @@ class _PaymentHistorySection extends StatelessWidget {
         else
           ...snapshot.payments.take(3).toList().asMap().entries.map((entry) {
             final payment = entry.value;
+            final method = _formatPaymentMethodLabel(payment['method']?.toString());
             return Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: GlassCard(
+              child: PremiumCard(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 16, vertical: 14),
                 child: Row(
@@ -757,13 +779,14 @@ class _PaymentHistorySection extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            '${_formatPaymentMethod(payment['method']?.toString())} \u2022 ${_formatDateLabel(payment['paidAt'] ?? payment['createdAt'])}',
+                            '$method \u2022 ${_formatDateLabel(payment['paidAt'] ?? payment['createdAt'])}',
                             style: Theme.of(context).textTheme.bodySmall,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
                     ),
-                    StatusBadge(
+                    StatusPill(
                         label: payment['status']?.toString() ?? 'UNKNOWN'),
                   ],
                 ),
@@ -813,14 +836,24 @@ class _RecentNotificationsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final strings = CbhiLocalizations.of(context);
+    final unreadCount = snapshot.notifications.where((n) => n['isRead'] != true).length;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SectionHeader(title: strings.t('recentNotifications')),
+        SectionTitle(
+          title: strings.t('recentNotifications'),
+          icon: unreadCount > 0 ? Icons.notifications_active_outlined : Icons.notifications_outlined,
+          action: snapshot.notifications.length >= 3
+              ? () => _showAllNotificationsSheet(context, snapshot, strings)
+              : null,
+          actionLabel: snapshot.notifications.length >= 3
+              ? strings.t('viewAllNotifications')
+              : null,
+        ),
         const SizedBox(height: 4),
         if (snapshot.notifications.isEmpty)
-          EmptyState(
+          EmptyView(
             icon: Icons.notifications_outlined,
             title: strings.t('noNotificationsYet'),
             subtitle: strings.t('coverageAlertsHere'),
@@ -836,7 +869,7 @@ class _RecentNotificationsSection extends StatelessWidget {
             final isRead = notification['isRead'] == true;
             return Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: GlassCard(
+              child: PremiumCard(
                 onTap: notification['id'] == null
                     ? null
                     : () => context
@@ -878,6 +911,7 @@ class _RecentNotificationsSection extends StatelessWidget {
                                 .textTheme
                                 .titleSmall
                                 ?.copyWith(fontWeight: FontWeight.w600),
+                            overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 2),
                           Text(
@@ -912,16 +946,6 @@ class _RecentNotificationsSection extends StatelessWidget {
                       delay: (50 * entry.key).ms),
             );
           }),
-          if (snapshot.notifications.length >= 3)
-            Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: TextButton.icon(
-                onPressed: () =>
-                    _showAllNotificationsSheet(context, snapshot, strings),
-                icon: const Icon(Icons.arrow_forward, size: 16),
-                label: Text(strings.t('viewAllNotifications')),
-              ),
-            ),
         ],
       ],
     );
@@ -976,8 +1000,15 @@ class _RecentNotificationsSection extends StatelessWidget {
                           ? AppTheme.textSecondary
                           : AppTheme.accent,
                     ),
-                    title: Text(n['title']?.toString() ?? ''),
-                    subtitle: Text(n['message']?.toString() ?? ''),
+                    title: Text(
+                      n['title']?.toString() ?? '',
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    subtitle: Text(
+                      n['message']?.toString() ?? '',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     onTap: n['id'] == null
                         ? null
                         : () => context
@@ -1061,16 +1092,6 @@ String _formatDateLabel(dynamic value) {
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
   ];
   return '${parsed.day.toString().padLeft(2, '0')} ${months[parsed.month - 1]} ${parsed.year}';
-}
-
-String _formatPaymentMethod(String? raw) {
-  if (raw == null || raw.isEmpty) return 'Payment';
-  return raw
-      .replaceAll('_', ' ')
-      .toLowerCase()
-      .split(' ')
-      .map((w) => w.isEmpty ? '' : '${w[0].toUpperCase()}${w.substring(1)}')
-      .join(' ');
 }
 
 Future<void> _showRenewCoverageSheet(

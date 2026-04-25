@@ -742,5 +742,14 @@
   "passkeyDeleteConfirmTitle": "ፓስኪ ይሰርዙ?",
   "passkeyDeleteConfirmMessage": "ይህ ፓስኪ ከመለያዎ ይወገዳል።",
   "passkeyDevice": "የመሣሪያ ፓስኪ",
-  "passkeyAddFailed": "ፓስኪ ማከል አልተሳካም። እንደገና ይሞክሩ።"
+  "passkeyAddFailed": "ፓስኪ ማከል አልተሳካም። እንደገና ይሞክሩ።",
+
+  "noClaimsForFilter": "በዚህ ሁኔታ ምንም ጥያቄዎች የሉም",
+  "tryDifferentFilter": "ሌላ ማጣሪያ ይሞክሩ",
+  "pinNotSetHint": "ፒን አልተዘጋጀም። OTP ተጠቅሞ ይግቡ እና በመገለጫ ቅንብሮች ፒን ያዘጋጁ።",
+  "underReview": "በግምገማ ላይ",
+  "healthFacility": "የጤና ተቋም",
+  "all": "ሁሉም",
+  "submitted": "ቀርቧል",
+  "rejected": "ተቀባይነት አላገኘም"
 }

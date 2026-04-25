@@ -16,6 +16,18 @@ class AppTheme {
   static const Color error = Color(0xFFE53935);
   static const Color success = Color(0xFF2E7D52);
   static const Color warning = Color(0xFFFF8F00);
+  static const Color info = Color(0xFF1565C0);
+
+  // Surface hierarchy (elevation system)
+  static const Color surface0 = Color(0xFFF6F9F8);  // page background
+  static const Color surface1 = Color(0xFFFFFFFF);  // card background
+  static const Color surface2 = Color(0xFFEDF4F2);  // subtle section bg
+  static const Color surface3 = Color(0xFFE0EDE9);  // pressed/hover state
+
+  // Dark mode surfaces
+  static const Color darkSurface0 = Color(0xFF0F1A17);
+  static const Color darkSurface1 = Color(0xFF1A2E28);
+  static const Color darkSurface2 = Color(0xFF243D35);
 
   // Gradient presets
   static const LinearGradient heroGradient = LinearGradient(
@@ -37,6 +49,7 @@ class AppTheme {
   );
 
   // ───── Shape ─────
+  static const double radiusXS = 6;
   static const double radiusS = 12;
   static const double radiusM = 16;
   static const double radiusL = 24;
@@ -48,6 +61,12 @@ class AppTheme {
   static const double spacingM = 16;
   static const double spacingL = 24;
   static const double spacingXL = 32;
+  static const double spacingXXL = 48;
+
+  // ───── Motion ─────
+  static const Duration durationFast = Duration(milliseconds: 150);
+  static const Duration durationMedium = Duration(milliseconds: 300);
+  static const Duration durationSlow = Duration(milliseconds: 500);
 
   // ───── Elevation & Shadows ─────
   static List<BoxShadow> get cardShadow => [

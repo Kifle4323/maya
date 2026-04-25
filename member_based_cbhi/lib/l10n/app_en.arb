@@ -746,5 +746,45 @@
   "passkeyDeleteConfirmTitle": "Remove Passkey?",
   "passkeyDeleteConfirmMessage": "This passkey will be removed from your account.",
   "passkeyDevice": "Device passkey",
-  "passkeyAddFailed": "Failed to add passkey. Please try again."
+  "passkeyAddFailed": "Failed to add passkey. Please try again.",
+
+  "noClaimsForFilter": "No claims with this status",
+  "tryDifferentFilter": "Try selecting a different filter above",
+  "pinNotSetHint": "No PIN set. Use OTP to sign in and set up a PIN in Profile settings.",
+  "underReview": "Under Review",
+  "healthFacility": "Health Facility",
+  "all": "All",
+  "submitted": "Submitted",
+  "rejected": "Rejected",
+
+  "forgotPinMessage": "We will send a one-time code to your registered phone number to recover access.",
+  "otpRecoveryTitle": "Account Recovery",
+  "otpRecoverySubtitle": "Enter your registered phone number to receive a recovery code.",
+  "otpRecoveryPhoneLabel": "Registered phone number",
+  "otpRecoveryCodeLabel": "Recovery code",
+  "otpRecoveryCodeHint": "Enter the 6-digit code sent to your phone",
+  "otpRecoverySendCode": "Send Recovery Code",
+  "otpRecoveryVerify": "Verify Code",
+  "otpRecoveryNewPin": "Set New PIN",
+  "otpRecoveryNewPinHint": "Enter a new {length}-digit PIN",
+  "@otpRecoveryNewPinHint": {
+    "placeholders": { "length": {"type": "String"} }
+  },
+  "otpRecoveryConfirmPin": "Confirm new PIN",
+  "otpRecoverySuccess": "PIN updated successfully. Please sign in.",
+  "otpRecoveryRateLimit": "Too many requests. Please wait before trying again.",
+  "otpRecoveryCodeSent": "Recovery code sent to {phone}",
+  "@otpRecoveryCodeSent": {
+    "placeholders": { "phone": {"type": "String"} }
+  },
+  "setNewPin": "Set New PIN",
+  "confirmAndSubmit": "Confirm & Submit",
+  "browseCatalog": "Browse Catalog",
+  "totpVerificationTitle": "Two-Factor Verification",
+  "totpVerificationSubtitle": "Enter the 6-digit code from your authenticator app.",
+  "totpCodeLabel": "Authenticator code",
+  "totpVerify": "Verify",
+  "totpBackToPassword": "Back to password",
+  "totpInvalidCode": "Invalid code. Please check your authenticator app and try again.",
+  "tempPasswordTitle": "Temporary Password"
 }

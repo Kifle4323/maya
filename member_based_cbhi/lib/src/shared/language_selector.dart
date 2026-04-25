@@ -14,7 +14,8 @@ class LanguageSelector extends StatelessWidget {
     final appCubit = context.read<AppCubit>();
     final currentLocale = context.watch<AppCubit>().state.locale;
     final strings = CbhiLocalizations.of(context);
-    const languages = [('en', '🇬🇧'), ('am', '🇪🇹'), ('om', '🇪🇹')];
+    // Language codes paired with their display abbreviations (no emoji flags)
+    const languages = [('en', 'EN'), ('am', 'AM'), ('om', 'OM')];
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -50,7 +51,7 @@ class LanguageSelector extends StatelessWidget {
                 (lang) => DropdownMenuItem(
                   value: lang.$1,
                   child: Text(
-                    '${lang.$2} ${strings.t(switch (lang.$1) {
+                    '${lang.$2}  ${strings.t(switch (lang.$1) {
                       'am' => 'amharic',
                       'om' => 'afaanOromo',
                       _ => 'english',

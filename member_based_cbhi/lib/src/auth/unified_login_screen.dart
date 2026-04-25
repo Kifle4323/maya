@@ -38,10 +38,10 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
   bool _methodPickerOpen = false;
   bool _biometricAvailable = false;
   bool _biometricEnrolled = false;
-  bool _pinSet = false;
+  bool _pinSet = false; // used to show "Set up PIN" vs PIN entry
   bool _pinLocked = false;
   int _biometricAttempts = 0;
-  int _pinRemainingAttempts = PinService.maxFailAttempts;
+  int _pinRemainingAttempts = PinService.maxFailAttempts; // shown below PIN dots
   String _pinInput = '';
   String? _error;
   bool _showEnrollBiometricBanner = false;
@@ -357,6 +357,8 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
         return _PinContent(
           pinInput: _pinInput,
           locked: _pinLocked,
+          remainingAttempts: _pinRemainingAttempts,
+          pinNotSet: !_pinSet,
           onKeyTap: _onKeyTap,
           onBackspace: _onBackspace,
           onSubmit: _submitPin,
@@ -521,6 +523,8 @@ class _PinContent extends StatelessWidget {
   const _PinContent({
     required this.pinInput,
     required this.locked,
+    required this.remainingAttempts,
+    required this.pinNotSet,
     required this.onKeyTap,
     required this.onBackspace,
     required this.onSubmit,
@@ -528,12 +532,15 @@ class _PinContent extends StatelessWidget {
 
   final String pinInput;
   final bool locked;
+  final int remainingAttempts;
+  final bool pinNotSet;
   final void Function(String) onKeyTap;
   final VoidCallback onBackspace;
   final VoidCallback onSubmit;
 
   @override
   Widget build(BuildContext context) {
+    final strings = CbhiLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.all(AppTheme.spacingM),
       child: Column(
@@ -559,6 +566,31 @@ class _PinContent extends StatelessWidget {
             }),
           ),
 
+          const SizedBox(height: 8),
+
+          // Remaining attempts indicator
+          if (!locked && remainingAttempts < PinService.maxFailAttempts)
+            Text(
+              strings.f('pinAttemptsRemaining', {'count': remainingAttempts}),
+              style: const TextStyle(
+                color: AppTheme.warning,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+
+          if (pinNotSet)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                strings.t('pinNotSetHint'),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppTheme.textSecondary,
+                    ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+
           const SizedBox(height: 24),
 
           // Numeric keypad
@@ -583,7 +615,7 @@ class _NumericKeypad extends StatelessWidget {
       ['1', '2', '3'],
       ['4', '5', '6'],
       ['7', '8', '9'],
-      ['', '0', '⌫'],
+      ['', '0', 'DEL'],
     ];
 
     return Column(
@@ -594,7 +626,8 @@ class _NumericKeypad extends StatelessWidget {
             if (key.isEmpty) return const SizedBox(width: 80, height: 64);
             return _KeyButton(
               label: key,
-              onTap: key == '⌫' ? onBackspace : () => onKeyTap(key),
+              onTap: key == 'DEL' ? onBackspace : () => onKeyTap(key),
+              isDelete: key == 'DEL',
             );
           }).toList(),
         );
@@ -604,32 +637,37 @@ class _NumericKeypad extends StatelessWidget {
 }
 
 class _KeyButton extends StatelessWidget {
-  const _KeyButton({required this.label, required this.onTap});
+  const _KeyButton({required this.label, required this.onTap, this.isDelete = false});
   final String label;
   final VoidCallback onTap;
+  final bool isDelete;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 80,
-        height: 64,
-        margin: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: AppTheme.primary.withValues(alpha: 0.06),
-          borderRadius: BorderRadius.circular(AppTheme.radiusM),
-        ),
-        child: Center(
-          child: label == '⌫'
-              ? const Icon(Icons.backspace_outlined, color: AppTheme.primary)
-              : Text(
-                  label,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: AppTheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
+    return Semantics(
+      label: isDelete ? 'Delete' : label,
+      button: true,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 80,
+          height: 64,
+          margin: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: AppTheme.primary.withValues(alpha: 0.06),
+            borderRadius: BorderRadius.circular(AppTheme.radiusM),
+          ),
+          child: Center(
+            child: isDelete
+                ? const Icon(Icons.backspace_outlined, color: AppTheme.primary, size: 22)
+                : Text(
+                    label,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          color: AppTheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+          ),
         ),
       ),
     );

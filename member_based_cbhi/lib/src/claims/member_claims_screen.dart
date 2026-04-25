@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../cbhi_data.dart';
 import '../cbhi_localizations.dart';
 import '../shared/animated_widgets.dart';
+import '../shared/premium_widgets.dart';
 import '../theme/app_theme.dart';
 
 /// Full claims screen — shows claim history and allows viewing claim details.
@@ -22,6 +23,7 @@ class MemberClaimsScreen extends StatefulWidget {
 
 class _MemberClaimsScreenState extends State<MemberClaimsScreen> {
   List<Map<String, dynamic>> _appeals = [];
+  String _statusFilter = 'ALL';
 
   @override
   void initState() {
@@ -40,6 +42,15 @@ class _MemberClaimsScreenState extends State<MemberClaimsScreen> {
 
   bool _hasAppeal(String claimId) =>
       _appeals.any((a) => a['claimId']?.toString() == claimId);
+
+  List<Map<String, dynamic>> get _filteredClaims {
+    final claims = widget.snapshot.claims;
+    if (_statusFilter == 'ALL') return claims;
+    return claims
+        .where((c) =>
+            c['status']?.toString().toUpperCase() == _statusFilter)
+        .toList();
+  }
 
   Future<void> _submitAppeal(BuildContext context, Map<String, dynamic> claim) async {
     final repo = widget.repository;
@@ -69,6 +80,7 @@ class _MemberClaimsScreenState extends State<MemberClaimsScreen> {
               TextField(
                 controller: reasonCtrl,
                 maxLines: 4,
+                maxLength: 500,
                 decoration: InputDecoration(
                   labelText: strings.t('appealReason'),
                   hintText: strings.t('appealReasonHint'),
@@ -123,65 +135,98 @@ class _MemberClaimsScreenState extends State<MemberClaimsScreen> {
   Widget build(BuildContext context) {
     final strings = CbhiLocalizations.of(context);
     final claims = widget.snapshot.claims;
+    final filtered = _filteredClaims;
 
-    return ListView(
-      padding: const EdgeInsets.all(AppTheme.spacingM),
+    // Build filter counts
+    int countFor(String status) => status == 'ALL'
+        ? claims.length
+        : claims.where((c) => c['status']?.toString().toUpperCase() == status).length;
+
+    final filters = [
+      FilterOption(value: 'ALL', label: strings.t('all'), count: countFor('ALL')),
+      FilterOption(value: 'SUBMITTED', label: strings.t('submitted'), count: countFor('SUBMITTED')),
+      FilterOption(value: 'UNDER_REVIEW', label: strings.t('underReview'), count: countFor('UNDER_REVIEW')),
+      FilterOption(value: 'APPROVED', label: strings.t('approved'), count: countFor('APPROVED')),
+      FilterOption(value: 'REJECTED', label: strings.t('rejected'), count: countFor('REJECTED')),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AnimatedHeroCard(
-          icon: Icons.receipt_long_outlined,
-          title: strings.t('myClaims'),
-          subtitle: strings.t('trackClaimsSubtitle'),
-          value: strings.t('claims'),
-        ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
+        // Hero header
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+              AppTheme.spacingM, AppTheme.spacingM, AppTheme.spacingM, 0),
+          child: AnimatedHeroCard(
+            icon: Icons.receipt_long_outlined,
+            title: strings.t('myClaims'),
+            subtitle: strings.t('trackClaimsSubtitle'),
+            value: '${claims.length} ${strings.t('claims')}',
+          ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
+        ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: AppTheme.spacingM),
 
         // Info banner
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: AppTheme.primary.withValues(alpha: 0.06),
-            borderRadius: BorderRadius.circular(AppTheme.radiusS),
-            border: Border.all(
-                color: AppTheme.primary.withValues(alpha: 0.15)),
-          ),
-          child: Row(
-            children: [
-              const Icon(Icons.info_outline,
-                  color: AppTheme.primary, size: 18),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  strings.t('claimsSubmittedByFacility'),
-                  style: Theme.of(context).textTheme.bodySmall,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
+          child: InfoBanner(
+            message: strings.t('claimsSubmittedByFacility'),
+            variant: BannerVariant.info,
+          ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
+        ),
+
+        const SizedBox(height: AppTheme.spacingM),
+
+        // Filter bar
+        if (claims.isNotEmpty)
+          FilterBar(
+            filters: filters,
+            selected: _statusFilter,
+            onSelected: (v) => setState(() => _statusFilter = v),
+          ).animate().fadeIn(duration: 300.ms, delay: 150.ms),
+
+        const SizedBox(height: AppTheme.spacingS),
+
+        // Claims list
+        Expanded(
+          child: filtered.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.all(AppTheme.spacingM),
+                  child: EmptyView(
+                    icon: Icons.receipt_long_outlined,
+                    title: _statusFilter == 'ALL'
+                        ? strings.t('noClaimsYet')
+                        : strings.t('noClaimsForFilter'),
+                    subtitle: _statusFilter == 'ALL'
+                        ? strings.t('claimsWillAppearHere')
+                        : strings.t('tryDifferentFilter'),
+                  ).animate().fadeIn(duration: 400.ms, delay: 150.ms),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(
+                      AppTheme.spacingM, 0, AppTheme.spacingM, AppTheme.spacingM),
+                  itemCount: filtered.length,
+                  itemBuilder: (context, index) {
+                    final claim = filtered[index];
+                    final claimId = claim['id']?.toString() ?? '';
+                    final alreadyAppealed = _hasAppeal(claimId);
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: _ClaimCard(
+                        claim: claim,
+                        index: index,
+                        canAppeal:
+                            claim['status']?.toString().toUpperCase() == 'REJECTED' &&
+                                !alreadyAppealed &&
+                                widget.repository != null,
+                        alreadyAppealed: alreadyAppealed,
+                        onAppeal: () => _submitAppeal(context, claim),
+                      ),
+                    );
+                  },
                 ),
-              ),
-            ],
-          ),
-        ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
-
-        const SizedBox(height: 20),
-
-        if (claims.isEmpty)
-          EmptyState(
-            icon: Icons.receipt_long_outlined,
-            title: strings.t('noClaimsYet'),
-            subtitle: strings.t('claimsWillAppearHere'),
-          ).animate().fadeIn(duration: 400.ms, delay: 150.ms)
-        else
-          ...claims.asMap().entries.map((entry) {
-            final claim = entry.value;
-            final alreadyAppealed = _hasAppeal(claim['id']?.toString() ?? '');
-            return _ClaimCard(
-              claim: claim,
-              index: entry.key,
-              canAppeal: claim['status']?.toString().toUpperCase() == 'REJECTED' &&
-                  !alreadyAppealed &&
-                  widget.repository != null,
-              alreadyAppealed: alreadyAppealed,
-              onAppeal: () => _submitAppeal(context, claim),
-            );
-          }),
+        ),
       ],
     );
   }
@@ -227,14 +272,15 @@ class _ClaimCard extends StatelessWidget {
     final strings = CbhiLocalizations.of(context);
     final status = claim['status']?.toString() ?? 'UNKNOWN';
     final claimNumber = claim['claimNumber']?.toString() ?? 'N/A';
-    final facilityName = claim['facilityName']?.toString();
+    // Facility name is now the primary title (Oscar Health pattern)
+    final facilityName = claim['facilityName']?.toString() ?? strings.t('healthFacility');
     final serviceDate = claim['serviceDate']?.toString();
     final claimedAmount = claim['claimedAmount'];
     final approvedAmount = claim['approvedAmount'];
     final decisionNote = claim['decisionNote']?.toString();
     final color = _statusColor(status);
 
-    return GlassCard(
+    return PremiumCard(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,20 +300,25 @@ class _ClaimCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Facility name is primary — more meaningful than claim number
                     Text(
-                      claimNumber,
+                      facilityName,
                       style: Theme.of(context)
                           .textTheme
-                          .titleMedium
+                          .titleSmall
                           ?.copyWith(fontWeight: FontWeight.w600),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    if (facilityName != null)
-                      Text(facilityName,
-                          style: Theme.of(context).textTheme.bodySmall),
+                    Text(
+                      claimNumber,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppTheme.textSecondary,
+                          ),
+                    ),
                   ],
                 ),
               ),
-              StatusBadge(label: status, color: color),
+              StatusPill(label: status, color: color),
             ],
           ),
           const SizedBox(height: 12),
@@ -319,6 +370,8 @@ class _ClaimCard extends StatelessWidget {
                     child: Text(
                       decisionNote,
                       style: Theme.of(context).textTheme.bodySmall,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -342,7 +395,10 @@ class _ClaimCard extends StatelessWidget {
                   const SizedBox(width: 6),
                   Text(
                     CbhiLocalizations.of(context).t('appealPending'),
-                    style: const TextStyle(color: AppTheme.warning, fontSize: 12, fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                        color: AppTheme.warning,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600),
                   ),
                 ],
               ),
@@ -357,6 +413,7 @@ class _ClaimCard extends StatelessWidget {
                 foregroundColor: AppTheme.primary,
                 side: const BorderSide(color: AppTheme.primary),
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                minimumSize: const Size(0, 40),
               ),
             ),
           ],

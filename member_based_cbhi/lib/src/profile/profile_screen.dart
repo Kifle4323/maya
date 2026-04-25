@@ -15,6 +15,7 @@ import '../shared/animated_widgets.dart';
 import '../shared/biometric_service.dart';
 import '../shared/help_screen.dart';
 import '../shared/passkey_service.dart';
+import '../shared/premium_widgets.dart';
 import '../theme/app_theme.dart';
 
 /// Profile screen — settings, language, dark mode, biometric, account actions.
@@ -43,14 +44,11 @@ class ProfileScreen extends StatelessWidget {
           padding: const EdgeInsets.all(24),
           child: Row(
             children: [
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.20),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.person, color: Colors.white, size: 32),
+              // ProfileAvatar with initials fallback — no hardcoded Icons.person
+              ProfileAvatar(
+                name: session?.user.displayName ?? 'Member',
+                radius: 30,
+                backgroundColor: Colors.white.withValues(alpha: 0.20),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -63,6 +61,7 @@ class ProfileScreen extends StatelessWidget {
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
                           ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                     if ((session?.user.phoneNumber ?? '').isNotEmpty) ...[
                       const SizedBox(height: 4),
@@ -404,12 +403,14 @@ class ProfileScreen extends StatelessWidget {
 
         const SizedBox(height: 12),
 
-        FilledButton.icon(
+        OutlinedButton.icon(
           onPressed: () async => context.read<AuthCubit>().logout(),
           icon: const Icon(Icons.logout),
           label: Text(strings.t('signOut')),
-          style: FilledButton.styleFrom(
-              backgroundColor: AppTheme.error.withValues(alpha: 0.9)),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppTheme.error,
+            side: BorderSide(color: AppTheme.error.withValues(alpha: 0.5)),
+          ),
         ).animate().fadeIn(duration: 400.ms, delay: 400.ms),
 
         const SizedBox(height: 12),

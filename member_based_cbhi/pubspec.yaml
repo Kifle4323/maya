@@ -43,6 +43,7 @@ dependencies:
   json_annotation: ^4.9.0
   sentry_flutter: ^8.14.2     # v8.14 supports Kotlin 2.1 + AGP 8.9; v9 requires code changes
   crypto: ^3.0.3              # SHA-256 for local PIN hashing
+  web: ^1.1.0                 # dart:js_interop DOM bindings — required by passkey_web.dart
 
 dev_dependencies:
   flutter_test:

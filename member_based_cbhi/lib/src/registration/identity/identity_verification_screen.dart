@@ -104,7 +104,7 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const RegistrationStepIndicator(currentStep: 3, totalSteps: 7),
+                        const RegistrationStepIndicator(step: RegistrationStep.identity),
                         const SizedBox(height: AppTheme.spacingM),
                         // Header
                         Container(

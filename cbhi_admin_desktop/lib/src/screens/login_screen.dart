@@ -312,7 +312,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           child: Row(
                             children: [
-                              const Text('🧪', style: TextStyle(fontSize: 16)),
+                              const Icon(
+                                Icons.science_outlined,
+                                size: 16,
+                                color: Color(0xFF856404),
+                              ),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
