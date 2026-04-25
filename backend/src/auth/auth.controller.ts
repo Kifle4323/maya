@@ -105,6 +105,20 @@ export class AuthController {
   }
 
   /**
+   * First-time password setup — sets the password WITHOUT invalidating the
+   * current session (tokenVersion is not incremented). Use this when the user
+   * is setting a password for the first time after registration so they are
+   * not logged out immediately after completing setup.
+   */
+  @Post('set-initial-password')
+  async setInitialPassword(
+    @CurrentUser() user: User,
+    @Body() dto: SetPasswordDto,
+  ) {
+    return this.authService.setInitialPasswordNoInvalidate(user.id, dto.password);
+  }
+
+  /**
    * GDPR / data privacy: anonymise and deactivate the account.
    * The user's PII is replaced with anonymised placeholders.
    * Household, claims, and payment records are preserved for audit.

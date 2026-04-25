@@ -87,6 +87,10 @@ export class SubmitServiceClaimDto {
 
   @IsOptional()
   @IsString()
+  referralCode?: string;
+
+  @IsOptional()
+  @IsString()
   supportingDocumentPath?: string;
 
   @IsOptional()

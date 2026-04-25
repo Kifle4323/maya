@@ -79,11 +79,52 @@ class _IndigentScreenState extends State<IndigentScreen> {
                   'size': app['familySize']?.toString() ?? '0',
                 }),
               ),
+              const Divider(height: 24),
+              Text(
+                strings.t('visionValidationResults'),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+              ),
+              const SizedBox(height: 8),
+              if (app['documentMeta'] != null && (app['documentMeta'] as List).isNotEmpty)
+                ...((app['documentMeta'] as List).map((meta) {
+                  final isExp = meta['isExpired'] == true;
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: isExp ? AdminTheme.error.withValues(alpha: 0.05) : AdminTheme.success.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(color: isExp ? AdminTheme.error.withValues(alpha: 0.2) : AdminTheme.success.withValues(alpha: 0.2)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(isExp ? Icons.error_outline : Icons.check_circle_outline, size: 14, color: isExp ? AdminTheme.error : AdminTheme.success),
+                            const SizedBox(width: 4),
+                            Text(
+                              meta['documentType']?.toString() ?? 'Unknown Doc',
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: isExp ? AdminTheme.error : AdminTheme.success),
+                            ),
+                          ],
+                        ),
+                        if (meta['detectedDate'] != null)
+                          Text('Issued: ${meta['detectedDate']}', style: const TextStyle(fontSize: 11)),
+                        if (meta['validationSummary'] != null)
+                          Text(meta['validationSummary']!, style: const TextStyle(fontSize: 11, fontStyle: FontStyle.italic)),
+                      ],
+                    ),
+                  );
+                }))
+              else
+                Text(strings.t('noVisionDataAvailable'), style: const TextStyle(color: AdminTheme.textSecondary, fontSize: 12)),
               const SizedBox(height: 16),
               TextField(
                 controller: reasonCtrl,
                 decoration: InputDecoration(
                   labelText: strings.t('overrideReason'),
+                  hintText: strings.t('explainWhyOverriding'),
                 ),
                 maxLines: 2,
               ),

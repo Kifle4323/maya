@@ -16,6 +16,7 @@ import { IntegrationsModule } from '../integrations/integrations.module';
 import { Notification } from '../notifications/notification.entity';
 import { Payment } from '../payments/payment.entity';
 import { StorageModule } from '../storage/storage.module';
+import { VisionModule } from '../vision/vision.module';
 import { User } from '../users/user.entity';
 import { CbhiController } from './cbhi.controller';
 import { CbhiService } from './cbhi.service';
@@ -29,6 +30,7 @@ import { RegistrationService } from './registration.service';
     AuditModule,
     IntegrationsModule,
     StorageModule,
+    VisionModule,
     TypeOrmModule.forFeature([
       User,
       Household,

@@ -71,15 +71,53 @@ export class CoverageService {
     private readonly benefitPackageRepository: Repository<BenefitPackage>,
   ) {}
 
-  resolveRegistrationEligibility(dto: RegistrationStepTwoDto, householdSize: number): EligibilityDecision {
+  resolveRegistrationEligibility(
+    dto: RegistrationStepTwoDto,
+    householdSize: number,
+    visionResults?: any[],
+  ): EligibilityDecision {
     if (dto.membershipType === MembershipType.PAYING) {
-      return this.evaluateEligibility(dto.membershipType, dto.eligibilitySignals.employmentStatus, householdSize);
+      return this.evaluateEligibility(
+        dto.membershipType,
+        dto.eligibilitySignals?.employmentStatus as any,
+        householdSize,
+      );
     }
+
     const proofs = dto.indigentProofUploads ?? [];
     if (proofs.length < 1) {
-      throw new BadRequestException('Indigent membership requires at least one supporting document.');
+      throw new BadRequestException(
+        'Indigent membership requires at least one supporting document.',
+      );
     }
-    return { score: 100, approved: true, reason: 'Indigent pathway: supporting documents submitted.' };
+
+    const decision = this.evaluateEligibility(
+      dto.membershipType,
+      dto.eligibilitySignals?.employmentStatus as any,
+      householdSize,
+    );
+
+    // Automation Logic: Two-way proof (Vision API + Score)
+    if (visionResults && visionResults.length > 0) {
+      const validResults = visionResults.filter(
+        (r) => r.isValid && r.confidence >= 0.85,
+      );
+      if (validResults.length > 0) {
+        // Automatically approve if Vision is confident
+        decision.approved = true;
+        decision.reason += ` | Vision verified: ${validResults[0].documentType}`;
+      } else {
+        // Vision failed or is low confidence — gate for Admin review
+        decision.approved = false;
+        const mainIssue = visionResults[0]?.issues?.[0] ?? 'low confidence';
+        decision.reason += ` | Vision verification pending: ${mainIssue}`;
+      }
+    } else {
+      decision.approved = false;
+      decision.reason += ' | No valid vision results';
+    }
+
+    return decision;
   }
 
   evaluateEligibility(
@@ -267,6 +305,35 @@ export class CoverageService {
       annualCeiling: Number(coverage.benefitPackage?.annualCeiling ?? 0),
       benefitPackageId: coverage.benefitPackage?.id ?? null,
     };
+  }
+
+  private calculateTierPremium(tier: MembershipTier, householdSize: number): number {
+    let base = 500;
+    let extraRate = 150;
+
+    switch (tier) {
+      case MembershipTier.LOW_INCOME:
+        base = 350;
+        extraRate = 100;
+        break;
+      case MembershipTier.MIDDLE_INCOME:
+        base = 500;
+        extraRate = 150;
+        break;
+      case MembershipTier.HIGH_INCOME:
+        base = 650;
+        extraRate = 200;
+        break;
+      case MembershipTier.INDIGENT:
+        return 0;
+      default:
+        base = 500;
+        extraRate = 150;
+    }
+
+    const standardSize = 5;
+    const additionalMembers = Math.max(0, householdSize - standardSize);
+    return base + additionalMembers * extraRate;
   }
 
   private addMonths(date: Date, months: number) {

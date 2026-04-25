@@ -62,6 +62,12 @@ export class Claim extends AuditableEntity {
   @OneToMany(() => ClaimItem, (item) => item.claim, { cascade: true })
   items!: ClaimItem[];
 
+  @Column({ type: 'varchar', length: 32, nullable: true })
+  referralCode?: string | null;
+
+  @ManyToOne(() => HealthFacility, { nullable: true, onDelete: 'SET NULL' })
+  referredFromFacility?: HealthFacility | null;
+
   @OneToMany(() => Document, (document) => document.claim)
   documents!: Document[];
 }

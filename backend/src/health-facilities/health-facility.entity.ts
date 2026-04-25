@@ -4,6 +4,7 @@ import { Location } from '../locations/location.entity';
 import { FacilityService } from '../facility-services/facility-service.entity';
 import { FacilityUser } from '../facility-users/facility-user.entity';
 import { Claim } from '../claims/claim.entity';
+import { FacilityLevel } from '../common/enums/cbhi.enums';
 
 @Entity('health_facilities')
 export class HealthFacility extends AuditableEntity {
@@ -16,8 +17,8 @@ export class HealthFacility extends AuditableEntity {
   @Column({ type: 'varchar', length: 80, nullable: true })
   licenseNumber?: string | null;
 
-  @Column({ type: 'varchar', length: 120, nullable: true })
-  serviceLevel?: string | null;
+  @Column({ type: 'enum', enum: FacilityLevel, nullable: true })
+  serviceLevel?: FacilityLevel | null;
 
   @Column({ type: 'varchar', length: 32, nullable: true })
   phoneNumber?: string | null;

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
@@ -11,13 +11,17 @@ import {
   IndigentDecisionDto,
   OverrideIndigentApplicationDto,
 } from './indigent.dto';
+import { VisionService } from '../vision/vision.service';
 
 @Injectable()
 export class IndigentService {
   constructor(
     @InjectRepository(IndigentApplication)
     private readonly indigentRepository: Repository<IndigentApplication>,
+    private readonly visionService: VisionService,
   ) {}
+
+  private readonly logger = new Logger(IndigentService.name);
 
   evaluateIndigentApplication(
     data: CreateIndigentApplicationDto,
@@ -78,21 +82,36 @@ export class IndigentService {
     return { score, status, reason };
   }
 
-  async applyApplication(data: CreateIndigentApplicationDto) {
-    const hasExpiredDocuments = data.documentMeta?.some((doc) => doc.isExpired === true) ?? false;
-
-    if (hasExpiredDocuments) {
-      const expiredDocs = data.documentMeta
-        ?.filter((doc) => doc.isExpired)
-        .map((doc) => doc.documentType ?? 'Unknown document')
-        .join(', ');
-      throw new BadRequestException(
-        `Application rejected: expired document(s) detected (${expiredDocs}). ` +
-        'Please obtain updated certificates from your kebele before applying.',
-      );
+    const visionResults = [];
+    if (data.documents?.length) {
+       // If documents are passed as base64, validate them. 
+       // Note: Currently documents are expected to be URLs or Base64 depending on the source.
+       // We only validate if they look like base64.
+       for (const doc of data.documents) {
+         if (doc.length > 500) { // likely base64
+           try {
+             const res = await this.visionService.validateIndigentDocument(doc);
+             visionResults.push(res);
+           } catch (e) {
+             this.logger.error(`Vision validation failed: ${e.message}`);
+           }
+         }
+       }
     }
 
     const decision = this.evaluateIndigentApplication(data);
+
+    // Two-way proof gating
+    if (visionResults.length > 0) {
+      const validResults = visionResults.filter(r => r.isValid && r.confidence >= 0.85);
+      if (validResults.length > 0) {
+        decision.status = IndigentApplicationStatus.APPROVED;
+        decision.reason += ` | Vision verified: ${validResults[0].documentType}`;
+      } else {
+        decision.status = IndigentApplicationStatus.PENDING;
+        decision.reason += ` | Vision validation pending: ${visionResults[0]?.issues?.[0] ?? 'low confidence'}`;
+      }
+    }
     const application = this.indigentRepository.create({
       income: data.income,
       employmentStatus: data.employmentStatus,

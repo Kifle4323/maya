@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -153,7 +154,12 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
                 snapshot: state.registrationSnapshot,
                 isOffline: state.isOffline,
               );
-            default:
+            case RegistrationStep.start:
+            case RegistrationStep.error:
+              // Restart from personalInfo on unexpected states
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                regCubit.startRegistration();
+              });
               return const Scaffold(
                 body: Center(child: CircularProgressIndicator()),
               );
@@ -333,6 +339,19 @@ class _TempPasswordCard extends StatelessWidget {
   const _TempPasswordCard({required this.tempPassword});
   final String tempPassword;
 
+  Future<void> _copyCode(BuildContext context) async {
+    await Clipboard.setData(ClipboardData(text: tempPassword));
+    if (!context.mounted) return;
+    final strings = CbhiLocalizations.of(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(strings.t('tempPasswordCopied')),
+        backgroundColor: AppTheme.success,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final strings = CbhiLocalizations.of(context);
@@ -351,7 +370,7 @@ class _TempPasswordCard extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  strings.t('tempPasswordTitle'),
+                  strings.t('tempPasswordCardTitle'),
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
                     color: AppTheme.warning,
@@ -362,30 +381,58 @@ class _TempPasswordCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            strings.t('tempPasswordWarning'),
+            strings.t('tempPasswordCardBody'),
             style: const TextStyle(fontSize: 13),
           ),
           const SizedBox(height: 12),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: AppTheme.warning),
             ),
-            child: Text(
-              tempPassword,
-              style: const TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 8,
-                color: AppTheme.warning,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  tempPassword,
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 8,
+                    color: AppTheme.warning,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.copy, color: AppTheme.warning),
+                  onPressed: () => _copyCode(context),
+                  tooltip: strings.t('tempPasswordCopyCode'),
+                  constraints: const BoxConstraints(
+                    minWidth: 48,
+                    minHeight: 48,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: () => _copyCode(context),
+              icon: const Icon(Icons.copy, size: 16),
+              label: Text(strings.t('tempPasswordCopyCode')),
+              style: FilledButton.styleFrom(
+                backgroundColor: AppTheme.warning,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(0, 48),
               ),
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            strings.t('tempPasswordNote'),
+            strings.t('tempPasswordWarning'),
             style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary),
             textAlign: TextAlign.center,
           ),

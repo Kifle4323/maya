@@ -12,6 +12,7 @@ import '../shared/pin_service.dart';
 import '../theme/app_theme.dart';
 import 'auth_cubit.dart';
 import 'auth_state.dart';
+import 'otp_recovery_screen.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // AdaptiveAuthMethod
@@ -395,7 +396,7 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(strings.t('forgotPin')),
-        content: Text(strings.t('forgotPinMessage') ?? 'We will send an OTP to your registered phone number to recover access.'),
+        content: Text(strings.t('forgotPinMessage')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -404,11 +405,29 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
           FilledButton(
             onPressed: () {
               Navigator.pop(ctx);
-              // TODO: trigger OTP recovery flow
+              _navigateToOtpRecovery(context);
             },
             child: Text(strings.t('sendOtp')),
           ),
         ],
+      ),
+    );
+  }
+
+  void _navigateToOtpRecovery(BuildContext context) {
+    Navigator.of(context).push<void>(
+      PageRouteBuilder<void>(
+        pageBuilder: (_, __, ___) => const OtpRecoveryScreen(),
+        transitionDuration: const Duration(milliseconds: 300),
+        transitionsBuilder: (_, animation, __, child) => SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(1, 0),
+            end: Offset.zero,
+          ).animate(
+            CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+          ),
+          child: child,
+        ),
       ),
     );
   }

@@ -134,23 +134,59 @@ class _IndigentProofScreenState extends State<IndigentProofScreen> {
                 // Header
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(24),
+                  clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
-                    gradient: AppTheme.cardGradient,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusM),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        strings.t('supportingDocuments'),
-                        style: textTheme.headlineSmall?.copyWith(color: Colors.white),
+                    color: AppTheme.primary,
+                    borderRadius: BorderRadius.circular(AppTheme.radiusL),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.primary.withValues(alpha: 0.2),
+                        blurRadius: 24,
+                        offset: const Offset(0, 12),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        strings.t('indigentProofDescription'),
-                        style: textTheme.bodyMedium?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.9),
+                    ],
+                  ),
+                  child: Stack(
+                    children: [
+                      // Mesh Effect
+                      Positioned(
+                        top: -50,
+                        right: -50,
+                        child: Container(
+                          width: 150,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: RadialGradient(
+                              colors: [
+                                AppTheme.accent.withValues(alpha: 0.3),
+                                AppTheme.accent.withValues(alpha: 0.0),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ).animate(onPlay: (c) => c.repeat(reverse: true)).move(begin: const Offset(-10, -10), end: const Offset(10, 10), duration: 5.s),
+
+                      Padding(
+                        padding: const EdgeInsets.all(AppTheme.spacingL),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              strings.t('supportingDocuments'),
+                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              strings.t('indigentProofDescription'),
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Colors.white.withValues(alpha: 0.85),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -158,90 +194,119 @@ class _IndigentProofScreenState extends State<IndigentProofScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.attach_file, color: AppTheme.primary, size: 20),
-                            const SizedBox(width: 8),
-                            Text(
-                              strings.t('indigentProofDocuments'),
-                              style: textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.primary,
-                              ),
+                PremiumCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primary.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            const Spacer(),
-                            Text(
-                              '${_paths.length} / 3',
-                              style: textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+                            child: const Icon(Icons.attach_file, color: AppTheme.primary, size: 18),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            strings.t('indigentProofDocuments'),
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
                             ),
-                          ],
-                        ),
-                        const Divider(height: 32),
+                          ),
+                          const Spacer(),
+                          StatusPill(
+                            label: '${_paths.length} / 3',
+                            color: _paths.length > 0 ? AppTheme.primary : AppTheme.textSecondary,
+                            compact: true,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
 
-                        if (_paths.isEmpty)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 32),
-                            child: Center(
-                              child: Column(
-                                children: [
-                                  Icon(Icons.cloud_upload_outlined, 
-                                      size: 48, color: AppTheme.textSecondary.withValues(alpha: 0.4)),
-                                  const SizedBox(height: 12),
-                                  Text(
-                                    strings.t('noDocumentsYet'),
-                                    style: textTheme.bodyMedium?.copyWith(color: AppTheme.textSecondary),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    strings.t('tapAddToUpload'),
-                                    style: textTheme.bodySmall?.copyWith(color: AppTheme.textSecondary),
-                                  ),
-                                ],
+                      if (_paths.isEmpty)
+                        SpringTap(
+                          onTap: state.isLoading ? null : _addDocument,
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 48),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primary.withValues(alpha: 0.03),
+                              borderRadius: BorderRadius.circular(AppTheme.radiusM),
+                              border: Border.all(
+                                color: AppTheme.primary.withValues(alpha: 0.15),
+                                style: BorderStyle.solid,
+                                width: 1.5,
                               ),
                             ),
-                          )
-                        else
-                          ..._paths.asMap().entries.map((e) {
-                            final path = e.value;
-                            final name = p.basename(path);
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 12),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.surface,
-                                  borderRadius: BorderRadius.circular(AppTheme.radiusS),
-                                  border: Border.all(color: Theme.of(context).dividerColor),
+                            child: Column(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.primary.withValues(alpha: 0.08),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(Icons.cloud_upload_outlined, 
+                                      size: 32, color: AppTheme.primary),
                                 ),
-                                child: ListTile(
-                                  leading: const Icon(Icons.description_outlined, color: AppTheme.primary),
-                                  title: Text(name, maxLines: 1, overflow: TextOverflow.ellipsis),
-                                  trailing: IconButton(
-                                    icon: const Icon(Icons.delete_outline, color: AppTheme.error),
-                                    onPressed: () => _removeAt(e.key),
+                                const SizedBox(height: 16),
+                                Text(
+                                  strings.t('noDocumentsYet'),
+                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  strings.t('tapAddToUpload'),
+                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: AppTheme.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      else
+                        ..._paths.asMap().entries.map((e) {
+                          final path = e.value;
+                          final name = p.basename(path);
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AppTheme.surfaceLight,
+                                borderRadius: BorderRadius.circular(AppTheme.radiusS),
+                                border: Border.all(color: AppTheme.primary.withValues(alpha: 0.1)),
                               ),
-                            );
-                          }),
+                              child: ListTile(
+                                leading: const Icon(Icons.description_outlined, color: AppTheme.primary),
+                                title: Text(name, 
+                                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                                  maxLines: 1, 
+                                  overflow: TextOverflow.ellipsis
+                                ),
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.delete_outline, color: AppTheme.error, size: 20),
+                                  onPressed: () => _removeAt(e.key),
+                                ),
+                              ),
+                            ).animate().fadeIn().slideX(begin: 0.1, end: 0),
+                          );
+                        }),
 
-                        const SizedBox(height: 16),
-                        
-                        SizedBox(
-                          width: double.infinity,
-                          child: OutlinedButton.icon(
+                      if (_paths.isNotEmpty && _paths.length < 3)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: TextButton.icon(
                             onPressed: state.isLoading ? null : _addDocument,
-                            icon: const Icon(Icons.add_photo_alternate_outlined),
-                            label: Text(strings.t('addDocument')),
+                            icon: const Icon(Icons.add_circle_outline, size: 18),
+                            label: Text(strings.t('addAnotherDocument')),
                           ),
                         ),
-                      ],
-                    ),
+                    ],
                   ),
                 ),
 
@@ -271,29 +336,84 @@ class _IndigentProofScreenState extends State<IndigentProofScreen> {
                     ),
                   ),
 
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton(
-                    onPressed: (state.isLoading || _paths.isEmpty)
-                        ? null
-                        : () => regCubit.submitIndigentProofs(List.from(_paths)),
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    child: state.isLoading
-                        ? const SizedBox(
-                            height: 22,
-                            width: 22,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                          )
-                        : Text(strings.t('submitRegistration')),
-                  ),
+                LoadingButton(
+                  isLoading: state.isLoading,
+                  onPressed: _paths.isEmpty
+                      ? null
+                      : () => regCubit.submitIndigentProofs(List.from(_paths)),
+                  label: strings.t('submitRegistration'),
+                  icon: Icons.check_circle_outline,
                 ),
                 const SizedBox(height: 40),
               ],
             ),
           ),
-        ),
+          
+          // Scanning Overlay (Google Vision API visualization)
+          if (state.isLoading)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black.withValues(alpha: 0.75),
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 240,
+                        height: 160,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: AppTheme.accent, width: 2),
+                        ),
+                        child: Stack(
+                          children: [
+                            // Scanning line
+                            Positioned(
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              child: Container(
+                                height: 2,
+                                decoration: BoxDecoration(
+                                  color: AppTheme.accent,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppTheme.accent.withValues(alpha: 0.8),
+                                      blurRadius: 10,
+                                      spreadRadius: 2,
+                                    ),
+                                  ],
+                                ),
+                              ).animate(onPlay: (c) => c.repeat()).moveY(begin: 0, end: 158, duration: 2.s, curve: Curves.easeInOut),
+                            ),
+                            // Face/Document icon hint
+                            Center(
+                              child: Icon(Icons.document_scanner_outlined, color: Colors.white.withValues(alpha: 0.5), size: 64),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      Text(
+                        strings.t('scanningIndigentProofs'),
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        strings.t('googleVisionAiProcessing'),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ).animate().fadeIn(),
+            ),
+        ],
       ),
     );
   }

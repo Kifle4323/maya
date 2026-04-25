@@ -124,7 +124,6 @@ class _SubmitClaimScreenState extends State<SubmitClaimScreen> {
     }
   }
 
-  /// Opens the service catalog picker dialog and adds selected services to items list.
   Future<void> _openCatalogPicker() async {
     await showDialog<void>(
       context: context,
@@ -255,7 +254,7 @@ class _SubmitClaimScreenState extends State<SubmitClaimScreen> {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Confirm & Submit'),
+            child: Text(strings.t('confirmAndSubmit')),
           ),
         ],
       ),
@@ -532,9 +531,9 @@ class _SubmitClaimScreenState extends State<SubmitClaimScreen> {
                             const Spacer(),
                             // Catalog picker button
                             FilledButton.icon(
-                              onPressed: _openCatalogPicker,
+                              onPressed: _catalogLoaded ? _openCatalogPicker : null,
                               icon: const Icon(Icons.library_books_outlined, size: 16),
-                              label: const Text('Browse Catalog'),
+                              label: Text(strings.t('browseCatalog')),
                               style: FilledButton.styleFrom(
                                 backgroundColor: kPrimary,
                                 padding: const EdgeInsets.symmetric(
@@ -823,235 +822,284 @@ class _ServiceCatalogDialogState extends State<_ServiceCatalogDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      clipBehavior: Clip.antiAlias,
       child: SizedBox(
-        width: 720,
-        height: 580,
+        width: 560,
+        height: 600,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Header
+            // ── Header ──────────────────────────────────────────────────────
             Container(
-              padding: const EdgeInsets.fromLTRB(24, 20, 16, 16),
+              padding: const EdgeInsets.fromLTRB(20, 16, 12, 16),
               decoration: const BoxDecoration(
                 color: kPrimary,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.library_books_outlined,
-                      color: Colors.white, size: 22),
-                  const SizedBox(width: 12),
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'CBHI Benefit Package Catalog',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
-                          ),
-                        ),
-                        Text(
-                          'Select a covered service to add to the claim',
-                          style: TextStyle(
-                              color: Colors.white70, fontSize: 12),
-                        ),
-                      ],
+                  const Icon(
+                    Icons.library_books_outlined,
+                    color: Colors.white,
+                    size: 22,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      strings.t('browseCatalog'),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white),
+                    icon: const Icon(Icons.close, color: Colors.white, size: 20),
                     onPressed: () => Navigator.pop(context),
+                    constraints: const BoxConstraints(
+                      minWidth: 48,
+                      minHeight: 48,
+                    ),
                   ),
                 ],
               ),
             ),
 
-            // Search + category filter
+            // ── Search field ─────────────────────────────────────────────────
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-              child: Row(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              child: TextField(
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: strings.t('search'),
+                  prefixIcon: const Icon(Icons.search, size: 20),
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: kPrimary, width: 2),
+                  ),
+                ),
+                onChanged: (v) => setState(() => _search = v),
+              ),
+            ),
+
+            // ── Category filter chips ─────────────────────────────────────────
+            SizedBox(
+              height: 44,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 children: [
-                  Expanded(
-                    child: TextField(
-                      autofocus: true,
-                      onChanged: (v) => setState(() => _search = v),
-                      decoration: const InputDecoration(
-                        hintText: 'Search services...',
-                        prefixIcon: Icon(Icons.search, size: 18),
-                        isDense: true,
-                        contentPadding: EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 10),
+                  // "All" chip
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: FilterChip(
+                      label: Text(strings.t('allCategories')),
+                      selected: _selectedCategory == null,
+                      onSelected: (_) =>
+                          setState(() => _selectedCategory = null),
+                      selectedColor: kPrimary.withValues(alpha: 0.15),
+                      checkmarkColor: kPrimary,
+                      labelStyle: TextStyle(
+                        color: _selectedCategory == null
+                            ? kPrimary
+                            : kTextSecondary,
+                        fontWeight: _selectedCategory == null
+                            ? FontWeight.w600
+                            : FontWeight.normal,
+                        fontSize: 12,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  DropdownButton<String?>(
-                    value: _selectedCategory,
-                    hint: const Text('All categories',
-                        style: TextStyle(fontSize: 13)),
-                    underline: const SizedBox(),
-                    items: [
-                      const DropdownMenuItem<String?>(
-                        value: null,
-                        child: Text('All categories',
-                            style: TextStyle(fontSize: 13)),
+                  // Category chips
+                  ..._categories.map((cat) {
+                    final isSelected = _selectedCategory == cat.id;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: FilterChip(
+                        avatar: Icon(cat.icon, size: 14, color: cat.color),
+                        label: Text(cat.id),
+                        selected: isSelected,
+                        onSelected: (_) => setState(() =>
+                            _selectedCategory = isSelected ? null : cat.id),
+                        selectedColor: cat.color.withValues(alpha: 0.15),
+                        checkmarkColor: cat.color,
+                        labelStyle: TextStyle(
+                          color: isSelected ? cat.color : kTextSecondary,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.normal,
+                          fontSize: 12,
+                        ),
                       ),
-                      ..._kCatalog.map((cat) => DropdownMenuItem<String?>(
-                            value: cat.id,
-                            child: Row(
-                              children: [
-                                Icon(cat.icon, size: 16, color: cat.color),
-                                const SizedBox(width: 6),
-                                Text(cat.id,
-                                    style: const TextStyle(fontSize: 13)),
-                              ],
-                            ),
-                          )),
-                    ],
-                    onChanged: (v) =>
-                        setState(() => _selectedCategory = v),
-                  ),
+                    );
+                  }),
                 ],
               ),
             ),
 
-            const SizedBox(height: 8),
             const Divider(height: 1),
 
-            // Service list
+            // ── Service list ─────────────────────────────────────────────────
             Expanded(
-              child: _filteredServices.isEmpty
-                  ? const Center(
-                      child: Text('No services found',
-                          style: TextStyle(color: Colors.grey)),
-                    )
-                  : ListView.separated(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      itemCount: _filteredServices.length,
-                      separatorBuilder: (_, __) =>
-                          const Divider(height: 1, indent: 56),
-                      itemBuilder: (ctx, i) {
-                        final svc = _filteredServices[i];
-                        final catId = _categoryForService(svc.code);
-                        final color = _colorForCategory(catId);
-                        final catLabel = _labelForCategory(catId);
-                        return ListTile(
-                          dense: true,
-                          leading: Container(
-                            width: 36,
-                            height: 36,
-                            decoration: BoxDecoration(
-                              color: color.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(
-                              _kCatalog
-                                  .firstWhere((c) => c.id == catId)
-                                  .icon,
-                              color: color,
-                              size: 18,
-                            ),
+              child: Builder(
+                builder: (context) {
+                  final services = _filteredServices;
+                  if (services.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.search_off_outlined,
+                            size: 48,
+                            color: kTextSecondary.withValues(alpha: 0.4),
                           ),
-                          title: Text(
-                            svc.name,
+                          const SizedBox(height: 12),
+                          Text(
+                            strings.t('noServicesInCategory'),
                             style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13,
+                              color: kTextSecondary,
+                              fontSize: 14,
                             ),
                           ),
-                          subtitle: Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: color.withValues(alpha: 0.08),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  catLabel.split('(').first.trim(),
-                                  style: TextStyle(
-                                    color: color,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                svc.code,
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.grey,
-                                  fontFamily: 'monospace',
-                                ),
-                              ),
-                            ],
+                        ],
+                      ),
+                    );
+                  }
+
+                  return ListView.separated(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: services.length,
+                    separatorBuilder: (_, __) =>
+                        const Divider(height: 1, indent: 16, endIndent: 16),
+                    itemBuilder: (context, index) {
+                      final svc = services[index];
+                      final catId = _categoryForService(svc.code);
+                      final catColor = _colorForCategory(catId);
+
+                      return InkWell(
+                        onTap: () {
+                          widget.onSelected(svc.name, svc.code, svc.defaultPrice);
+                          Navigator.pop(context);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
                           ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
+                          child: Row(
                             children: [
-                              Text(
-                                'ETB ${svc.defaultPrice.toStringAsFixed(0)}',
-                                style: TextStyle(
-                                  color: color,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 13,
+                              // Category color indicator
+                              Container(
+                                width: 4,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: catColor,
+                                  borderRadius: BorderRadius.circular(2),
                                 ),
                               ),
                               const SizedBox(width: 12),
-                              FilledButton(
-                                onPressed: () {
-                                  widget.onSelected(
-                                      svc.name, svc.code, svc.defaultPrice);
-                                  Navigator.pop(context);
-                                },
-                                style: FilledButton.styleFrom(
-                                  backgroundColor: color,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
-                                  minimumSize: Size.zero,
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
+
+                              // Service info
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      svc.name,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                        color: kTextDark,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 6,
+                                            vertical: 2,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: catColor.withValues(alpha: 0.12),
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                          ),
+                                          child: Text(
+                                            svc.code,
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w700,
+                                              color: catColor,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          _labelForCategory(catId),
+                                          style: const TextStyle(
+                                            fontSize: 11,
+                                            color: kTextSecondary,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                                child: const Text('Add',
-                                    style: TextStyle(fontSize: 12)),
+                              ),
+
+                              // Default price
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    'ETB ${svc.defaultPrice.toStringAsFixed(0)}',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 13,
+                                      color: kPrimary,
+                                    ),
+                                  ),
+                                  const Text(
+                                    'default',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: kTextSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(width: 8),
+                              const Icon(
+                                Icons.add_circle_outline,
+                                color: kPrimary,
+                                size: 20,
                               ),
                             ],
                           ),
-                          onTap: () {
-                            widget.onSelected(
-                                svc.name, svc.code, svc.defaultPrice);
-                            Navigator.pop(context);
-                          },
-                        );
-                      },
-                    ),
-            ),
-
-            // Footer hint
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade50,
-                borderRadius: const BorderRadius.vertical(
-                    bottom: Radius.circular(16)),
-                border: Border(top: BorderSide(color: Colors.grey.shade200)),
-              ),
-              child: const Row(
-                children: [
-                  Icon(Icons.info_outline, size: 14, color: Colors.grey),
-                  SizedBox(width: 6),
-                  Text(
-                    'Unit prices are default estimates — adjust as needed after adding.',
-                    style: TextStyle(fontSize: 11, color: Colors.grey),
-                  ),
-                ],
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ),
           ],

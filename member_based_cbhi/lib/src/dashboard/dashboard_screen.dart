@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,6 +11,7 @@ import '../cbhi_localizations.dart';
 import '../cbhi_state.dart';
 import '../coverage/renewal_reminder_widget.dart';
 import '../family/my_family_cubit.dart';
+import '../indigent/indigent_application_screen.dart';
 import '../payment/payment_screen.dart';
 import '../shared/animated_widgets.dart';
 import '../shared/premium_widgets.dart';
@@ -52,43 +54,67 @@ class DashboardScreen extends StatelessWidget {
             padding: const EdgeInsets.all(AppTheme.spacingM),
             children: [
               _SetupBanner(),
-              _CoverageHeroCard(
-                snapshot: snapshot,
-                isFamilyMember: isFamilyMember,
-                isIndigent: isIndigent,
-              )
-                  .animate()
-                  .fadeIn(duration: 500.ms)
-                  .slideY(begin: 0.1, end: 0, duration: 500.ms, curve: Curves.easeOutCubic),
-              const SizedBox(height: AppTheme.spacingM),
-              _QuickStatsRow(
-                snapshot: snapshot,
-                isFamilyMember: isFamilyMember,
-                isIndigent: isIndigent,
-              )
-                  .animate()
-                  .fadeIn(duration: 400.ms, delay: 150.ms)
-                  .slideY(begin: 0.08, end: 0, duration: 400.ms, delay: 150.ms),
-              const SizedBox(height: AppTheme.spacingM),
+              // Bento Top Section
+              BentoGrid(
+                crossAxisCount: 2,
+                children: [
+                  // Full width hero
+                  SizedBox(
+                    width: double.infinity,
+                    child: _CoverageHeroCard(
+                      snapshot: snapshot,
+                      isFamilyMember: isFamilyMember,
+                      isIndigent: isIndigent,
+                    ),
+                  )
+                      .animate()
+                      .fadeIn(duration: 600.ms)
+                      .scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1), curve: Curves.easeOutBack),
+                  
+                  // Grid items
+                  _QuickStatTile(
+                    label: strings.t('coverage'),
+                    value: snapshot.coverageStatus,
+                    icon: Icons.verified_outlined,
+                    color: _coverageColor(snapshot.coverageStatus),
+                  ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2, end: 0),
+                  
+                  if (isFamilyMember)
+                    _QuickStatTile(
+                      label: strings.t('eligibility'),
+                      value: snapshot.eligibility?['approved'] == true ? strings.t('eligible') : strings.t('pending'),
+                      icon: Icons.verified_user_outlined,
+                      color: snapshot.eligibility?['approved'] == true ? AppTheme.success : AppTheme.warning,
+                    ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.2, end: 0)
+                  else if (isIndigent)
+                    _QuickStatTile(
+                      label: strings.t('indigentApplication'),
+                      value: snapshot.household['indigentStatus']?.toString() ?? strings.t('pending'),
+                      icon: Icons.volunteer_activism_outlined,
+                      color: AppTheme.accent,
+                    ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.2, end: 0)
+                  else
+                    _QuickStatTile(
+                      label: strings.t('members'),
+                      value: snapshot.familyMembers.length.toString(),
+                      icon: Icons.family_restroom_outlined,
+                      color: AppTheme.primary,
+                    ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.2, end: 0),
+                ],
+              ),
+              
+              const SizedBox(height: AppTheme.spacingL),
+              
               if (canRenew && !isIndigent) ...[
                 _RenewalSection(
                   snapshot: snapshot,
                   isSyncing: state.isSyncing,
                   onRenew: () => _showRenewCoverageSheet(
                     context, snapshot, context.read<AppCubit>().repository),
-                )
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 200.ms)
-                    .slideY(begin: 0.06, end: 0, duration: 400.ms, delay: 200.ms),
+                ).animate().fadeIn(delay: 400.ms),
                 const SizedBox(height: AppTheme.spacingM),
               ],
-              if (isIndigent) ...[
-                _IndigentStatusSection(snapshot: snapshot)
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 200.ms)
-                    .slideY(begin: 0.06, end: 0, duration: 400.ms, delay: 200.ms),
-                const SizedBox(height: AppTheme.spacingM),
-              ],
+              
               _SyncStatusCard(
                 snapshot: snapshot,
                 isFamilyMember: isFamilyMember,
@@ -96,24 +122,25 @@ class DashboardScreen extends StatelessWidget {
                 isSyncing: state.isSyncing,
                 onRenew: () => _showRenewCoverageSheet(
                   context, snapshot, context.read<AppCubit>().repository),
-              )
-                  .animate()
-                  .fadeIn(duration: 400.ms, delay: 300.ms)
-                  .slideY(begin: 0.06, end: 0, duration: 400.ms, delay: 300.ms),
+              ).animate().fadeIn(delay: 450.ms),
+              
               const SizedBox(height: AppTheme.spacingL),
+              
               if (!isIndigent) ...[
-                _PaymentHistorySection(snapshot: snapshot)
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 380.ms),
+                _PaymentHistorySection(snapshot: snapshot).animate().fadeIn(delay: 500.ms),
                 const SizedBox(height: AppTheme.spacingL),
               ],
-              _BenefitUtilizationSection(snapshot: snapshot)
-                  .animate()
-                  .fadeIn(duration: 400.ms, delay: 430.ms),
+              
+              _BenefitUtilizationSection(snapshot: snapshot).animate().fadeIn(delay: 550.ms),
+              
               const SizedBox(height: AppTheme.spacingL),
-              _RecentNotificationsSection(snapshot: snapshot)
-                  .animate()
-                  .fadeIn(duration: 400.ms, delay: 480.ms),
+              
+              if (snapshot.referrals.isNotEmpty) ...[
+                _ReferralsSection(snapshot: snapshot).animate().fadeIn(delay: 600.ms),
+                const SizedBox(height: AppTheme.spacingL),
+              ],
+              
+              _RecentNotificationsSection(snapshot: snapshot).animate().fadeIn(delay: 650.ms),
               const SizedBox(height: AppTheme.spacingL),
             ],
           ),
@@ -153,140 +180,189 @@ class _CoverageHeroCard extends StatelessWidget {
     if (snapshot.householdCode.isEmpty) {
       subtitle = strings.t('noHouseholdSynced');
     } else if (isFamilyMember) {
-      subtitle = snapshot.householdCode;
-    } else {
-      subtitle = '${snapshot.viewerName} \u2022 ${snapshot.householdCode}';
-    }
-
-    return Container(
+      subtitle = snapshot.    return Container(
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        gradient: AppTheme.heroGradient,
+        color: AppTheme.primary,
         borderRadius: BorderRadius.circular(AppTheme.radiusL),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primary.withValues(alpha: 0.30),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
+            color: AppTheme.primary.withValues(alpha: 0.25),
+            blurRadius: 32,
+            offset: const Offset(0, 16),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(AppTheme.spacingL),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.18),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusS),
-                ),
-                child: Icon(
-                  isFamilyMember
-                      ? Icons.person
-                      : (isIndigent
-                          ? Icons.volunteer_activism_outlined
-                          : Icons.home_work_outlined),
-                  color: Colors.white,
-                  size: 22,
+          // Aurora Mesh Effect (Layered gradients)
+          Positioned(
+            top: -100,
+            right: -100,
+            child: Container(
+              width: 300,
+              height: 300,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    AppTheme.accent.withValues(alpha: 0.4),
+                    AppTheme.accent.withValues(alpha: 0.0),
+                  ],
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  isFamilyMember
-                      ? strings.t('beneficiaryProfile')
-                      : strings.t('household'),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.85),
+            ),
+          ).animate(onPlay: (c) => c.repeat(reverse: true)).move(begin: const Offset(-20, -20), end: const Offset(20, 20), duration: 8.s, curve: Curves.easeInOut),
+          
+          Positioned(
+            bottom: -50,
+            left: -50,
+            child: Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    Colors.white.withValues(alpha: 0.15),
+                    Colors.white.withValues(alpha: 0.0),
+                  ],
+                ),
+              ),
+            ),
+          ).animate(onPlay: (c) => c.repeat(reverse: true)).move(begin: const Offset(10, 10), end: const Offset(-10, -10), duration: 6.s, curve: Curves.easeInOut),
+
+          Padding(
+            padding: const EdgeInsets.all(AppTheme.spacingL),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.18),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusS),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                      ),
+                      child: Icon(
+                        isFamilyMember
+                            ? Icons.person
+                            : (isIndigent
+                                ? Icons.volunteer_activism_outlined
+                                : Icons.home_work_outlined),
+                        color: Colors.white,
+                        size: 22,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        isFamilyMember
+                            ? strings.t('beneficiaryProfile')
+                            : strings.t('household'),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              color: Colors.white.withValues(alpha: 0.8),
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.5,
+                            ),
+                      ),
+                    ),
+                    // Status pill (Glass style)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.20),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: status.toUpperCase() == 'ACTIVE' ? Colors.white : AppTheme.gold,
+                            ),
+                          ).animate(onPlay: (c) => c.repeat()).scale(begin: const Offset(1, 1), end: const Offset(1.5, 1.5), duration: 1.s, curve: Curves.easeInOut),
+                          const SizedBox(width: 6),
+                          Text(
+                            status,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  snapshot.householdCode.isEmpty
+                      ? strings.t('guestSession')
+                      : snapshot.viewerName,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.5,
+                      ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.8),
                         fontWeight: FontWeight.w500,
                       ),
                 ),
-              ),
-              // Status badge
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.20),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  status,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
+                if (isFamilyMember || isIndigent || expiryLabel.isNotEmpty) ...[
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          isFamilyMember 
+                            ? Icons.badge_outlined 
+                            : (isIndigent ? Icons.handshake_outlined : Icons.calendar_today_outlined),
+                          color: Colors.white.withValues(alpha: 0.9),
+                          size: 14,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          isFamilyMember 
+                            ? strings.t('familyMemberSession')
+                            : (isIndigent ? strings.t('indigentMembership') : expiryLabel),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            snapshot.householdCode.isEmpty
-                ? strings.t('guestSession')
-                : snapshot.viewerName,
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            subtitle,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.white.withValues(alpha: 0.85),
-                ),
-          ),
-          if (isFamilyMember) ...[
-            const SizedBox(height: 10),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                strings.t('familyMemberSession'),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+                ],
+              ],
             ),
-          ] else if (isIndigent) ...[
-            const SizedBox(height: 10),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(20),
+          ),
+        ],
+      ),
+    );
               ),
-              child: Text(
-                strings.t('indigentMembership'),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ] else if (expiryLabel.isNotEmpty) ...[
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                const Icon(Icons.schedule_outlined,
-                    color: Colors.white70, size: 14),
-                const SizedBox(width: 4),
-                Text(
-                  expiryLabel,
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 12,
-                  ),
                 ),
               ],
             ),
@@ -297,79 +373,38 @@ class _CoverageHeroCard extends StatelessWidget {
   }
 }
 
-// ─── _QuickStatsRow ──────────────────────────────────────────────────────────
+// ─── _QuickStatTile ──────────────────────────────────────────────────────────
 
-class _QuickStatsRow extends StatelessWidget {
-  const _QuickStatsRow({
-    required this.snapshot,
-    required this.isFamilyMember,
-    required this.isIndigent,
+class _QuickStatTile extends StatelessWidget {
+  const _QuickStatTile({
+    required this.label,
+    required this.value,
+    required this.icon,
+    this.color,
   });
 
-  final CbhiSnapshot snapshot;
-  final bool isFamilyMember;
-  final bool isIndigent;
+  final String label;
+  final String value;
+  final IconData icon;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
-    final strings = CbhiLocalizations.of(context);
-    final eligibility = snapshot.eligibility ?? const <String, dynamic>{};
-
-    // Left tile: always coverage status
-    final leftTile = MetricTile(
-      label: strings.t('coverage'),
-      value: snapshot.coverageStatus,
-      icon: Icons.verified_outlined,
-      color: _coverageColor(snapshot.coverageStatus),
-    );
-
-    // Right tile: role/type dependent
-    Widget rightTile;
-    if (isFamilyMember) {
-      rightTile = MetricTile(
-        label: strings.t('eligibility'),
-        value: eligibility['approved'] == true
-            ? strings.t('eligible')
-            : strings.t('pending'),
-        icon: Icons.verified_user_outlined,
-        color: eligibility['approved'] == true ? AppTheme.success : AppTheme.warning,
-      );
-    } else if (isIndigent) {
-      final indigentStatus =
-          snapshot.household['indigentStatus']?.toString() ??
-              snapshot.household['indigentApplicationStatus']?.toString() ??
-              strings.t('pending');
-      rightTile = MetricTile(
-        label: strings.t('indigentApplication'),
-        value: indigentStatus,
-        icon: Icons.volunteer_activism_outlined,
-        color: AppTheme.accent,
-      );
-    } else {
-      rightTile = MetricTile(
-        label: strings.t('members'),
-        value: snapshot.familyMembers.length.toString(),
-        icon: Icons.family_restroom_outlined,
-        color: AppTheme.primary,
-      );
-    }
-
-    return Row(
-      children: [
-        Expanded(child: leftTile),
-        const SizedBox(width: 12),
-        Expanded(child: rightTile),
-      ],
+    return MetricTile(
+      label: label,
+      value: value,
+      icon: icon,
+      color: color,
     );
   }
-
-  Color _coverageColor(String status) => switch (status.toUpperCase()) {
-        'ACTIVE' => AppTheme.success,
-        'EXPIRED' => AppTheme.error,
-        'PENDING_RENEWAL' || 'WAITING_PERIOD' => AppTheme.warning,
-        _ => AppTheme.textSecondary,
-      };
 }
+
+Color _coverageColor(String status) => switch (status.toUpperCase()) {
+      'ACTIVE' => AppTheme.success,
+      'EXPIRED' => AppTheme.error,
+      'PENDING_RENEWAL' || 'WAITING_PERIOD' => AppTheme.warning,
+      _ => AppTheme.textSecondary,
+    };
 
 // ─── _RenewalSection ─────────────────────────────────────────────────────────
 
@@ -400,7 +435,7 @@ class _RenewalSection extends StatelessWidget {
     // Show renew button when not active, expired, or expiring soon
     final showRenewButton = !isActive || isExpiringSoon || isExpired;
 
-    return GlassCard(
+    return PremiumCard(
       padding: const EdgeInsets.all(AppTheme.spacingM),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -420,26 +455,20 @@ class _RenewalSection extends StatelessWidget {
               Expanded(
                 child: Text(
                   strings.t('renewalStatus'),
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
               if (isActive && !isExpiringSoon)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: AppTheme.success.withValues(alpha: 0.10),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                        color: AppTheme.success.withValues(alpha: 0.25)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.check_circle_outline,
-                          color: AppTheme.success, size: 14),
-                      const SizedBox(width: 4),
-                      Text(
+                StatusPill(
+                  label: strings.t('active'),
+                  color: AppTheme.success,
+                  compact: true,
+                ),
+            ],
+          ),
+          const SizedBox(height: 16),
                         strings.t('eligible'),
                         style: const TextStyle(
                           color: AppTheme.success,
@@ -462,8 +491,9 @@ class _RenewalSection extends StatelessWidget {
                 Expanded(
                   child: _InfoChip(
                     label: strings.t('premium'),
-                    value:
-                        '${snapshot.premiumAmount.toStringAsFixed(0)} ETB',
+                    value: snapshot.premiumAmount > 0
+                        ? '${snapshot.premiumAmount.toStringAsFixed(0)} ETB'
+                        : _calcDisplayPremium(snapshot),
                     icon: Icons.payments_outlined,
                     color: AppTheme.gold,
                   ),
@@ -487,7 +517,7 @@ class _RenewalSection extends StatelessWidget {
               label: Text(
                 snapshot.premiumAmount > 0
                     ? strings.t('renewCoverage')
-                    : strings.t('confirmRenewal'),
+                    : strings.t('payPremiumNow'),
               ),
             ),
           ],
@@ -497,8 +527,15 @@ class _RenewalSection extends StatelessWidget {
   }
 }
 
-// ─── _IndigentStatusSection ──────────────────────────────────────────────────
+/// When premiumAmount is 0 (pay-later case), calculate from member count.
+String _calcDisplayPremium(CbhiSnapshot snapshot) {
+  final memberCount =
+      (snapshot.household['memberCount'] as num?)?.toInt() ?? 1;
+  final calculated = memberCount * 120;
+  return '$calculated ETB';
+}
 
+// ─── _IndigentStatusSection ──────────────────────────────────────────────────
 class _IndigentStatusSection extends StatelessWidget {
   const _IndigentStatusSection({required this.snapshot});
 
@@ -613,11 +650,54 @@ class _IndigentStatusSection extends StatelessWidget {
                 ],
               ),
             ),
+          ] else ...[
+            // Pending or Rejected — show upload proof button
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: () => _navigateToIndigentApplication(context, snapshot),
+                icon: const Icon(Icons.upload_file_outlined, size: 18),
+                label: Text(strings.t('uploadProofDocuments')),
+                style: FilledButton.styleFrom(
+                  backgroundColor: statusColor,
+                ),
+              ),
+            ),
           ],
         ],
       ),
     );
   }
+}
+
+void _navigateToIndigentApplication(
+    BuildContext context, CbhiSnapshot snapshot) {
+  final appCubit = context.read<AppCubit>();
+  final authCubit = context.read<AuthCubit>();
+  final session = authCubit.state.session;
+  if (session == null) return;
+  final memberCount = snapshot.familyMembers.isNotEmpty
+      ? snapshot.familyMembers.length
+      : ((snapshot.household['memberCount'] as num?)?.toInt() ?? 1);
+  final employment =
+      snapshot.household['headEmploymentStatus']?.toString() ??
+          snapshot.household['employmentStatus']?.toString() ??
+          'unemployed';
+  Navigator.of(context).push<void>(
+    MaterialPageRoute<void>(
+      builder: (_) => IndigentApplicationScreen(
+        repository: appCubit.repository,
+        userId: session.user.id,
+        familySize: memberCount,
+        employmentStatus: employment,
+        onSubmitted: (_) {
+          Navigator.of(context).pop();
+          appCubit.sync();
+        },
+      ),
+    ),
+  );
 }
 
 // ─── _SyncStatusCard ─────────────────────────────────────────────────────────
@@ -1184,7 +1264,9 @@ Future<void> _showRenewCoverageSheet(
 
 // ─── Setup Banner ─────────────────────────────────────────────────────────────
 
-/// Shown after registration until the user changes their temporary password.
+/// Shown after registration until the user sets their password.
+/// Displays the 6-digit setup code prominently so the user can copy it
+/// and use it in the Change Password dialog without being signed out.
 class _SetupBanner extends StatefulWidget {
   @override
   State<_SetupBanner> createState() => _SetupBannerState();
@@ -1192,6 +1274,8 @@ class _SetupBanner extends StatefulWidget {
 
 class _SetupBannerState extends State<_SetupBanner> {
   bool _visible = false;
+  String? _setupCode;
+  bool _codeCopied = false;
 
   @override
   void initState() {
@@ -1203,14 +1287,205 @@ class _SetupBannerState extends State<_SetupBanner> {
     final prefs = await SharedPreferences.getInstance();
     final hasTempPassword = prefs.getBool(_kTempPasswordKey) ?? false;
     if (hasTempPassword && mounted) {
-      setState(() => _visible = true);
+      final code = prefs.getString('cbhi_setup_code') ??
+          prefs.getString('cbhi_temp_password');
+      setState(() {
+        _visible = true;
+        _setupCode = code;
+      });
     }
   }
 
   Future<void> _dismiss() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_kTempPasswordKey);
+    await prefs.remove('cbhi_setup_code');
+    await prefs.remove('cbhi_temp_password');
     if (mounted) setState(() => _visible = false);
+  }
+
+  Future<void> _copyCode() async {
+    if (_setupCode == null) return;
+    await Clipboard.setData(ClipboardData(text: _setupCode!));
+    if (!mounted) return;
+    setState(() => _codeCopied = true);
+    final strings = CbhiLocalizations.of(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(strings.t('setupCodeCopied')),
+        duration: const Duration(seconds: 2),
+        backgroundColor: AppTheme.success,
+      ),
+    );
+    await Future<void>.delayed(const Duration(seconds: 2));
+    if (mounted) setState(() => _codeCopied = false);
+  }
+
+  Future<void> _showSetPasswordDialog(BuildContext context) async {
+    final strings = CbhiLocalizations.of(context);
+    final newCtrl = TextEditingController();
+    final confirmCtrl = TextEditingController();
+    String? error;
+    bool loading = false;
+
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: Text(strings.t('changePassword')),
+          content: SizedBox(
+            width: 340,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Show setup code for reference
+                if (_setupCode != null) ...[
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primary.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusS),
+                      border: Border.all(
+                          color: AppTheme.primary.withValues(alpha: 0.2)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.info_outline,
+                            color: AppTheme.primary, size: 16),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            strings.t('setupCodeReference'),
+                            style: const TextStyle(
+                                fontSize: 12, color: AppTheme.primary),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: _copyCode,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primary.withValues(alpha: 0.12),
+                              borderRadius:
+                                  BorderRadius.circular(AppTheme.radiusS),
+                            ),
+                            child: Text(
+                              _setupCode!,
+                              style: const TextStyle(
+                                fontFamily: 'monospace',
+                                fontWeight: FontWeight.w900,
+                                fontSize: 16,
+                                letterSpacing: 4,
+                                color: AppTheme.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                if (error != null) ...[
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: AppTheme.error.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(error!,
+                        style: const TextStyle(
+                            color: AppTheme.error, fontSize: 13)),
+                  ),
+                ],
+                TextField(
+                  controller: newCtrl,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: strings.t('newPassword'),
+                    prefixIcon: const Icon(Icons.lock_reset_outlined),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: confirmCtrl,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: strings.t('confirmPassword'),
+                    prefixIcon: const Icon(Icons.lock_outline),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(strings.t('cancel')),
+            ),
+            FilledButton(
+              onPressed: loading
+                  ? null
+                  : () async {
+                      if (newCtrl.text.length < 6) {
+                        setDialogState(
+                            () => error = strings.t('passwordTooShort'));
+                        return;
+                      }
+                      if (newCtrl.text != confirmCtrl.text) {
+                        setDialogState(
+                            () => error = strings.t('passwordsDoNotMatch'));
+                        return;
+                      }
+                      setDialogState(() => loading = true);
+                      try {
+                        // Use set-initial-password — does NOT invalidate session
+                        await ctx
+                            .read<AppCubit>()
+                            .repository
+                            .setInitialPasswordDirect(
+                                password: newCtrl.text);
+                        // Clear all setup code flags
+                        final p = await SharedPreferences.getInstance();
+                        await p.remove('cbhi_setup_code');
+                        await p.remove('cbhi_temp_password');
+                        await p.remove(_kTempPasswordKey);
+
+                        if (ctx.mounted) Navigator.pop(ctx);
+                        if (context.mounted) {
+                          setState(() => _visible = false);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(strings.t('passwordChanged')),
+                              backgroundColor: AppTheme.success,
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        setDialogState(() {
+                          error = e
+                              .toString()
+                              .replaceFirst('Exception: ', '');
+                          loading = false;
+                        });
+                      }
+                    },
+              child: loading
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: Colors.white),
+                    )
+                  : Text(strings.t('save')),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -1219,22 +1494,22 @@ class _SetupBannerState extends State<_SetupBanner> {
     final strings = CbhiLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.warning.withValues(alpha: 0.10),
+        color: AppTheme.warning.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(AppTheme.radiusM),
-        border: Border.all(color: AppTheme.warning.withValues(alpha: 0.4)),
+        border: Border.all(color: AppTheme.warning.withValues(alpha: 0.35)),
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.lock_outline, color: AppTheme.warning, size: 20),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
+          Row(
+            children: [
+              const Icon(Icons.lock_open_outlined,
+                  color: AppTheme.warning, size: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
                   strings.t('setupAccountTitle'),
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
@@ -1242,57 +1517,101 @@ class _SetupBannerState extends State<_SetupBanner> {
                     fontSize: 13,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  strings.t('tempPasswordWarning'),
-                  style: const TextStyle(fontSize: 12, height: 1.4),
+              ),
+              IconButton(
+                icon: const Icon(Icons.close, size: 16),
+                onPressed: _dismiss,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                color: AppTheme.textSecondary,
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            strings.t('setupCodeBannerBody'),
+            style: const TextStyle(fontSize: 12, height: 1.4),
+          ),
+          // Setup code display — tap to copy
+          if (_setupCode != null) ...[
+            const SizedBox(height: 12),
+            GestureDetector(
+              onTap: _copyCode,
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(AppTheme.radiusS),
+                  border: Border.all(
+                      color: AppTheme.warning.withValues(alpha: 0.5)),
                 ),
-                const SizedBox(height: 8),
-                Row(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    FilledButton.tonal(
-                      style: FilledButton.styleFrom(
-                        backgroundColor:
-                            AppTheme.warning.withValues(alpha: 0.15),
-                        foregroundColor: AppTheme.warning,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      onPressed: () {
-                        _dismiss();
-                        _ProfileTabNotification().dispatch(context);
-                      },
-                      child: Text(
-                        strings.t('changePassword'),
-                        style: const TextStyle(fontSize: 12),
+                    Text(
+                      _setupCode!,
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 8,
+                        color: AppTheme.warning,
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 6),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      onPressed: _dismiss,
-                      child: Text(
-                        strings.t('remindMeLater'),
-                        style: const TextStyle(fontSize: 12),
-                      ),
+                    const SizedBox(width: 12),
+                    Icon(
+                      _codeCopied
+                          ? Icons.check_circle_outline
+                          : Icons.copy_outlined,
+                      color: _codeCopied
+                          ? AppTheme.success
+                          : AppTheme.warning,
+                      size: 20,
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.close, size: 16),
-            onPressed: _dismiss,
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
+            const SizedBox(height: 4),
+            Center(
+              child: Text(
+                strings.t('tapToCopyCode'),
+                style: const TextStyle(
+                    fontSize: 11, color: AppTheme.textSecondary),
+              ),
+            ),
+          ],
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppTheme.warning,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  ),
+                  onPressed: () => _showSetPasswordDialog(context),
+                  icon: const Icon(Icons.lock_reset_outlined, size: 16),
+                  label: Text(
+                    strings.t('setPasswordNow'),
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              TextButton(
+                style: TextButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                ),
+                onPressed: _dismiss,
+                child: Text(
+                  strings.t('remindMeLater'),
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -1300,6 +1619,101 @@ class _SetupBannerState extends State<_SetupBanner> {
   }
 }
 
-class _ProfileTabNotification extends Notification {}
+class ProfileTabNotification extends Notification {}
+
+class FamilyTabNotification extends Notification {}
+
+class _ReferralsSection extends StatelessWidget {
+  const _ReferralsSection({required this.snapshot});
+
+  final CbhiSnapshot snapshot;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = CbhiLocalizations.of(context);
+    final activeReferrals =
+        snapshot.referrals.where((r) => r['isUsed'] == false).toList();
+
+    if (activeReferrals.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionTitle(
+          title: strings.t('activeReferrals'),
+          icon: Icons.medical_services_outlined,
+        ),
+        const SizedBox(height: 12),
+        ...activeReferrals.map((ref) => _ReferralCard(ref: ref)),
+      ],
+    );
+  }
+}
+
+class _ReferralCard extends StatelessWidget {
+  const _ReferralCard({required this.ref});
+
+  final Map<String, dynamic> ref;
+
+  @override
+  Widget build(BuildContext context) {
+    final code = ref['code']?.toString() ?? 'REF-XXXX';
+    final facility =
+        ref['issuedByFacility']?['name']?.toString() ?? 'Health Center';
+    final expiresAtStr = ref['expiresAt']?.toString();
+    final expiresAt =
+        expiresAtStr != null ? DateTime.tryParse(expiresAtStr) : null;
+
+    return GlassCard(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppTheme.primary.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child:
+                const Icon(Icons.assignment_outlined, color: AppTheme.primary),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  code,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                Text(
+                  'Issued by: $facility',
+                  style: const TextStyle(
+                      color: AppTheme.textSecondary, fontSize: 13),
+                ),
+                if (expiresAt != null)
+                  Text(
+                    'Expires: ${DateFormat.yMMMd().format(expiresAt)}',
+                    style: TextStyle(
+                      color: expiresAt.isBefore(DateTime.now())
+                          ? AppTheme.error
+                          : AppTheme.textSecondary,
+                      fontSize: 11,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const Icon(Icons.qr_code, color: AppTheme.primary, size: 32),
+        ],
+      ),
+    );
+  }
+}
 
 

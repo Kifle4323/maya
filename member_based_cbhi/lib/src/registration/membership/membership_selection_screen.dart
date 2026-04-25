@@ -210,11 +210,11 @@ class MembershipSelectionScreen extends StatelessWidget {
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              // Submit now without payment — can pay later from dashboard
+              // Skip payment — can pay later from dashboard
               cubit.submitPayingMembership(
                 const MembershipSelection(
                   type: MembershipType.paying,
-                  premiumAmount: 500,
+                  premiumAmount: 0,
                 ),
               );
             },
@@ -223,7 +223,8 @@ class MembershipSelectionScreen extends StatelessWidget {
           FilledButton(
             onPressed: () {
               Navigator.pop(ctx);
-              cubit.submitPayingMembership(
+              // Navigate to payment step
+              cubit.beginPayment(
                 const MembershipSelection(
                   type: MembershipType.paying,
                   premiumAmount: 500,

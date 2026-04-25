@@ -133,10 +133,10 @@ class AdminRepository {
   }) async {
     return _post('/admin/facilities', {
       'name': name,
-      'facilityCode': ?facilityCode,
-      'serviceLevel': ?serviceLevel,
-      'phoneNumber': ?phoneNumber,
-      'addressLine': ?addressLine,
+      if (facilityCode != null) 'facilityCode': facilityCode,
+      if (serviceLevel != null) 'serviceLevel': serviceLevel,
+      if (phoneNumber != null) 'phoneNumber': phoneNumber,
+      if (addressLine != null) 'addressLine': addressLine,
     });
   }
 
@@ -148,8 +148,8 @@ class AdminRepository {
   }) async {
     await _post('/admin/facilities/$facilityId/staff', {
       'identifier': identifier,
-      'firstName': ?firstName,
-      'lastName': ?lastName,
+      if (firstName != null) 'firstName': firstName,
+      if (lastName != null) 'lastName': lastName,
     });
   }
 
@@ -158,8 +158,8 @@ class AdminRepository {
     String? entityId,
   }) async {
     final query = <String, String>{
-      'entityType': ?entityType,
-      'entityId': ?entityId,
+      if (entityType != null) 'entityType': entityType,
+      if (entityId != null) 'entityId': entityId,
     };
     final qs = query.isEmpty ? '' : '?${Uri(queryParameters: query).query}';
     final response = await _get('/admin/audit-logs$qs');
@@ -320,6 +320,20 @@ class AdminRepository {
   /// Activates TOTP after the user verifies the first token
   Future<void> activateTotp(String token) async {
     await _post('/auth/totp/activate', {'token': token});
+  }
+
+  /// Verifies a TOTP code during login (second factor).
+  /// Returns the full session response including [accessToken].
+  Future<Map<String, dynamic>> verifyTotp(String code) async {
+    final response = await _post('/auth/totp/verify', {'token': code});
+    // If the backend returns a new access token on TOTP verification, store it
+    final newToken = response['accessToken']?.toString();
+    if (newToken != null && newToken.isNotEmpty) {
+      _token = newToken;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_tokenKey, _token ?? '');
+    }
+    return response;
   }
 
   // ── Facility Performance ──────────────────────────────────────────────────

@@ -4,7 +4,6 @@ import '../../cbhi_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../shared/language_selector.dart';
 import '../registration_cubit.dart';
-import '../registration_step_indicator.dart';
 import 'identity_cubit.dart';
 import '../models/identity_model.dart';
 
@@ -104,7 +103,6 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const RegistrationStepIndicator(step: RegistrationStep.identity),
                         const SizedBox(height: AppTheme.spacingM),
                         // Header
                         Container(

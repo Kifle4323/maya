@@ -6,7 +6,7 @@ import {
   Optional,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Claim } from '../claims/claim.entity';
 import {
   ClaimStatus,
@@ -33,6 +33,7 @@ import { SmsService } from '../sms/sms.service';
 import { SystemSetting } from '../system-settings/system-setting.entity';
 import { User } from '../users/user.entity';
 import { AuditLog } from '../audit/audit-log.entity';
+import { Referral } from '../referrals/referral.entity';
 import {
   ReportsQueryDto,
   ReviewClaimDto,
@@ -70,6 +71,8 @@ export class AdminService {
     private readonly auditLogRepository: Repository<AuditLog>,
     @InjectRepository(Beneficiary)
     private readonly beneficiaryRepository: Repository<Beneficiary>,
+    @InjectRepository(Referral)
+    private readonly referralRepository: Repository<Referral>,
     private readonly indigentService: IndigentService,
     private readonly coverageService: CoverageService,
     private readonly notificationService: NotificationService,
@@ -856,6 +859,8 @@ export class AdminService {
         totalClaimedAmount: claims.reduce((s, c) => s + Number(c.claimedAmount), 0),
         totalApprovedAmount: approved.reduce((s, c) => s + Number(c.approvedAmount ?? 0), 0),
         staffCount: facility.facilityUsers?.filter(fu => fu.isActive).length ?? 0,
+        referralsIssued: await this.referralRepository.countBy({ issuedByFacility: { id: facility.id } }),
+        referralsUsed: await this.referralRepository.countBy({ isUsed: true, code: In(claims.map(c => c.referralCode).filter(Boolean)) }),
       };
     }));
 

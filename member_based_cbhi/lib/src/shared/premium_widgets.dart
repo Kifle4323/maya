@@ -15,6 +15,63 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../theme/app_theme.dart';
+import 'animated_widgets.dart';
+
+// ─── SpringTap ─────────────────────────────────────────────────────────────
+// High-quality visual feedback wrapper. Scales content down on press.
+class SpringTap extends StatefulWidget {
+  const SpringTap({
+    super.key,
+    required this.child,
+    required this.onTap,
+    this.scale = 0.96,
+  });
+
+  final Widget child;
+  final VoidCallback? onTap;
+  final double scale;
+
+  @override
+  State<SpringTap> createState() => _SpringTapState();
+}
+
+class _SpringTapState extends State<SpringTap> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: widget.scale).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => widget.onTap != null ? _controller.forward() : null,
+      onTapUp: (_) => _controller.reverse(),
+      onTapCancel: () => _controller.reverse(),
+      onTap: widget.onTap,
+      behavior: HitTestBehavior.opaque,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: widget.child,
+      ),
+    );
+  }
+}
 
 // ─── PremiumCard ─────────────────────────────────────────────────────────────
 // Replaces GlassCard with proper elevation + border + dark mode support.
@@ -59,23 +116,48 @@ class PremiumCard extends StatelessWidget {
     return Semantics(
       label: semanticLabel,
       button: onTap != null,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(AppTheme.radiusM),
-          child: Container(
-            decoration: BoxDecoration(
-              color: bg,
-              borderRadius: BorderRadius.circular(AppTheme.radiusM),
-              border: Border.all(color: border),
-              boxShadow: shadow,
-            ),
-            padding: padding,
-            child: child,
+      child: SpringTap(
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(AppTheme.radiusM),
+            border: Border.all(color: border),
+            boxShadow: shadow,
           ),
+          padding: padding,
+          child: child,
         ),
       ),
+    );
+  }
+}
+
+// ─── BentoGrid ──────────────────────────────────────────────────────────────
+// Modern asymmetrical layout for dashboards.
+class BentoGrid extends StatelessWidget {
+  const BentoGrid({
+    super.key,
+    required this.children,
+    this.crossAxisCount = 2,
+    this.spacing = AppTheme.spacingM,
+  });
+
+  final List<Widget> children;
+  final int crossAxisCount;
+  final double spacing;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final itemWidth = (constraints.maxWidth - (spacing * (crossAxisCount - 1))) / crossAxisCount;
+        return Wrap(
+          spacing: spacing,
+          runSpacing: spacing,
+          children: children.map((child) => SizedBox(width: itemWidth, child: child)).toList(),
+        );
+      },
     );
   }
 }

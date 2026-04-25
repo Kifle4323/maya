@@ -446,6 +446,19 @@ export class AuthService {
     }
   }
 
+  async setInitialPasswordNoInvalidate(userId: string, password: string) {
+    if (!password || password.length < 6) {
+      throw new BadRequestException('Password must be at least 6 characters.');
+    }
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found.');
+    user.passwordHash = this.hashPassword(password);
+    // Do NOT increment tokenVersion — this is first-time setup.
+    // There are no prior sessions to invalidate, so the current session stays active.
+    await this.userRepository.save(user);
+    return { message: 'Password set successfully.' };
+  }
+
   async setPassword(userId: string, password: string) {
     if (!password || password.length < 6) {
       throw new BadRequestException('Password must be at least 6 characters.');

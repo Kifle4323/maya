@@ -154,7 +154,7 @@ class _MyFamilyBodyState extends State<_MyFamilyBody> {
             if (state.members.isNotEmpty) ...[
               TextField(
                 decoration: InputDecoration(
-                  hintText: 'Search by name or membership ID...',
+                  hintText: strings.t('searchByNameOrId'),
                   prefixIcon: const Icon(Icons.search),
                   isDense: true,
                   border: OutlineInputBorder(
@@ -165,7 +165,10 @@ class _MyFamilyBodyState extends State<_MyFamilyBody> {
               ),
               const SizedBox(height: AppTheme.spacingS),
               Text(
-                'Showing ${filtered.length} of ${state.members.length} members',
+                strings.f('showingXofY', {
+                  'x': filtered.length.toString(),
+                  'y': state.members.length.toString(),
+                }),
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: AppTheme.spacingM),

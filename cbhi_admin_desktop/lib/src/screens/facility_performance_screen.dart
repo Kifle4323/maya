@@ -157,6 +157,10 @@ class _FacilityPerformanceScreenState extends State<FacilityPerformanceScreen> {
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
                                   _PerfMetric(label: strings.t('totalClaims'), value: '$totalClaims', color: AdminTheme.primary),
+                                  if ((f['referralsIssued'] as num? ?? 0) > 0)
+                                    _PerfMetric(label: strings.t('referralsIssued'), value: '${f['referralsIssued']}', color: AdminTheme.accent),
+                                  if ((f['referralsUsed'] as num? ?? 0) > 0)
+                                    _PerfMetric(label: strings.t('referralsUsed'), value: '${f['referralsUsed']}', color: AdminTheme.gold),
                                   _PerfMetric(label: strings.t('approvalRate'), value: '${approvalRate.toStringAsFixed(0)}%', color: color),
                                   _PerfMetric(label: strings.t('totalApproved'), value: '${totalApproved.toStringAsFixed(0)} ETB', color: AdminTheme.success),
                                   _PerfMetric(label: strings.t('avgClaim'), value: '${avgClaim.toStringAsFixed(0)} ETB', color: AdminTheme.warning),

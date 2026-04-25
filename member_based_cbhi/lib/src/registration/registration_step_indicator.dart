@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../cbhi_localizations.dart';
 import '../theme/app_theme.dart';
 import 'registration_cubit.dart';
 
@@ -46,41 +47,61 @@ class RegistrationStepIndicator extends StatelessWidget {
     if (stepNumber == null) return const SizedBox.shrink();
 
     final progress = stepNumber / RegistrationStepX.totalSteps;
+    final strings = CbhiLocalizations.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppTheme.spacingM,
-            vertical: AppTheme.spacingS,
-          ),
-          child: Row(
+    // Use localized label if key exists, otherwise fall back to English
+    String stepLabel;
+    try {
+      stepLabel = strings.f('stepNofM', {
+        'n': stepNumber.toString(),
+        'm': RegistrationStepX.totalSteps.toString(),
+      });
+    } catch (_) {
+      stepLabel = 'Step $stepNumber of ${RegistrationStepX.totalSteps}';
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingM,
+        vertical: AppTheme.spacingL,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Step $stepNumber of ${RegistrationStepX.totalSteps}',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                stepLabel,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       color: AppTheme.primary,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w800,
                     ),
               ),
-              Text(
-                '${(progress * 100).round()}%',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: AppTheme.textSecondary,
-                    ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppTheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${(progress * 100).round()}%',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: AppTheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
               ),
             ],
           ),
-        ),
-        LinearProgressIndicator(
-          value: progress,
-          backgroundColor: AppTheme.primary.withValues(alpha: 0.12),
-          valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primary),
-          minHeight: 3,
-        ),
-      ],
+          const SizedBox(height: 20),
+          TimelineStep(
+            steps: List.generate(RegistrationStepX.totalSteps, (i) => ''),
+            currentStep: stepNumber - 1,
+            compact: true,
+          ),
+        ],
+      ),
     );
   }
 }

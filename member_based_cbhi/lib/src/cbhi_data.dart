@@ -311,6 +311,7 @@ class CbhiSnapshot {
     required this.payments,
     required this.notifications,
     required this.digitalCards,
+    required this.referrals,
     required this.familyMembers,
     required this.syncedAt,
     this.coverage,
@@ -328,6 +329,7 @@ class CbhiSnapshot {
   final List<Map<String, dynamic>> payments;
   final List<Map<String, dynamic>> notifications;
   final List<Map<String, dynamic>> digitalCards;
+  final List<Map<String, dynamic>> referrals;
   final List<FamilyMember> familyMembers;
   final String syncedAt;
 
@@ -413,6 +415,7 @@ class CbhiSnapshot {
       payments: <Map<String, dynamic>>[],
       notifications: <Map<String, dynamic>>[],
       digitalCards: <Map<String, dynamic>>[],
+      referrals: <Map<String, dynamic>>[],
       familyMembers: <FamilyMember>[],
       syncedAt: '',
     );
@@ -446,6 +449,9 @@ class CbhiSnapshot {
       digitalCards: (json['digitalCards'] as List? ?? const [])
           .map((item) => (item as Map).cast<String, dynamic>())
           .toList(growable: false),
+      referrals: (json['referrals'] as List? ?? const [])
+          .map((item) => (item as Map).cast<String, dynamic>())
+          .toList(growable: false),
       familyMembers: (json['familyMembers'] as List? ?? const [])
           .map(
             (item) =>
@@ -466,6 +472,7 @@ class CbhiSnapshot {
     List<Map<String, dynamic>>? payments,
     List<Map<String, dynamic>>? notifications,
     List<Map<String, dynamic>>? digitalCards,
+    List<Map<String, dynamic>>? referrals,
     List<FamilyMember>? familyMembers,
     String? syncedAt,
   }) {
@@ -479,6 +486,7 @@ class CbhiSnapshot {
       payments: payments ?? this.payments,
       notifications: notifications ?? this.notifications,
       digitalCards: digitalCards ?? this.digitalCards,
+      referrals: referrals ?? this.referrals,
       familyMembers: familyMembers ?? this.familyMembers,
       syncedAt: syncedAt ?? this.syncedAt,
     );
@@ -494,6 +502,7 @@ class CbhiSnapshot {
     'payments': payments,
     'notifications': notifications,
     'digitalCards': digitalCards,
+    'referrals': referrals,
     'familyMembers': familyMembers.map((member) => member.toJson()).toList(),
     'syncedAt': syncedAt,
   };
@@ -1023,6 +1032,13 @@ class CbhiRepository {
     await _postJson('/auth/set-password', {'password': password}, authorized: true);
   }
 
+  /// Set the initial password for first-time setup WITHOUT invalidating the
+  /// current session. Use this when the user is setting a password for the
+  /// first time after registration — the session must stay active.
+  Future<void> setInitialPasswordDirect({required String password}) async {
+    await _postJson('/auth/set-initial-password', {'password': password}, authorized: true);
+  }
+
   /// GDPR: anonymise and deactivate the account.
   Future<void> deleteAccount() async {
     await _postJson('/auth/delete-account', const <String, dynamic>{}, authorized: true);
@@ -1304,6 +1320,34 @@ class CbhiRepository {
       await localDb.writeSnapshot(snapshot);
       return snapshot;
     }
+  }
+
+  Future<List<Map<String, dynamic>>> getMyAppeals() async {
+    final session = await _getStoredSession();
+    if (session == null) return const [];
+
+    try {
+      final response = await _getJson('/cbhi/claims/appeals');
+      if (response is List) {
+        return response.cast<Map<String, dynamic>>();
+      }
+      return const [];
+    } catch (_) {
+      return const [];
+    }
+  }
+
+  Future<void> submitClaimAppeal({
+    required String claimId,
+    required String reason,
+  }) async {
+    final session = await _getStoredSession();
+    if (session == null) throw const _ApiException('Not authenticated');
+
+    await _postJson('/cbhi/claims/appeals', {
+      'claimId': claimId,
+      'reason': reason,
+    });
   }
 
   Future<void> _storeAuthIfPresent(Map<String, dynamic> json) async {

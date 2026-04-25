@@ -19,6 +19,7 @@ import { Payment } from '../payments/payment.entity';
 import { SmsModule } from '../sms/sms.module';
 import { SystemSetting } from '../system-settings/system-setting.entity';
 import { User } from '../users/user.entity';
+import { Referral } from '../referrals/referral.entity';
 import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';
 
@@ -43,6 +44,7 @@ import { AdminService } from './admin.service';
       SystemSetting,
       Beneficiary,
       AuditLog,
+      Referral,
     ]),
   ],
   controllers: [AdminController],

@@ -20,6 +20,7 @@ import {
   ClaimStatus,
   CoverageStatus,
   DocumentType,
+  FacilityLevel,
   NotificationType,
   UserRole,
 } from '../common/enums/cbhi.enums';
@@ -33,6 +34,7 @@ import { Notification } from '../notifications/notification.entity';
 import { NotificationService } from '../notifications/notification.service';
 import { NotificationsGateway } from '../notifications/notifications.gateway';
 import { User } from '../users/user.entity';
+import { ReferralService } from '../referrals/referral.service';
 
 @Injectable()
 export class FacilityService {
@@ -52,6 +54,7 @@ export class FacilityService {
     @InjectRepository(Notification)
     private readonly notificationRepository: Repository<Notification>,
     private readonly notificationService: NotificationService,
+    private readonly referralService: ReferralService,
     @Optional() private readonly wsGateway?: NotificationsGateway,
   ) {}
 
@@ -118,6 +121,23 @@ export class FacilityService {
       throw new BadRequestException(
         'This beneficiary does not have an active eligible coverage for claim submission.',
       );
+    }
+
+    // EHIS Gap: Referral logic for Hospitals
+    const isHospital = [
+      FacilityLevel.PRIMARY_HOSPITAL,
+      FacilityLevel.GENERAL_HOSPITAL,
+      FacilityLevel.SPECIALIZED_HOSPITAL,
+    ].includes(context.facility.serviceLevel as FacilityLevel);
+
+    let referral = null;
+    if (isHospital) {
+      if (!dto.referralCode) {
+        throw new BadRequestException(
+          'Hospital treatment requires a valid referral code from a Primary Health Center.',
+        );
+      }
+      referral = await this.referralService.validateReferral(dto.referralCode, beneficiary.id);
     }
 
     // B6: Waiting period enforcement
@@ -218,8 +238,14 @@ export class FacilityService {
         submittedBy: context.user,
         beneficiary,
         items,
+        referralCode: referral?.code ?? null,
+        referredFromFacility: referral?.issuedByFacility ?? null,
       }),
     );
+
+    if (referral) {
+      await this.referralService.markAsUsed(referral.id);
+    }
 
     if (dto.supportingDocumentUpload || dto.supportingDocumentPath) {
       await this.upsertClaimDocument(

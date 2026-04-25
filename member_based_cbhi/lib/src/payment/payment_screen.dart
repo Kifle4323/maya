@@ -80,7 +80,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
       setState(() => _isOnline = !result.contains(ConnectivityResult.none));
     }
   }
-
   double get _premiumAmount => widget.snapshot.premiumAmount;
 
   // ── Auto-polling ──────────────────────────────────────────────────────────
@@ -124,13 +123,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
   // ── Payment actions ───────────────────────────────────────────────────────
 
   Future<void> _initiatePayment() async {
+    final strings = CbhiLocalizations.of(context);
     await _checkConnectivity();
     if (!_isOnline) {
-      setState(() => _error = 'No internet connection. Please check your network and try again.');
+      setState(() => _error = strings.t('noInternetConnection'));
       return;
     }
     if (_premiumAmount <= 0) {
-      setState(() => _error = 'No premium amount set for this household.');
+      setState(() => _error = strings.t('noPremiumAmount'));
       return;
     }
     setState(() {
@@ -414,6 +414,7 @@ class _OfflineBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = CbhiLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
@@ -425,13 +426,16 @@ class _OfflineBanner extends StatelessWidget {
         children: [
           const Icon(Icons.wifi_off, color: AppTheme.warning, size: 20),
           const SizedBox(width: 10),
-          const Expanded(
+          Expanded(
             child: Text(
-              'No internet connection',
-              style: TextStyle(color: AppTheme.warning, fontWeight: FontWeight.w600),
+              strings.t('noInternetConnection'),
+              style: const TextStyle(color: AppTheme.warning, fontWeight: FontWeight.w600),
             ),
           ),
-          TextButton(onPressed: onRetry, child: const Text('Retry')),
+          TextButton(
+            onPressed: onRetry,
+            child: Text(strings.t('retryConnection')),
+          ),
         ],
       ),
     );
@@ -517,7 +521,7 @@ class _CheckoutSection extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Waiting for payment confirmation...',
+                          strings.t('waitingForPayment'),
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: AppTheme.primary,
                             fontWeight: FontWeight.w600,
@@ -525,7 +529,7 @@ class _CheckoutSection extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Auto-checking every 5 seconds',
+                          strings.t('autoCheckingPayment'),
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: AppTheme.textSecondary,
                             fontSize: 11,
@@ -598,7 +602,7 @@ class _VerifyResultCard extends StatelessWidget {
           if (isPending) ...[
             const SizedBox(height: 8),
             Text(
-              'Payment is still processing. It will be verified automatically.',
+              strings.t('paymentStillProcessing'),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppTheme.textSecondary),
             ),
           ],
@@ -644,7 +648,12 @@ class _PaymentStepIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const steps = ['Amount', 'Pay', 'Done'];
+    final strings = CbhiLocalizations.of(context);
+    final steps = [
+      strings.t('paymentStepAmount'),
+      strings.t('paymentStepPay'),
+      strings.t('paymentStepDone'),
+    ];
     return Row(
       children: List.generate(steps.length * 2 - 1, (i) {
         if (i.isOdd) {
@@ -710,6 +719,7 @@ class _ReceiptDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = CbhiLocalizations.of(context);
     final endDate = result['coverageEndDate']?.toString() ?? result['endDate']?.toString();
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -726,7 +736,7 @@ class _ReceiptDialog extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'Payment Successful',
+            strings.t('paymentSuccessTitle'),
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w700,
               color: AppTheme.success,
@@ -734,20 +744,20 @@ class _ReceiptDialog extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Your CBHI coverage is now active',
+            strings.t('paymentSuccessBody'),
             style: Theme.of(context).textTheme.bodySmall,
           ),
           const SizedBox(height: 16),
           const Divider(),
           const SizedBox(height: 8),
-          _ReceiptRow(label: 'Amount', value: '${result['amount'] ?? ''} ETB'),
-          _ReceiptRow(label: 'Reference', value: txRef),
+          _ReceiptRow(label: strings.t('receiptAmount'), value: '${result['amount'] ?? ''} ETB'),
+          _ReceiptRow(label: strings.t('receiptReference'), value: txRef),
           if (result['paymentMethod'] != null)
-            _ReceiptRow(label: 'Method', value: result['paymentMethod'].toString()),
+            _ReceiptRow(label: strings.t('receiptMethod'), value: result['paymentMethod'].toString()),
           if (result['paidAt'] != null)
-            _ReceiptRow(label: 'Paid At', value: _formatDate(result['paidAt'].toString())),
+            _ReceiptRow(label: strings.t('receiptPaidAt'), value: _formatDate(result['paidAt'].toString())),
           if (endDate != null)
-            _ReceiptRow(label: 'Coverage until', value: _formatDate(endDate)),
+            _ReceiptRow(label: strings.t('receiptCoverageUntil'), value: _formatDate(endDate)),
           const SizedBox(height: 8),
           const Divider(),
           const SizedBox(height: 8),
@@ -763,7 +773,7 @@ class _ReceiptDialog extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'A confirmation notification has been sent to your phone.',
+                    strings.t('receiptConfirmationNote'),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 11),
                   ),
                 ),
@@ -779,7 +789,7 @@ class _ReceiptDialog extends StatelessWidget {
             onDone();
           },
           style: FilledButton.styleFrom(backgroundColor: AppTheme.success),
-          child: const Text('Done'),
+          child: Text(strings.t('done')),
         ),
       ],
     );

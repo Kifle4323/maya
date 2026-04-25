@@ -28,6 +28,7 @@ import {
 } from './cbhi.dto';
 import { CoverageService } from './coverage.service';
 import { DigitalCardService } from './digital-card.service';
+import { VisionService } from '../vision/vision.service';
 import { mkdir, writeFile } from 'fs/promises';
 import { basename, extname, join, resolve } from 'path';
 import { randomBytes } from 'crypto';
@@ -52,6 +53,7 @@ export class RegistrationService {
     private readonly authService: AuthService,
     private readonly coverageService: CoverageService,
     private readonly digitalCardService: DigitalCardService,
+    private readonly visionService: VisionService,
   ) {}
 
   async registerStepOne(dto: RegistrationStepOneDto) {
@@ -140,9 +142,28 @@ export class RegistrationService {
     beneficiary.identityNumber = user.identityNumber;
     beneficiary.nationalId = user.nationalId;
 
-    const eligibility = this.coverageService.resolveRegistrationEligibility(dto, household.memberCount);
+    // Automation: Two-way proof for Indigent HHs
+    const visionResults = [];
+    if (dto.membershipType === MembershipType.INDIGENT && dto.indigentProofUploads?.length) {
+      // Validate all proofs in parallel via Google Vision
+      const results = await Promise.all(
+        dto.indigentProofUploads.map((upload) =>
+          this.visionService.validateIndigentDocument(upload.contentBase64),
+        ),
+      );
+      visionResults.push(...results);
+    }
+
+    const eligibility = this.coverageService.resolveRegistrationEligibility(
+      dto,
+      household.memberCount,
+      visionResults,
+    );
     household.membershipType = dto.membershipType;
-    household.coverageStatus = this.coverageService.resolveCoverageStatus(dto.membershipType, eligibility);
+    household.coverageStatus = this.coverageService.resolveCoverageStatus(
+      dto.membershipType,
+      eligibility,
+    );
     await this.householdRepository.save(household);
 
     beneficiary.isEligible = dto.membershipType === MembershipType.PAYING || eligibility.approved;

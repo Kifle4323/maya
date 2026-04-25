@@ -30,6 +30,7 @@ import { SmsModule } from './sms/sms.module';
 import { StorageModule } from './storage/storage.module';
 import { VisionModule } from './vision/vision.module';
 import { VerificationModule } from './verification/verification.module';
+import { ReferralModule } from './referrals/referral.module';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -159,6 +160,7 @@ const redisEnabled = !!process.env.REDIS_HOST;
     StorageModule,
     VisionModule,
     VerificationModule,
+    ReferralModule,
 
     TypeOrmModule.forRoot(buildTypeOrmConfig()),
   ],

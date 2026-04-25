@@ -94,8 +94,51 @@ class RegistrationCubit extends Cubit<RegistrationState> {
     await _runRegistration(membership, const []);
   }
 
-  void beginIndigentProof(MembershipSelection membership) {
-    final next = state.copyWith(
+  /// Navigate to the payment step for paying members who chose "Pay Now".
+  Future<void> beginPayment(MembershipSelection membership) async {
+    emit(state.copyWith(isLoading: true, clearError: true));
+    // Run registration first to get the snapshot, then show payment
+    try {
+      final snapshot = await repository.registerFull(
+        personalInfo: state.personalInfo!,
+        identity: state.identity!,
+        membership: membership,
+        indigentProofPaths: const [],
+      );
+      final next = state.copyWith(
+        membership: membership,
+        registrationSnapshot: snapshot,
+        registeredPhone: state.personalInfo?.phone,
+        currentStep: RegistrationStep.payment,
+        isLoading: false,
+        clearError: true,
+      );
+      emit(next);
+      _saveDraft(next);
+    } catch (e) {
+      final message = _parseErrorMessage(e.toString());
+      if (e.toString().contains('400') || e.toString().contains('Bad Request')) {
+        emit(state.copyWith(errorMessage: message, isLoading: false));
+        return;
+      }
+      // Network error — build offline snapshot and go to payment anyway
+      final offlineSnapshot = _buildOfflineSnapshot(membership);
+      await repository.localDb.writeSnapshot(offlineSnapshot);
+      final next = state.copyWith(
+        membership: membership,
+        registrationSnapshot: offlineSnapshot,
+        registeredPhone: state.personalInfo?.phone,
+        currentStep: RegistrationStep.payment,
+        isLoading: false,
+        isOffline: true,
+        clearError: true,
+      );
+      emit(next);
+      _saveDraft(next);
+    }
+  }
+
+  void beginIndigentProof(MembershipSelection membership) {    final next = state.copyWith(
       membership: membership,
       currentStep: RegistrationStep.indigentProof,
       clearError: true,
@@ -146,10 +189,11 @@ class RegistrationCubit extends Cubit<RegistrationState> {
   ) async {
     emit(state.copyWith(isLoading: true, clearError: true, errorMessage: null));
 
-    // Generate 6-digit temp password immediately — shown regardless of online/offline
-    final tempPassword = _generateTempPassword();
+    // Generate 6-digit setup code immediately — shown regardless of online/offline
+    final setupCode = _generateTempPassword();
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('cbhi_temp_password', tempPassword);
+    await prefs.setString('cbhi_setup_code', setupCode);
+    await prefs.setString('cbhi_temp_password', setupCode); // keep legacy key for profile screen compat
     await prefs.setBool('cbhi_has_temp_password', true);
 
     CbhiSnapshot? snapshot;
@@ -175,6 +219,20 @@ class RegistrationCubit extends Cubit<RegistrationState> {
       snapshot = _buildOfflineSnapshot(membership);
       await repository.localDb.writeSnapshot(snapshot);
     }
+
+    // Inject setup code notification into the snapshot so it appears in the inbox
+    final setupCodeNotification = {
+      'id': 'setup-code-${DateTime.now().millisecondsSinceEpoch}',
+      'type': 'SYSTEM_ALERT',
+      'title': 'Your Setup Code',
+      'body': 'Your 6-digit setup code is: $setupCode. Use this to set your password in Profile \u2192 Change Password.',
+      'isRead': false,
+      'createdAt': DateTime.now().toIso8601String(),
+    };
+    final existingNotifications = List<Map<String, dynamic>>.from(snapshot.notifications);
+    existingNotifications.insert(0, setupCodeNotification);
+    snapshot = snapshot.copyWith(notifications: existingNotifications);
+    await repository.localDb.writeSnapshot(snapshot);
 
     final next = state.copyWith(
       membership: membership,

@@ -16,7 +16,6 @@ import '../../shared/file_image_widget.dart';
 import '../../shared/local_attachment_store.dart';
 import '../../shared/location_service.dart';
 import '../../shared/ethiopic_date_picker.dart';
-import '../registration_step_indicator.dart';
 
 class PersonalInfoForm extends StatefulWidget {
   const PersonalInfoForm({
@@ -396,8 +395,6 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const RegistrationStepIndicator(currentStep: 1, totalSteps: 7),
-                  const SizedBox(height: AppTheme.spacingM),
                   // Hero Section
                   Container(
                     width: double.infinity,

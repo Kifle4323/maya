@@ -23,6 +23,8 @@ import 'registration/registration_flow.dart';
 import 'shared/animated_widgets.dart';
 import 'shared/connectivity_banner.dart';
 import 'shared/connectivity_cubit.dart';
+import 'shared/help_screen.dart';
+import 'shared/premium_sidebar.dart';
 import 'theme/app_theme.dart';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -331,40 +333,13 @@ class _HomeShellState extends State<_HomeShell> {
   }
 
   Future<void> _handlePop(BuildContext context) async {
-    if (_index != 0) {
-      setState(() => _index = 0);
-      return;
-    }
-    // On home tab — show exit confirmation
-    final strings = CbhiLocalizations.of(context);
-    await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(strings.t('exitAppTitle')),
-        content: Text(strings.t('exitAppMessage')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(strings.t('cancel')),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(strings.t('yes')),
-          ),
-        ],
-      ),
-    );
-    // We don't programmatically exit — the system handles it if the user
-    // confirms. The dialog result is intentionally unused here because
-    // dart:io SystemNavigator.pop() is not web-safe.
-  }
-
-  @override
+    if (  @override
   Widget build(BuildContext context) {
     final strings = CbhiLocalizations.of(context);
     final authState = context.watch<AuthCubit>().state;
     final isFamilyMember = authState.isFamilyMember;
     final appCubit = context.read<AppCubit>();
+    final snapshot = context.watch<AppCubit>().state.snapshot;
 
     final pages = _buildPages(isFamilyMember, appCubit);
     final destinations = _buildDestinations(isFamilyMember, strings);
@@ -372,13 +347,31 @@ class _HomeShellState extends State<_HomeShell> {
     // Guard: clamp index to valid range when role changes
     final safeIndex = _index.clamp(0, pages.length - 1);
 
+    // Responsive Logic
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeScreen = screenWidth > 800;
+    final isMediumScreen = screenWidth > 600 && screenWidth <= 800;
+    final useSidebar = isLargeScreen || isMediumScreen;
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
         if (didPop) return;
         _handlePop(context);
       },
-      child: MultiBlocListener(
+      child: NotificationListener<ProfileTabNotification>(
+        onNotification: (_) {
+          // Profile tab is always the last tab
+          setState(() => _index = pages.length - 1);
+          return true;
+        },
+        child: NotificationListener<FamilyTabNotification>(
+          onNotification: (_) {
+            // Family tab is index 1 for household heads (not shown for family members)
+            if (!isFamilyMember) setState(() => _index = 1);
+            return true;
+          },
+          child: MultiBlocListener(
         listeners: [
           BlocListener<ConnectivityCubit, ConnectivityState>(
             listenWhen: (prev, curr) => !prev.isOnline && curr.isOnline,
@@ -416,8 +409,8 @@ class _HomeShellState extends State<_HomeShell> {
             actions: [
               BlocBuilder<AppCubit, AppState>(
                 builder: (context, state) {
-                  final snapshot = state.snapshot;
-                  final isPendingSync = snapshot?.isPendingSync ?? false;
+                  final snap = state.snapshot;
+                  final isPendingSync = snap?.isPendingSync ?? false;
 
                   return Row(
                     mainAxisSize: MainAxisSize.min,
@@ -455,7 +448,7 @@ class _HomeShellState extends State<_HomeShell> {
                           ),
                         ),
                       // Notification bell with unread badge
-                      _NotificationBell(snapshot: snapshot),
+                      _NotificationBell(snapshot: snap),
                       Container(
                         margin: const EdgeInsets.only(right: 8),
                         decoration: BoxDecoration(
@@ -491,57 +484,86 @@ class _HomeShellState extends State<_HomeShell> {
               ),
             ],
           ),
-          body: Column(
+          body: Row(
             children: [
-              const ConnectivityBanner(),
+              if (useSidebar)
+                PremiumSidebar(
+                  selectedIndex: safeIndex,
+                  onDestinationSelected: (idx) => setState(() => _index = idx),
+                  isFamilyMember: isFamilyMember,
+                  userName: authState.session?.user.displayName ?? 'Member',
+                  householdCode: snapshot?.householdCode ?? 'Pending',
+                  isCollapsed: isMediumScreen,
+                ),
               Expanded(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 350),
-                  switchInCurve: Curves.easeOutCubic,
-                  switchOutCurve: Curves.easeInCubic,
-                  transitionBuilder: (child, animation) {
-                    return FadeTransition(
-                      opacity: animation,
-                      child: SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(0.03, 0),
-                          end: Offset.zero,
-                        ).animate(animation),
-                        child: child,
+                child: Column(
+                  children: [
+                    const ConnectivityBanner(),
+                    Expanded(
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 350),
+                        switchInCurve: Curves.easeOutCubic,
+                        switchOutCurve: Curves.easeInCubic,
+                        transitionBuilder: (child, animation) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(0.03, 0),
+                                end: Offset.zero,
+                              ).animate(animation),
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: KeyedSubtree(
+                          key: ValueKey(safeIndex),
+                          child: pages[safeIndex],
+                        ),
                       ),
-                    );
-                  },
-                  child: KeyedSubtree(
-                    key: ValueKey(safeIndex),
-                    child: pages[safeIndex],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          bottomNavigationBar: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.06),
-                  blurRadius: 16,
-                  offset: const Offset(0, -4),
+          floatingActionButton: safeIndex != 0
+              ? FloatingActionButton.extended(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const HelpScreen()),
+                  ),
+                  icon: const Icon(Icons.help_outline),
+                  label: const Text('Help & FAQ'),
+                  backgroundColor: AppTheme.primary,
+                  foregroundColor: Colors.white,
+                ).animate().scale(curve: Curves.easeOutBack, duration: 400.ms)
+              : null,
+          bottomNavigationBar: useSidebar
+              ? null
+              : Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.06),
+                        blurRadius: 16,
+                        offset: const Offset(0, -4),
+                      ),
+                    ],
+                  ),
+                  child: NavigationBar(
+                    selectedIndex: safeIndex,
+                    onDestinationSelected: (value) =>
+                        setState(() => _index = value),
+                    destinations: destinations,
+                  ),
                 ),
-              ],
-            ),
-            child: NavigationBar(
-              selectedIndex: safeIndex,
-              onDestinationSelected: (value) =>
-                  setState(() => _index = value),
-              destinations: destinations,
-            ),
-          ),
         ),
       ),
+    ),
+    ),
     );
   }
-}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Notification Bell — AppBar action with unread badge

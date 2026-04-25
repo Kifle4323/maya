@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../auth/auth_cubit.dart';
 import '../cbhi_data.dart';
@@ -444,9 +445,22 @@ String _formatDateLabel(dynamic value) {
 
 Future<void> _showChangePasswordDialog(BuildContext context) async {
   final strings = CbhiLocalizations.of(context);
+  final currentCtrl = TextEditingController();
   final newCtrl = TextEditingController();
   final confirmCtrl = TextEditingController();
   String? error;
+  bool usingTempCode = false;
+  String? tempCode;
+
+  // Check if user has a temp password stored
+  final prefs = await SharedPreferences.getInstance();
+  final hasTempPassword = prefs.getBool('cbhi_has_temp_password') ?? false;
+  if (hasTempPassword) {
+    tempCode = prefs.getString('cbhi_setup_code') ??
+        prefs.getString('cbhi_temp_password');
+  }
+
+  if (!context.mounted) return;
 
   await showDialog<void>(
     context: context,
@@ -469,16 +483,59 @@ Future<void> _showChangePasswordDialog(BuildContext context) async {
                   child: Text(error!,
                       style: const TextStyle(color: AppTheme.error, fontSize: 13)),
                 ),
+              // Toggle for temp code users
+              if (hasTempPassword && tempCode != null) ...[
+                Row(
+                  children: [
+                    Checkbox(
+                      value: usingTempCode,
+                      onChanged: (v) {
+                        setDialogState(() {
+                          usingTempCode = v ?? false;
+                          if (usingTempCode) {
+                            currentCtrl.text = tempCode!;
+                          } else {
+                            currentCtrl.clear();
+                          }
+                        });
+                      },
+                    ),
+                    Expanded(
+                      child: Text(
+                        strings.t('usingTempCode'),
+                        style: const TextStyle(fontSize: 13),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+              ],
+              // Current password field
+              TextField(
+                controller: currentCtrl,
+                obscureText: !usingTempCode,
+                readOnly: usingTempCode,
+                decoration: InputDecoration(
+                  labelText: usingTempCode
+                      ? strings.t('tempCodePreFilled')
+                      : strings.t('currentPassword'),
+                  prefixIcon: const Icon(Icons.lock_outline),
+                ),
+              ),
+              const SizedBox(height: 12),
               TextField(
                 controller: newCtrl,
                 obscureText: true,
-                decoration: InputDecoration(labelText: strings.t('newPassword')),
+                decoration: InputDecoration(labelText: strings.t('newPassword'),
+                    prefixIcon: const Icon(Icons.lock_reset_outlined)),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: confirmCtrl,
                 obscureText: true,
-                decoration: InputDecoration(labelText: strings.t('confirmPassword')),
+                decoration: InputDecoration(
+                    labelText: strings.t('confirmPassword'),
+                    prefixIcon: const Icon(Icons.lock_outline)),
               ),
             ],
           ),
@@ -499,9 +556,15 @@ Future<void> _showChangePasswordDialog(BuildContext context) async {
                 return;
               }
               try {
-                await ctx.read<AppCubit>().repository.setInitialPassword(
+                await ctx.read<AppCubit>().repository.setInitialPasswordDirect(
                       password: newCtrl.text,
                     );
+                // Clear all setup code flags — session stays active (no tokenVersion bump)
+                final p = await SharedPreferences.getInstance();
+                await p.remove('cbhi_setup_code');
+                await p.remove('cbhi_temp_password');
+                await p.remove('cbhi_has_temp_password');
+
                 if (ctx.mounted) Navigator.pop(ctx);
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(

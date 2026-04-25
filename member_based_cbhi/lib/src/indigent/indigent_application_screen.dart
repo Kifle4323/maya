@@ -151,7 +151,7 @@ class _IndigentApplicationScreenState
           _documents[index] = doc.copyWith(
             isValidating: false,
             isValidated: true,
-            validationError: 'Could not read file. Please try again.',
+            validationError: CbhiLocalizations.of(context).t('couldNotReadFile'),
           );
         });
         return;
@@ -183,7 +183,10 @@ class _IndigentApplicationScreenState
         _documents[index] = doc.copyWith(
           isValidating: false,
           isValidated: true,
-          validationError: 'Validation failed: ${e.toString()}',
+          validationError: CbhiLocalizations.of(context).f(
+            'validationFailedError',
+            {'error': e.toString().replaceFirst('Exception: ', '')},
+          ),
         );
       });
     }
@@ -289,7 +292,7 @@ class _IndigentApplicationScreenState
             decoration: InputDecoration(
               labelText: strings.t('monthlyIncomeEtb'),
               prefixIcon: const Icon(Icons.payments_outlined),
-              hintText: 'e.g. 500',
+              hintText: strings.t('incomeAmountHint'),
             ),
             validator: (v) {
               if (v == null || v.trim().isEmpty) return strings.t('required');
@@ -628,7 +631,7 @@ class _DocumentCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      doc.documentType ?? 'Document ${index + 1}',
+                      doc.documentType ?? strings.f('documentNumber', {'index': '${index + 1}'}),
                       style: TextStyle(
                           fontWeight: FontWeight.w700,
                           color: _statusColor,

@@ -9,12 +9,14 @@ import { Document } from '../documents/document.entity';
 import { FacilityUser } from '../facility-users/facility-user.entity';
 import { Notification } from '../notifications/notification.entity';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { ReferralModule } from '../referrals/referral.module';
 import { FacilityController } from './facility.controller';
 import { FacilityService } from './facility.service';
 
 @Module({
   imports: [
     NotificationsModule,
+    ReferralModule,
     TypeOrmModule.forFeature([
       FacilityUser,
       Beneficiary,
