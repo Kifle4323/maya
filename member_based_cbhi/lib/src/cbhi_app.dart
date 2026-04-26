@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -358,7 +359,7 @@ class _HomeShellState extends State<_HomeShell> {
     final screenWidth = MediaQuery.of(context).size.width;
     final isLargeScreen = screenWidth > 800;
     final isMediumScreen = screenWidth > 600 && screenWidth <= 800;
-    final useSidebar = isLargeScreen || isMediumScreen;
+    final useSidebar = kIsWeb && (isLargeScreen || isMediumScreen);
 
     return PopScope(
       canPop: false,

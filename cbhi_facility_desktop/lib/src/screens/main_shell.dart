@@ -111,15 +111,16 @@ class _MainShellState extends State<MainShell> {
                   child: Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: kPrimary.withValues(alpha: 0.3),
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(
-                          Icons.local_hospital,
-                          color: Colors.white,
-                          size: 22,
+                        child: Image.asset(
+                          'assets/images/logo.png',
+                          width: 24,
+                          height: 24,
+                          fit: BoxFit.contain,
                         ),
                       ),
                       const SizedBox(width: 10),

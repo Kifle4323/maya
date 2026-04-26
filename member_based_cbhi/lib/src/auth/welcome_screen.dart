@@ -41,10 +41,11 @@ class WelcomeScreen extends StatelessWidget {
                     color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Icon(
-                    Icons.health_and_safety,
-                    color: Colors.white,
-                    size: 40,
+                  child: Image.asset(
+                    'assets/images/logo.png',
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.contain,
                   ),
                 )
                     .animate()

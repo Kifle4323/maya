@@ -167,7 +167,7 @@ class _SidebarHeader extends StatelessWidget {
           gradient: AppTheme.heroGradient,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Icon(Icons.health_and_safety, color: Colors.white, size: 28),
+        child: Image.asset('assets/images/logo.png', width: 28, height: 28, fit: BoxFit.contain),
       );
     }
 
@@ -188,7 +188,7 @@ class _SidebarHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.health_and_safety, color: Colors.white, size: 32),
+          Image.asset('assets/images/logo.png', width: 32, height: 32, fit: BoxFit.contain),
           const SizedBox(height: 16),
           Text(
             userName,

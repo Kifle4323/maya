@@ -413,15 +413,16 @@ class _SidebarHeader extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 16),
             child: Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: AdminTheme.primary.withValues(alpha: 0.3),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(
-                Icons.health_and_safety,
-                color: Colors.white,
-                size: 22,
+              child: Image.asset(
+                'assets/images/logo.png',
+                width: 24,
+                height: 24,
+                fit: BoxFit.contain,
               ),
             ),
           ),
