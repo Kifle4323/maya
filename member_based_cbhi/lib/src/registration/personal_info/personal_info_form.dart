@@ -370,14 +370,33 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
+      backgroundColor: AppTheme.m3SurfaceContainerLow,
       appBar: AppBar(
-        title: Text(strings.t('step1PersonalInfo')),
+        backgroundColor: AppTheme.m3SurfaceContainerLowest,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         leading: widget.onCancel == null
             ? null
             : IconButton(
                 onPressed: widget.onCancel,
                 icon: const Icon(Icons.close),
+                color: AppTheme.m3OnSurface,
               ),
+        title: Row(
+          children: [
+            const Icon(Icons.health_and_safety,
+                color: AppTheme.m3Primary, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              strings.t('appTitle'),
+              style: const TextStyle(
+                color: AppTheme.m3OnSurface,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
         actions: const [
           Padding(
             padding: EdgeInsets.only(right: 12),
@@ -387,7 +406,7 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
       ),
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
+          constraints: const BoxConstraints(maxWidth: 900),
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(AppTheme.spacingL),
             child: Form(
@@ -395,9 +414,206 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Hero Section
+                  // ── M3 Progress Header ──────────────────────────────────
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        strings.t('step1PersonalInfo'),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: AppTheme.m3Primary,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        strings.t('personalInformation'),
+                        style: const TextStyle(
+                          fontFamily: 'Outfit',
+                          fontSize: 32,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.m3OnSurface,
+                          height: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        strings.t('captureHouseholdDetails'),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: AppTheme.m3OnSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      // Progress bar — 1/4 filled
+                      Row(
+                        children: List.generate(4, (i) {
+                          return Expanded(
+                            child: Container(
+                              height: 8,
+                              margin: EdgeInsets.only(right: i < 3 ? 4 : 0),
+                              decoration: BoxDecoration(
+                                color: i == 0
+                                    ? AppTheme.m3Primary
+                                    : AppTheme.m3SurfaceVariant,
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // ── Two-column layout on wide screens ───────────────────
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final useRow = constraints.maxWidth > 700;
+                      if (useRow) {
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Main form column (2/3)
+                            Expanded(
+                              flex: 2,
+                              child: _buildMainFormColumn(
+                                  context, strings, textTheme),
+                            ),
+                            const SizedBox(width: 24),
+                            // Sidebar (1/3)
+                            Expanded(
+                              child: _buildSidebar(context, strings),
+                            ),
+                          ],
+                        );
+                      }
+                      return Column(
+                        children: [
+                          _buildMainFormColumn(context, strings, textTheme),
+                          const SizedBox(height: 16),
+                          _buildSidebar(context, strings),
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSidebar(BuildContext context, dynamic strings) {
+    return Column(
+      children: [
+        // Need Help card
+        Container(
+          decoration: BoxDecoration(
+            color: AppTheme.m3TertiaryContainer,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.help_outline,
+                      color: AppTheme.m3OnTertiaryContainer, size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    strings.t('needHelp'),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.m3OnTertiaryContainer,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                strings.t('needHelpBody'),
+                style: TextStyle(
+                  fontSize: 13,
+                  color: AppTheme.m3OnTertiaryContainer.withValues(alpha: 0.9),
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: () {},
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppTheme.m3OnTertiaryContainer,
+                    side: BorderSide(
+                        color: AppTheme.m3OnTertiaryContainer
+                            .withValues(alpha: 0.5)),
+                    shape: const StadiumBorder(),
+                  ),
+                  child: Text(strings.t('contactSupport')),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        // Why we need this card
+        Container(
+          decoration: BoxDecoration(
+            color: AppTheme.m3SurfaceContainer,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+                color: AppTheme.m3SurfaceVariant),
+          ),
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.info_outline,
+                      color: AppTheme.m3OnSurfaceVariant, size: 18),
+                  const SizedBox(width: 8),
+                  Text(
+                    strings.t('whyWeNeedThis'),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.m3OnSurface,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                strings.t('whyWeNeedThisBody'),
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppTheme.m3OnSurfaceVariant,
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMainFormColumn(
+      BuildContext context, dynamic strings, TextTheme textTheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+                  // Personal details header card
                   Container(
-                    width: double.infinity,
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
                       gradient: AppTheme.cardGradient,
@@ -663,12 +879,7 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
                   ),
                   const SizedBox(height: 40),
                 ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+      );
   }
 
   /// Fallback free-text fields when location API is unavailable (offline)

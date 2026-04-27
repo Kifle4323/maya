@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Maya City CBHI - Digital Member Card</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-container": "#1976d2",
+                      "on-background": "#1b1b1f",
+                      "secondary-fixed": "#e2e2e2",
+                      "outline-variant": "#c1c6d4",
+                      "inverse-surface": "#303034",
+                      "tertiary-fixed": "#a0f2e1",
+                      "on-error": "#ffffff",
+                      "surface-tint": "#005faf",
+                      "on-secondary-fixed-variant": "#454747",
+                      "on-tertiary-fixed-variant": "#005046",
+                      "surface-bright": "#fbf8fe",
+                      "on-tertiary-container": "#f8fffc",
+                      "on-primary-fixed": "#001c3a",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-high": "#eae7ed",
+                      "tertiary": "#00695c",
+                      "inverse-primary": "#a5c8ff",
+                      "surface-variant": "#e4e1e7",
+                      "surface-container": "#f0edf2",
+                      "on-tertiary-fixed": "#00201b",
+                      "outline": "#717783",
+                      "error-container": "#ffdad6",
+                      "on-secondary-container": "#5f6161",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-container": "#dcdddd",
+                      "primary-fixed-dim": "#a5c8ff",
+                      "primary": "#005dac",
+                      "on-surface-variant": "#414752",
+                      "secondary": "#5d5f5f",
+                      "on-secondary-fixed": "#1a1c1c",
+                      "error": "#ba1a1a",
+                      "on-error-container": "#93000a",
+                      "tertiary-container": "#2d8274",
+                      "secondary-fixed-dim": "#c6c6c7",
+                      "background": "#fbf8fe",
+                      "surface-container-highest": "#e4e1e7",
+                      "surface": "#fbf8fe",
+                      "on-primary": "#ffffff",
+                      "on-primary-fixed-variant": "#004786",
+                      "on-primary-container": "#fffdff",
+                      "tertiary-fixed-dim": "#84d5c5",
+                      "on-surface": "#1b1b1f",
+                      "surface-dim": "#dcd9de",
+                      "primary-fixed": "#d4e3ff",
+                      "inverse-on-surface": "#f3f0f5",
+                      "surface-container-low": "#f6f2f8",
+                      "on-secondary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "16px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "24px",
+                      "sm": "8px",
+                      "lg": "24px",
+                      "base": "4px",
+                      "xs": "4px",
+                      "xl": "32px",
+                      "md": "16px"
+              },
+              "fontFamily": {
+                      "label-lg": [
+                              "Inter"
+                      ],
+                      "title-md": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Manrope"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Manrope"
+                      ],
+                      "title-lg": [
+                              "Manrope"
+                      ],
+                      "headline-lg": [
+                              "Manrope"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "label-lg": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.1px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "title-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "letterSpacing": "0.15px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "57px",
+                              {
+                                      "lineHeight": "64px",
+                                      "letterSpacing": "-0.25px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.5px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-md": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "title-lg": [
+                              "22px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.25px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "letterSpacing": "0.5px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+          .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+          }
+      </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md antialiased">
+<header class="sticky top-0 z-50 flex items-center justify-between w-full px-4 h-16 bg-white/80 backdrop-blur-md">
+<div class="flex items-center gap-sm">
+<img alt="User profile photo" class="w-8 h-8 rounded-full object-cover" data-alt="Headshot of a smiling young man in professional attire against a light gray background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMBLv7xyuU_bHJnzi7BO6bAgDOgEy3tByGfHTyJ4fyMqSbmcccO2GX0AFrc13hTzKBOTnuFQiAsL9fESWLb9NBMK_JYnf0AgI7FeTtyOp7_JnyWBvNESZCr2iu1_SCAYEg6q6Z01pPWPmABzL90la41Xcr0KXfWvr4OdmeftlkRhqUEcIP3_QLicJDCwICYHky8Uu1J0X4HdcfQay9pV1p_NARKUC-_hllxLHS2w9bM9yNCb_pF55Gt3B_lIXrIQHT6YoSb4nuNik"/>
+</div>
+<div class="text-lg font-extrabold tracking-tighter text-blue-700">
+            Maya CBHI
+        </div>
+<button class="hover:bg-slate-100 transition-colors active:scale-95 duration-150 p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-blue-700 text-xl">notifications</span>
+</button>
+</header>
+<main class="flex-1 w-full max-w-lg mx-auto px-margin-mobile md:px-margin-desktop py-lg pb-24 flex flex-col gap-lg">
+<div class="flex flex-col gap-xs">
+<h1 class="font-headline-md text-headline-md text-on-background">ID Card</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Present this digital card to access healthcare services.</p>
+</div>
+<section class="bg-primary-container text-on-primary-container rounded-xl p-lg flex flex-col gap-lg relative overflow-hidden shadow-md">
+<div class="absolute -right-16 -top-16 w-48 h-48 bg-primary rounded-full opacity-20 pointer-events-none"></div>
+<div class="absolute -left-8 -bottom-8 w-32 h-32 bg-primary rounded-full opacity-10 pointer-events-none"></div>
+<div class="flex items-start justify-between relative z-10">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg opacity-90">Maya City CBHI</span>
+<span class="font-title-md text-title-md">Community Health Plan</span>
+</div>
+<div class="bg-tertiary-container text-on-tertiary-container rounded-full px-3 py-1 flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Active</span>
+</div>
+</div>
+<div class="flex flex-col gap-1 relative z-10 mt-sm">
+<span class="font-label-md text-label-md opacity-80 uppercase tracking-widest">Member Name</span>
+<span class="font-headline-md text-headline-md leading-none">Adrian Collins Mwangi</span>
+</div>
+<div class="grid grid-cols-2 gap-md relative z-10 mt-sm">
+<div class="flex flex-col gap-1">
+<span class="font-label-md text-label-md opacity-80 uppercase tracking-widest">ID Number</span>
+<span class="font-title-md text-title-md">MCBHI-8472-910</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-label-md text-label-md opacity-80 uppercase tracking-widest">Valid Until</span>
+<span class="font-title-md text-title-md">Dec 31, 2025</span>
+</div>
+</div>
+</section>
+<section class="bg-surface-container-low rounded-xl p-lg flex flex-col items-center justify-center gap-md shadow-sm border border-outline-variant/30">
+<h2 class="font-title-lg text-title-lg text-on-surface">Scan to Verify</h2>
+<div class="bg-surface-container-lowest p-sm rounded-lg shadow-sm border border-outline-variant/20">
+<img alt="QR Code" class="w-48 h-48 object-contain" data-alt="High contrast black and white QR code used for digital identity verification" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgUbsERgJs_ABCr_Nm5KcDH6mbhYehgtjFVC5IiqsF_73fh9jOJKuKg5opi13cEKuC3ZdEgLAOZVxARhDCSRd-7WhcwDX2pOdmkw1ytJ2fVqP5ihRCwEW2e-cMXDwnMI8YjvzDlX8oefBvRHP4_eZNb3oEFZIwA81dm9rvEnTFy7_op_Jyl2AeQmHjf8zJPG-EDTvY_Ow0dapSJCwyDNvo_sCnxyaMevwOTrtCI1oLjGp07HiY11Zq6CfxT8p2LIVYj5wN789FzRg"/>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-center max-w-[250px]">
+                Show this code to your healthcare provider for instant verification.
+            </p>
+</section>
+<section class="grid grid-cols-2 gap-md mt-sm">
+<button class="bg-secondary-container text-on-secondary-container hover:bg-secondary-container/80 transition-colors active:scale-95 duration-200 rounded-full py-2 px-4 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">sync</span>
+<span class="font-label-lg text-label-lg">Sync Data</span>
+</button>
+<button class="bg-transparent border border-outline text-on-surface hover:bg-surface-variant/50 transition-colors active:scale-95 duration-200 rounded-full py-2 px-4 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">history</span>
+<span class="font-label-lg text-label-lg">View Activity Log</span>
+</button>
+</section>
+</main>
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.05)] md:hidden">
+<button class="flex flex-col items-center justify-center text-slate-500 opacity-80 hover:text-blue-600 active:scale-90 transition-transform duration-200 w-16">
+<span class="material-symbols-outlined text-[24px] mb-1">home</span>
+<span class="font-['Manrope'] text-[11px] font-medium">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-500 opacity-80 hover:text-blue-600 active:scale-90 transition-transform duration-200 w-16">
+<span class="material-symbols-outlined text-[24px] mb-1">group</span>
+<span class="font-['Manrope'] text-[11px] font-medium">Family</span>
+</button>
+<button class="flex flex-col items-center justify-center text-blue-700 bg-blue-50/50 rounded-xl px-3 py-1 active:scale-90 transition-transform duration-200 w-16">
+<span class="material-symbols-outlined text-[24px] mb-1" style="font-variation-settings: 'FILL' 1;">contact_page</span>
+<span class="font-['Manrope'] text-[11px] font-medium font-bold">ID Card</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-500 opacity-80 hover:text-blue-600 active:scale-90 transition-transform duration-200 w-16">
+<span class="material-symbols-outlined text-[24px] mb-1">receipt_long</span>
+<span class="font-['Manrope'] text-[11px] font-medium">Claims</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-500 opacity-80 hover:text-blue-600 active:scale-90 transition-transform duration-200 w-16">
+<span class="material-symbols-outlined text-[24px] mb-1">person</span>
+<span class="font-['Manrope'] text-[11px] font-medium">Account</span>
+</button>
+</nav>
+</body></html>

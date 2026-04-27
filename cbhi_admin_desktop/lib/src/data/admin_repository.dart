@@ -7,6 +7,16 @@ const String kAdminApiBase = String.fromEnvironment(
   defaultValue: 'https://member-based-cbhi.vercel.app/api/v1',
 );
 
+/// Normalize the API base URL at runtime:
+/// - Strip trailing slash
+/// - Ensure it ends with /api/v1
+String get _normalizedAdminApiBase {
+  var url = kAdminApiBase.trimRight();
+  if (url.endsWith('/')) url = url.substring(0, url.length - 1);
+  if (!url.endsWith('/api/v1')) url = '$url/api/v1';
+  return url;
+}
+
 class AdminRepository {
   AdminRepository({http.Client? client}) : _client = client ?? http.Client();
 
@@ -61,7 +71,7 @@ class AdminRepository {
   Future<bool> ping() async {
     try {
       final response = await _client
-          .get(Uri.parse('$kAdminApiBase/health'), headers: _headers)
+          .get(Uri.parse('$_normalizedAdminApiBase/health'), headers: _headers)
           .timeout(const Duration(seconds: 5));
       return response.statusCode < 500;
     } catch (_) {
@@ -189,7 +199,7 @@ class AdminRepository {
     };
     final qs = '?${Uri(queryParameters: query).query}';
     final response = await _client.get(
-      Uri.parse('$kAdminApiBase/admin/export$qs'),
+      Uri.parse('$_normalizedAdminApiBase/admin/export$qs'),
       headers: _headers,
     );
     if (response.statusCode != 200) throw Exception('Export failed');
@@ -376,7 +386,7 @@ class AdminRepository {
   Future<Map<String, dynamic>> _get(String path) async {
     try {
       final response = await _client
-          .get(Uri.parse('$kAdminApiBase$path'), headers: _headers)
+          .get(Uri.parse('$_normalizedAdminApiBase$path'), headers: _headers)
           .timeout(const Duration(seconds: 15));
       return _parse(response);
     } catch (e) {
@@ -391,7 +401,7 @@ class AdminRepository {
     try {
       final response = await _client
           .post(
-            Uri.parse('$kAdminApiBase$path'),
+            Uri.parse('$_normalizedAdminApiBase$path'),
             headers: _headers,
             body: jsonEncode(body),
           )
@@ -409,7 +419,7 @@ class AdminRepository {
     try {
       final response = await _client
           .patch(
-            Uri.parse('$kAdminApiBase$path'),
+            Uri.parse('$_normalizedAdminApiBase$path'),
             headers: _headers,
             body: jsonEncode(body),
           )
@@ -426,7 +436,7 @@ class AdminRepository {
   Future<Map<String, dynamic>> _put(String path, Map<String, dynamic> body) async {
     final response = await _client
         .put(
-          Uri.parse('$kAdminApiBase$path'),
+          Uri.parse('$_normalizedAdminApiBase$path'),
           headers: _headers,
           body: jsonEncode(body),
         )

@@ -7,6 +7,16 @@ const String kFacilityApiBase = String.fromEnvironment(
   defaultValue: 'https://member-based-cbhi.vercel.app/api/v1',
 );
 
+/// Normalize the API base URL at runtime:
+/// - Strip trailing slash
+/// - Ensure it ends with /api/v1
+String get _normalizedFacilityApiBase {
+  var url = kFacilityApiBase.trimRight();
+  if (url.endsWith('/')) url = url.substring(0, url.length - 1);
+  if (!url.endsWith('/api/v1')) url = '$url/api/v1';
+  return url;
+}
+
 class FacilityRepository {
   FacilityRepository({http.Client? client}) : _client = client ?? http.Client();
 
@@ -43,7 +53,7 @@ class FacilityRepository {
   Future<bool> ping() async {
     try {
       final response = await _client
-          .get(Uri.parse('$kFacilityApiBase/health'), headers: _headers)
+          .get(Uri.parse('$_normalizedFacilityApiBase/health'), headers: _headers)
           .timeout(const Duration(seconds: 5));
       return response.statusCode < 500;
     } catch (_) {
@@ -118,7 +128,7 @@ class FacilityRepository {
   Future<void> markNotificationRead(String notificationId) async {
     final response = await _client
         .patch(
-          Uri.parse('$kFacilityApiBase/notifications/$notificationId/read'),
+          Uri.parse('$_normalizedFacilityApiBase/notifications/$notificationId/read'),
           headers: _headers,
         )
         .timeout(const Duration(seconds: 10));
@@ -133,7 +143,7 @@ class FacilityRepository {
   Future<Map<String, dynamic>> _get(String path) async {
     try {
       final response = await _client
-          .get(Uri.parse('$kFacilityApiBase$path'), headers: _headers)
+          .get(Uri.parse('$_normalizedFacilityApiBase$path'), headers: _headers)
           .timeout(const Duration(seconds: 15));
       return _parse(response);
     } catch (e) {
@@ -148,7 +158,7 @@ class FacilityRepository {
     try {
       final response = await _client
           .post(
-            Uri.parse('$kFacilityApiBase$path'),
+            Uri.parse('$_normalizedFacilityApiBase$path'),
             headers: _headers,
             body: jsonEncode(body),
           )

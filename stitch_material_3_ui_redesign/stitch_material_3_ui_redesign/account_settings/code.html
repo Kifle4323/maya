@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Maya City CBHI - Account Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-container": "#1976d2",
+                      "on-background": "#1b1b1f",
+                      "secondary-fixed": "#e2e2e2",
+                      "outline-variant": "#c1c6d4",
+                      "inverse-surface": "#303034",
+                      "tertiary-fixed": "#a0f2e1",
+                      "on-error": "#ffffff",
+                      "surface-tint": "#005faf",
+                      "on-secondary-fixed-variant": "#454747",
+                      "on-tertiary-fixed-variant": "#005046",
+                      "surface-bright": "#fbf8fe",
+                      "on-tertiary-container": "#f8fffc",
+                      "on-primary-fixed": "#001c3a",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-high": "#eae7ed",
+                      "tertiary": "#00695c",
+                      "inverse-primary": "#a5c8ff",
+                      "surface-variant": "#e4e1e7",
+                      "surface-container": "#f0edf2",
+                      "on-tertiary-fixed": "#00201b",
+                      "outline": "#717783",
+                      "error-container": "#ffdad6",
+                      "on-secondary-container": "#5f6161",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-container": "#dcdddd",
+                      "primary-fixed-dim": "#a5c8ff",
+                      "primary": "#005dac",
+                      "on-surface-variant": "#414752",
+                      "secondary": "#5d5f5f",
+                      "on-secondary-fixed": "#1a1c1c",
+                      "error": "#ba1a1a",
+                      "on-error-container": "#93000a",
+                      "tertiary-container": "#2d8274",
+                      "secondary-fixed-dim": "#c6c6c7",
+                      "background": "#fbf8fe",
+                      "surface-container-highest": "#e4e1e7",
+                      "surface": "#fbf8fe",
+                      "on-primary": "#ffffff",
+                      "on-primary-fixed-variant": "#004786",
+                      "on-primary-container": "#fffdff",
+                      "tertiary-fixed-dim": "#84d5c5",
+                      "on-surface": "#1b1b1f",
+                      "surface-dim": "#dcd9de",
+                      "primary-fixed": "#d4e3ff",
+                      "inverse-on-surface": "#f3f0f5",
+                      "surface-container-low": "#f6f2f8",
+                      "on-secondary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "16px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "24px",
+                      "sm": "8px",
+                      "lg": "24px",
+                      "base": "4px",
+                      "xs": "4px",
+                      "xl": "32px",
+                      "md": "16px"
+              },
+              "fontFamily": {
+                      "label-lg": [
+                              "Inter"
+                      ],
+                      "title-md": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Manrope"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Manrope"
+                      ],
+                      "title-lg": [
+                              "Manrope"
+                      ],
+                      "headline-lg": [
+                              "Manrope"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "label-lg": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.1px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "title-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "letterSpacing": "0.15px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "57px",
+                              {
+                                      "lineHeight": "64px",
+                                      "letterSpacing": "-0.25px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.5px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-md": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "title-lg": [
+                              "22px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.25px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "letterSpacing": "0.5px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+      </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col md:flex-row pb-[80px] md:pb-0">
+<!-- Desktop Navigation Rail -->
+<nav class="hidden md:flex flex-col w-[80px] h-screen fixed left-0 top-0 bg-surface-container border-r border-outline-variant z-40 items-center py-6 gap-8">
+<div class="text-primary font-headline-md text-title-lg">M</div>
+<div class="flex flex-col gap-4 w-full px-2">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors p-2 rounded-xl" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors p-2 rounded-xl" href="#">
+<span class="material-symbols-outlined mb-1">group</span>
+<span class="font-label-md text-label-md">Family</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors p-2 rounded-xl" href="#">
+<span class="material-symbols-outlined mb-1">contact_page</span>
+<span class="font-label-md text-label-md">ID Card</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors p-2 rounded-xl" href="#">
+<span class="material-symbols-outlined mb-1">receipt_long</span>
+<span class="font-label-md text-label-md">Claims</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary bg-primary-container rounded-xl p-2 font-bold" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-md text-label-md">Account</span>
+</a>
+</div>
+</nav>
+<!-- TopAppBar -->
+<header class="sticky top-0 z-50 flex items-center justify-between w-full px-4 h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 md:pl-[96px]">
+<div class="flex items-center gap-3">
+<img alt="User profile photo" class="w-8 h-8 rounded-full object-cover border border-outline-variant" data-alt="close up portrait of a young woman with natural makeup looking directly at camera, soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnF6GGwOnV2t4z8ZxmmGoqKCRWYBL_9nX3XnPSIEhnGeseXyGmeXI-lf1gQHXduI_GF-r_tFWIiJIkrGesqKr0UliJvZAXXW8Ra7c-IAlpJAY-JyhJCz_EBGsPDK_Q1VNKA4XPvgYoEpbHw1gMgSIT6ATqu8ZbV-WI7aTAVLOW0SiJV0Z8D8UVmNtj0OMm3s5E-F2KfgMvXTyMkEDpDMKqv1mlNgJSEjIM6D0CN-Sf9MEueC6iPxATMcxo18Se2th1Wsl8C7bIjHU"/>
+<h1 class="font-['Manrope'] text-sm font-semibold tracking-tight text-blue-700 dark:text-blue-400">Maya CBHI</h1>
+</div>
+<button class="text-blue-700 dark:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors p-2 rounded-full active:scale-95 duration-150">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="flex-1 w-full max-w-4xl mx-auto px-4 py-6 md:pl-[96px] md:pr-6 md:py-8 flex flex-col gap-gutter">
+<!-- Page Title -->
+<div class="mb-4">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Account Settings</h2>
+</div>
+<!-- Profile Header Card -->
+<section class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/30 flex flex-col sm:flex-row items-center sm:items-start gap-6 relative shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
+<div class="relative group cursor-pointer shrink-0">
+<img alt="User Avatar" class="w-24 h-24 rounded-full object-cover border-2 border-primary/20" data-alt="close up portrait of a young woman with natural makeup looking directly at camera, soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQ2lzfSqp-Y2keIAP4ikQ_MpN9x2_RDUqkypNAgR6XSLits369oMDdg-pBSNblb0vmHJ9478mKu8BwSU4eLrgxdjNZkW8FrRSkjaKGBifj8CjbPlku9pCfMAzbZ7juJYPOZfkvFwHOIAtkeNjtPlrL67aajBKFCQIGXPjfRa816l958KRvudRfn2ivm_rjdjAlbcwWIgVf4tJ8OGf_hghNKi3ZWS9gnc7lSPIqIT6K_zMMVbXukMWUXZLziN8ZeNSE99jGfReqd7s"/>
+<div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-white">edit</span>
+</div>
+</div>
+<div class="flex flex-col items-center sm:items-start flex-1">
+<h3 class="font-title-lg text-title-lg text-on-surface mb-1">Sarah Jenkins</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">Member ID: MC-8492-491</p>
+<div class="flex flex-wrap gap-2 justify-center sm:justify-start">
+<span class="bg-tertiary-container/20 text-tertiary-container font-label-md text-label-md px-3 py-1 rounded-full border border-tertiary-container/30">Head of Household</span>
+<span class="bg-primary/10 text-primary font-label-md text-label-md px-3 py-1 rounded-full border border-primary/20">Active Plan</span>
+</div>
+</div>
+<button class="hidden sm:flex absolute top-6 right-6 text-primary hover:bg-primary/10 p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</section>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter mt-2">
+<!-- Left Column -->
+<div class="flex flex-col gap-gutter">
+<!-- Plan & Coverage -->
+<section class="bg-surface-container-low rounded-xl border border-outline-variant/30 overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
+<div class="p-4 border-b border-outline-variant/30 bg-surface-container-lowest/50">
+<h3 class="font-title-md text-title-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">health_and_safety</span>
+                            Plan &amp; Coverage
+                        </h3>
+</div>
+<div class="flex flex-col">
+<a class="flex items-center justify-between p-4 hover:bg-surface-container-high/50 transition-colors border-b border-outline-variant/20" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant">history</span>
+<span class="font-body-lg text-body-lg text-on-surface">Coverage History</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-4 hover:bg-surface-container-high/50 transition-colors" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant">credit_card</span>
+<span class="font-body-lg text-body-lg text-on-surface">Digital Cards</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</a>
+</div>
+</section>
+<!-- Preferences -->
+<section class="bg-surface-container-low rounded-xl border border-outline-variant/30 overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
+<div class="p-4 border-b border-outline-variant/30 bg-surface-container-lowest/50">
+<h3 class="font-title-md text-title-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">tune</span>
+                            Preferences
+                        </h3>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center justify-between p-4 border-b border-outline-variant/20">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant">language</span>
+<div class="flex flex-col">
+<span class="font-body-lg text-body-lg text-on-surface">Language</span>
+<span class="font-label-md text-label-md text-on-surface-variant">English (US)</span>
+</div>
+</div>
+<button class="text-primary font-label-lg text-label-lg hover:underline">Change</button>
+</div>
+<div class="p-4 flex flex-col gap-3">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-on-surface-variant">palette</span>
+<span class="font-body-lg text-body-lg text-on-surface">Appearance</span>
+</div>
+<div class="grid grid-cols-3 gap-2 bg-surface-container-highest p-1 rounded-lg">
+<button class="flex justify-center items-center py-2 rounded-md bg-surface text-on-surface shadow-sm font-label-md text-label-md">
+                                    System
+                                </button>
+<button class="flex justify-center items-center py-2 rounded-md text-on-surface-variant hover:bg-surface/50 font-label-md text-label-md transition-colors">
+                                    Light
+                                </button>
+<button class="flex justify-center items-center py-2 rounded-md text-on-surface-variant hover:bg-surface/50 font-label-md text-label-md transition-colors">
+                                    Dark
+                                </button>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column -->
+<div class="flex flex-col gap-gutter">
+<!-- Security -->
+<section class="bg-surface-container-low rounded-xl border border-outline-variant/30 overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
+<div class="p-4 border-b border-outline-variant/30 bg-surface-container-lowest/50">
+<h3 class="font-title-md text-title-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">security</span>
+                            Security
+                        </h3>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center justify-between p-4 border-b border-outline-variant/20">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-on-surface-variant mt-0.5">key</span>
+<div class="flex flex-col">
+<span class="font-body-lg text-body-lg text-on-surface">Passkeys</span>
+<span class="font-body-md text-body-md text-on-surface-variant mt-1">Sign in safely with your biometric data</span>
+</div>
+</div>
+<button class="bg-primary-container text-primary font-label-lg text-label-lg px-4 py-2 rounded-full hover:bg-primary-container/80 transition-colors shrink-0">Add</button>
+</div>
+<div class="flex items-center justify-between p-4">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-on-surface-variant mt-0.5">verified_user</span>
+<div class="flex flex-col">
+<span class="font-body-lg text-body-lg text-on-surface">Two-Factor Authentication</span>
+<span class="font-body-md text-body-md text-on-surface-variant mt-1">Currently enabled via SMS</span>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer shrink-0">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- Danger Zone -->
+<section class="mt-4 flex flex-col gap-3">
+<button class="w-full bg-surface-container flex items-center justify-center gap-2 py-3 rounded-full text-on-surface font-label-lg text-label-lg hover:bg-surface-variant transition-colors border border-outline-variant/50">
+<span class="material-symbols-outlined">logout</span>
+                        Sign Out
+                    </button>
+<button class="w-full flex items-center justify-center gap-2 py-3 rounded-full text-error font-label-lg text-label-lg hover:bg-error-container/50 transition-colors mt-2">
+<span class="material-symbols-outlined">delete_forever</span>
+                        Delete Account
+                    </button>
+</section>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 rounded-t-lg shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 opacity-80 hover:text-blue-600 dark:hover:text-blue-300 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-['Manrope'] text-[11px] font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 opacity-80 hover:text-blue-600 dark:hover:text-blue-300 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1">group</span>
+<span class="font-['Manrope'] text-[11px] font-medium">Family</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 opacity-80 hover:text-blue-600 dark:hover:text-blue-300 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1">contact_page</span>
+<span class="font-['Manrope'] text-[11px] font-medium">ID Card</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 opacity-80 hover:text-blue-600 dark:hover:text-blue-300 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1">receipt_long</span>
+<span class="font-['Manrope'] text-[11px] font-medium">Claims</span>
+</a>
+<a class="flex flex-col items-center justify-center text-blue-700 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/20 rounded-xl px-3 py-1 hover:text-blue-600 dark:hover:text-blue-300 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-['Manrope'] text-[11px] font-medium">Account</span>
+</a>
+</nav>
+</body></html>

@@ -9,10 +9,9 @@ import '../cbhi_data.dart';
 import '../cbhi_localizations.dart';
 import '../cbhi_state.dart';
 import '../theme/app_theme.dart';
-import '../shared/premium_widgets.dart';
 
-/// Digital CBHI card screen — shows QR-coded membership cards for all
-/// household members (or just the current beneficiary for family logins).
+/// Digital CBHI card screen — M3 HealthShield redesign.
+/// Shows the membership card (blue gradient) + QR section below.
 class DigitalCardScreen extends StatelessWidget {
   const DigitalCardScreen({super.key});
 
@@ -34,21 +33,33 @@ class DigitalCardScreen extends StatelessWidget {
             : snapshot.digitalCards;
 
         return Scaffold(
-          backgroundColor: AppTheme.darkSurface0,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            foregroundColor: Colors.white,
-            title: Text(strings.t('digitalCbhiCards'), 
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800)),
-          ),
+          backgroundColor: AppTheme.m3SurfaceContainerLow,
           body: ListView(
-            padding: const EdgeInsets.all(AppTheme.spacingL),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
             children: [
-              Text(
-                strings.t('yourActiveMemberships'),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.white.withValues(alpha: 0.6),
-                ),
+              // Page header
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    strings.t('idCard'),
+                    style: const TextStyle(
+                      color: AppTheme.m3OnSurface,
+                      fontSize: 28,
+                      fontWeight: FontWeight.w600,
+                      height: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    strings.t('presentCardForServices'),
+                    style: const TextStyle(
+                      color: AppTheme.m3OnSurfaceVariant,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 24),
               ...cards.toList().asMap().entries.map(
@@ -56,7 +67,7 @@ class DigitalCardScreen extends StatelessWidget {
                   final card = entry.value;
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 24),
-                    child: _FlippableCard(
+                    child: _M3CardLayout(
                       card: card,
                       snapshot: snapshot,
                     ),
@@ -71,34 +82,18 @@ class DigitalCardScreen extends StatelessWidget {
   }
 }
 
-// ── F5: Coverage status badge color helper ────────────────────────────────────
+// ── M3 Card Layout — card + QR section stacked ────────────────────────────────
 
-Color _coverageStatusColor(String status) {
-  switch (status.toUpperCase()) {
-    case 'ACTIVE':
-      return AppTheme.success;
-    case 'EXPIRED':
-      return AppTheme.error;
-    case 'PENDING_RENEWAL':
-    case 'PENDING':
-      return AppTheme.warning;
-    default:
-      return AppTheme.textSecondary;
-  }
-}
-
-// ── F3: Flippable card ────────────────────────────────────────────────────────
-
-class _FlippableCard extends StatefulWidget {
-  const _FlippableCard({required this.card, required this.snapshot});
+class _M3CardLayout extends StatefulWidget {
+  const _M3CardLayout({required this.card, required this.snapshot});
   final Map<String, dynamic> card;
   final CbhiSnapshot snapshot;
 
   @override
-  State<_FlippableCard> createState() => _FlippableCardState();
+  State<_M3CardLayout> createState() => _M3CardLayoutState();
 }
 
-class _FlippableCardState extends State<_FlippableCard>
+class _M3CardLayoutState extends State<_M3CardLayout>
     with SingleTickerProviderStateMixin {
   late final AnimationController _flipController;
   late final Animation<double> _flipAnimation;
@@ -133,35 +128,181 @@ class _FlippableCardState extends State<_FlippableCard>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _flip,
-      child: AnimatedBuilder(
-        animation: _flipAnimation,
-        builder: (context, child) {
-          final angle = _flipAnimation.value;
-          final isFront = angle <= math.pi / 2;
-          return Transform(
-            alignment: Alignment.center,
-            transform: Matrix4.identity()
-              ..setEntry(3, 2, 0.001)
-              ..rotateY(angle),
-            child: isFront
-                ? _CardFront(
-                    card: widget.card,
-                    snapshot: widget.snapshot,
-                    onFlip: _flip,
-                  )
-                : Transform(
-                    alignment: Alignment.center,
-                    transform: Matrix4.identity()..rotateY(math.pi),
-                    child: _CardBack(
-                      card: widget.card,
-                      snapshot: widget.snapshot,
+    final strings = CbhiLocalizations.of(context);
+    final card = widget.card;
+    final snapshot = widget.snapshot;
+    final hasToken = (card['token']?.toString() ?? '').isNotEmpty;
+
+    // Coverage status
+    final coverageStatus = card['coverageStatus']?.toString() ?? snapshot.coverageStatus;
+    final endDateRaw = snapshot.coverage?['endDate']?.toString() ?? card['validUntil']?.toString();
+    final endDate = endDateRaw != null ? DateTime.tryParse(endDateRaw) : null;
+
+    return Column(
+      children: [
+        // ── Blue gradient membership card ──
+        GestureDetector(
+          onTap: _flip,
+          child: AnimatedBuilder(
+            animation: _flipAnimation,
+            builder: (context, child) {
+              final angle = _flipAnimation.value;
+              final isFront = angle <= math.pi / 2;
+              return Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.identity()
+                  ..setEntry(3, 2, 0.001)
+                  ..rotateY(angle),
+                child: isFront
+                    ? _CardFront(
+                        card: card,
+                        snapshot: snapshot,
+                        coverageStatus: coverageStatus,
+                        endDate: endDate,
+                        onFlip: _flip,
+                      )
+                    : Transform(
+                        alignment: Alignment.center,
+                        transform: Matrix4.identity()..rotateY(math.pi),
+                        child: _CardBack(
+                          card: card,
+                          snapshot: snapshot,
+                          hasToken: hasToken,
+                        ),
+                      ),
+              );
+            },
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // ── QR section (always visible below card) ──
+        Container(
+          decoration: BoxDecoration(
+            color: AppTheme.m3SurfaceContainerLow,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.02),
+                blurRadius: 8,
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              Text(
+                strings.t('scanToVerify'),
+                style: const TextStyle(
+                  color: AppTheme.m3OnSurface,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 16),
+              // QR code
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppTheme.m3SurfaceContainerLowest,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: AppTheme.m3OutlineVariant.withValues(alpha: 0.2),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
+                child: hasToken
+                    ? QrImageView(
+                        data: card['token']!.toString(),
+                        size: 192,
+                        eyeStyle: const QrEyeStyle(
+                          eyeShape: QrEyeShape.circle,
+                          color: Colors.black,
+                        ),
+                        dataModuleStyle: const QrDataModuleStyle(
+                          dataModuleShape: QrDataModuleShape.circle,
+                          color: Colors.black,
+                        ),
+                      )
+                    : SizedBox(
+                        width: 192,
+                        height: 192,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.qr_code_2, size: 64, color: Colors.grey.shade300),
+                            const SizedBox(height: 12),
+                            Text(
+                              strings.t('noDigitalCardCached'),
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: AppTheme.m3OnSurfaceVariant,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                hasToken
+                    ? strings.t('showAtFacilityHint')
+                    : strings.t('completeSyncForQr'),
+                style: const TextStyle(
+                  color: AppTheme.m3OnSurfaceVariant,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              // Action buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: _PillButton(
+                      label: strings.t('syncData'),
+                      icon: Icons.sync_outlined,
+                      backgroundColor: AppTheme.m3SecondaryContainer,
+                      foregroundColor: AppTheme.m3OnSecondaryContainer,
+                      onTap: () => context.read<AppCubit>().sync(),
                     ),
                   ),
-          );
-        },
-      ),
+                  const SizedBox(width: 12),
+                  if (hasToken)
+                    Expanded(
+                      child: _PillButton(
+                        label: strings.t('showAtFacility'),
+                        icon: Icons.local_hospital_outlined,
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: AppTheme.m3OnSurface,
+                        borderColor: AppTheme.m3Outline,
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => _ShowAtFacilityScreen(
+                              token: card['token']!.toString(),
+                              memberName: card['memberName']?.toString() ?? snapshot.viewerName,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -172,141 +313,184 @@ class _CardFront extends StatelessWidget {
   const _CardFront({
     required this.card,
     required this.snapshot,
+    required this.coverageStatus,
+    required this.endDate,
     required this.onFlip,
   });
   final Map<String, dynamic> card;
   final CbhiSnapshot snapshot;
+  final String coverageStatus;
+  final DateTime? endDate;
   final VoidCallback onFlip;
 
   @override
   Widget build(BuildContext context) {
     final strings = CbhiLocalizations.of(context);
-    final coverageStatus =
-        card['coverageStatus']?.toString() ?? snapshot.coverageStatus;
-    final statusColor = _coverageStatusColor(coverageStatus);
 
-    // F4: Expiry date
-    final endDateRaw = snapshot.coverage?['endDate']?.toString() ??
-        card['validUntil']?.toString();
-    final endDate = endDateRaw != null ? DateTime.tryParse(endDateRaw) : null;
-    Color expiryColor = Colors.white;
-    if (endDate != null) {
-      final now = DateTime.now();
-      if (endDate.isBefore(now)) {
-        expiryColor = AppTheme.error;
-      } else if (endDate.difference(now).inDays <= 30) {
-        expiryColor = AppTheme.warning;
-      }
-    }
-
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Card(
-      elevation: 1,
-      color: colorScheme.primary,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.m3PrimaryContainer,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.m3Primary.withValues(alpha: 0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
         children: [
-
+          // Decorative circles
+          Positioned(
+            right: -64,
+            top: -64,
+            child: Container(
+              width: 192,
+              height: 192,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppTheme.m3Primary.withValues(alpha: 0.2),
+              ),
+            ),
+          ),
+          Positioned(
+            left: -32,
+            bottom: -32,
+            child: Container(
+              width: 128,
+              height: 128,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppTheme.m3Primary.withValues(alpha: 0.1),
+              ),
+            ),
+          ),
+          // Content
           Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Header row
                 Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-                      ),
-                      child: const Icon(Icons.health_and_safety, color: Colors.white, size: 20),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      strings.t('appTitle'),
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.8),
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.5,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Maya City CBHI',
+                          style: TextStyle(
+                            color: AppTheme.m3OnPrimaryContainer.withValues(alpha: 0.9),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
                           ),
+                        ),
+                        Text(
+                          strings.t('communityHealthPlan'),
+                          style: const TextStyle(
+                            color: AppTheme.m3OnPrimaryContainer,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.15,
+                          ),
+                        ),
+                      ],
                     ),
                     const Spacer(),
-                    StatusPill(
-                      label: coverageStatus,
-                      color: statusColor,
-                      compact: true,
+                    // Status badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: AppTheme.m3TertiaryContainer,
+                        borderRadius: BorderRadius.circular(999),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.08),
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.check_circle_outline, size: 14, color: AppTheme.m3OnTertiaryContainer),
+                          const SizedBox(width: 4),
+                          Text(
+                            coverageStatus.toUpperCase(),
+                            style: const TextStyle(
+                              color: AppTheme.m3OnTertiaryContainer,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(width: 8),
                     // Flip hint
-                    SpringTap(
+                    GestureDetector(
                       onTap: onFlip,
                       child: Icon(
                         Icons.rotate_right,
-                        color: Colors.white.withValues(alpha: 0.7),
+                        color: AppTheme.m3OnPrimaryContainer.withValues(alpha: 0.7),
                         size: 20,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 24),
-            Text(
-              card['memberName']?.toString() ?? snapshot.viewerName,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
+                // Member name
+                Text(
+                  strings.t('memberName').toUpperCase(),
+                  style: TextStyle(
+                    color: AppTheme.m3OnPrimaryContainer.withValues(alpha: 0.7),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 1.5,
                   ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                _CardInfoChip(
-                  label: strings.t('household'),
-                  value: snapshot.householdCode.isEmpty ? '—' : snapshot.householdCode,
                 ),
-                const SizedBox(width: 16),
-                if ((card['membershipId']?.toString() ?? '').isNotEmpty)
-                  _CardInfoChip(
-                    label: strings.t('idLabel'),
-                    value: card['membershipId'].toString(),
+                const SizedBox(height: 4),
+                Text(
+                  card['memberName']?.toString() ?? snapshot.viewerName,
+                  style: const TextStyle(
+                    color: AppTheme.m3OnPrimaryContainer,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                    height: 1.1,
                   ),
-              ],
-            ),
-            if (snapshot.coverageNumber.isNotEmpty) ...[
-              const SizedBox(height: 6),
-              _CardInfoChip(label: strings.t('coverage'), value: snapshot.coverageNumber),
-            ],
-            // F4: Expiry date
-            if (endDate != null) ...[
-              const SizedBox(height: 6),
-              Text(
-                '${strings.t('validUntil')}: ${_formatDate(endDate)}',
-                style: TextStyle(
-                  color: expiryColor,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12,
                 ),
-              ),
-            ],
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                OutlinedButton.icon(
-                  onPressed: () async {
+                const SizedBox(height: 20),
+                // ID + Valid Until
+                Row(
+                  children: [
+                    Expanded(
+                      child: _CardField(
+                        label: strings.t('idLabel'),
+                        value: card['membershipId']?.toString() ?? snapshot.viewerMembershipId,
+                      ),
+                    ),
+                    if (endDate != null)
+                      Expanded(
+                        child: _CardField(
+                          label: strings.t('validUntil'),
+                          value: _formatDate(endDate!),
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                // Share button
+                GestureDetector(
+                  onTap: () async {
                     final info = [
-                      strings.t('appTitle'),
+                      'Maya City CBHI',
                       '${strings.t('fullName')}: ${card['memberName'] ?? snapshot.viewerName}',
                       '${strings.t('household')}: ${snapshot.householdCode}',
                       '${strings.t('idLabel')}: ${card['membershipId'] ?? snapshot.viewerMembershipId}',
                       '${strings.t('coverage')}: $coverageStatus',
-                      'Coverage #: ${snapshot.coverageNumber}',
                     ].join('\n');
                     await Clipboard.setData(ClipboardData(text: info));
                     if (!context.mounted) return;
@@ -317,18 +501,29 @@ class _CardFront extends StatelessWidget {
                       ),
                     );
                   },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    side: BorderSide(color: Colors.white.withValues(alpha: 0.4)),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.share_outlined,
+                        size: 14,
+                        color: AppTheme.m3OnPrimaryContainer.withValues(alpha: 0.7),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        strings.t('shareCardInfo'),
+                        style: TextStyle(
+                          color: AppTheme.m3OnPrimaryContainer.withValues(alpha: 0.7),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
-                  icon: const Icon(Icons.share_outlined, size: 16),
-                  label: Text(strings.t('shareCardInfo')),
                 ),
               ],
             ),
-          ],
-        ),
-      ),
+          ),
         ],
       ),
     );
@@ -339,142 +534,131 @@ class _CardFront extends StatelessWidget {
       'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
     ];
-    return '${d.day.toString().padLeft(2, '0')} ${months[d.month - 1]} ${d.year}';
+    return '${months[d.month - 1]} ${d.day}, ${d.year}';
   }
 }
 
-// ── Card back face (QR + Show at Facility) ────────────────────────────────────
+// ── Card back face ────────────────────────────────────────────────────────────
 
 class _CardBack extends StatelessWidget {
-  const _CardBack({required this.card, required this.snapshot});
+  const _CardBack({required this.card, required this.snapshot, required this.hasToken});
   final Map<String, dynamic> card;
   final CbhiSnapshot snapshot;
+  final bool hasToken;
 
   @override
   Widget build(BuildContext context) {
     final strings = CbhiLocalizations.of(context);
-    final hasToken = (card['token']?.toString() ?? '').isNotEmpty;
 
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Card(
-      elevation: 1,
-      color: colorScheme.primary,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.m3PrimaryContainer,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.m3Primary.withValues(alpha: 0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       clipBehavior: Clip.antiAlias,
-      child: Stack(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  card['memberName']?.toString() ?? snapshot.viewerName,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.5,
-                      ),
+          Text(
+            card['memberName']?.toString() ?? snapshot.viewerName,
+            style: const TextStyle(
+              color: AppTheme.m3OnPrimaryContainer,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
                 ),
-                const SizedBox(height: 16),
-                Center(
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(AppTheme.radiusM),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
+              ],
+            ),
+            child: hasToken
+                ? QrImageView(
+                    data: card['token']!.toString(),
+                    size: 160,
+                    eyeStyle: const QrEyeStyle(
+                      eyeShape: QrEyeShape.circle,
+                      color: Colors.black,
+                    ),
+                    dataModuleStyle: const QrDataModuleStyle(
+                      dataModuleShape: QrDataModuleShape.circle,
+                      color: Colors.black,
+                    ),
+                  )
+                : SizedBox(
+                    width: 160,
+                    height: 160,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.qr_code_2, size: 56, color: Colors.grey.shade300),
+                        const SizedBox(height: 8),
+                        Text(
+                          strings.t('noDigitalCardCached'),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: AppTheme.m3OnSurfaceVariant,
+                            fontSize: 11,
+                          ),
                         ),
                       ],
                     ),
-                    child: hasToken
-                        ? QrImageView(
-                            data: card['token']!.toString(), 
-                            size: 180,
-                            eyeStyle: const QrEyeStyle(
-                              eyeShape: QrEyeShape.circle,
-                              color: Colors.black,
-                            ),
-                            dataModuleStyle: const QrDataModuleStyle(
-                              dataModuleShape: QrDataModuleShape.circle,
-                              color: Colors.black,
-                            ),
-                          )
-                        : SizedBox(
-                            width: 180,
-                            height: 180,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.qr_code_2, size: 64, color: Colors.grey.shade300),
-                                const SizedBox(height: 12),
-                                Text(
-                                  strings.t('noDigitalCardCached'),
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppTheme.textSecondary),
-                                ),
-                              ],
-                            ),
-                          ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  hasToken ? strings.t('encryptedQrToken') : strings.t('completeSyncForQr'),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.7),
-                      ),
-                  textAlign: TextAlign.center,
-                ),
-                if (hasToken) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    strings.t('showAtFacilityHint'),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.5),
-                          fontSize: 10,
-                        ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-                const SizedBox(height: 16),
-                // F2: Show at Facility button
-                if (hasToken)
-                  FilledButton.icon(
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => _ShowAtFacilityScreen(
-                          token: card['token']!.toString(),
-                          memberName: card['memberName']?.toString() ?? snapshot.viewerName,
-                        ),
-                      ),
-                    ),
-                    icon: const Icon(Icons.local_hospital_outlined),
-                    label: Text(strings.t('showAtFacility')),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: AppTheme.primary,
-                    ),
-                  ),
-              ],
-            ),
           ),
+          const SizedBox(height: 16),
+          Text(
+            hasToken ? strings.t('encryptedQrToken') : strings.t('completeSyncForQr'),
+            style: TextStyle(
+              color: AppTheme.m3OnPrimaryContainer.withValues(alpha: 0.7),
+              fontSize: 12,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          if (hasToken) ...[
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => _ShowAtFacilityScreen(
+                    token: card['token']!.toString(),
+                    memberName: card['memberName']?.toString() ?? snapshot.viewerName,
+                  ),
+                ),
+              ),
+              icon: const Icon(Icons.local_hospital_outlined, size: 16),
+              label: Text(strings.t('showAtFacility')),
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: AppTheme.m3Primary,
+                shape: const StadiumBorder(),
+                minimumSize: const Size(0, 44),
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
 }
 
-// ── F2: Full-screen "Show at Facility" screen ─────────────────────────────────
+// ── Full-screen "Show at Facility" screen ─────────────────────────────────────
 
 class _ShowAtFacilityScreen extends StatefulWidget {
   const _ShowAtFacilityScreen({required this.token, required this.memberName});
@@ -510,18 +694,21 @@ class _ShowAtFacilityScreenState extends State<_ShowAtFacilityScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                strings.t('appTitle'),
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Colors.white70,
-                    ),
+                'Maya City CBHI',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.7),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
                 widget.memberName,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                    ),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(height: 24),
               Container(
@@ -535,10 +722,12 @@ class _ShowAtFacilityScreenState extends State<_ShowAtFacilityScreen> {
               const SizedBox(height: 24),
               Text(
                 strings.t('tapToDismiss'),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.white38,
-                    ),
-              ),            ],
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.4),
+                  fontSize: 13,
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -548,8 +737,8 @@ class _ShowAtFacilityScreenState extends State<_ShowAtFacilityScreen> {
 
 // ── Shared widgets ────────────────────────────────────────────────────────────
 
-class _CardInfoChip extends StatelessWidget {
-  const _CardInfoChip({required this.label, required this.value});
+class _CardField extends StatelessWidget {
+  const _CardField({required this.label, required this.value});
   final String label;
   final String value;
 
@@ -559,20 +748,75 @@ class _CardInfoChip extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Colors.white.withValues(alpha: 0.6),
-                fontSize: 10,
-              ),
+          label.toUpperCase(),
+          style: TextStyle(
+            color: AppTheme.m3OnPrimaryContainer.withValues(alpha: 0.7),
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 1.5,
+          ),
         ),
+        const SizedBox(height: 2),
         Text(
-          value,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
+          value.isEmpty ? '—' : value,
+          style: const TextStyle(
+            color: AppTheme.m3OnPrimaryContainer,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.15,
+          ),
         ),
       ],
+    );
+  }
+}
+
+class _PillButton extends StatelessWidget {
+  const _PillButton({
+    required this.label,
+    required this.icon,
+    required this.backgroundColor,
+    required this.foregroundColor,
+    this.borderColor,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final Color backgroundColor;
+  final Color foregroundColor;
+  final Color? borderColor;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 44,
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(999),
+          border: borderColor != null
+              ? Border.all(color: borderColor!)
+              : null,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 18, color: foregroundColor),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TextStyle(
+                color: foregroundColor,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

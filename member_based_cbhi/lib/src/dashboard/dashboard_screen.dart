@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../auth/auth_cubit.dart';
-import '../benefits/benefit_utilization_widget.dart';
 import '../cbhi_data.dart';
 
 import '../cbhi_localizations.dart';
@@ -62,6 +61,37 @@ class DashboardScreen extends StatelessWidget {
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
                     _SetupBanner(),
+                    // Welcome header
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${strings.t('hello')}, ${snapshot.viewerName.split(' ').first}',
+                                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.2,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  strings.t('coverageSummarySubtitle'),
+                                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    _SetupBanner(),
                     // Bento Top Section
                     _CoverageHeroCard(
                       snapshot: snapshot,
@@ -71,52 +101,47 @@ class DashboardScreen extends StatelessWidget {
                     
                     const SizedBox(height: AppTheme.spacingM),
 
-                    GridView.count(
-                      crossAxisCount: 2,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      mainAxisSpacing: 16,
-                      crossAxisSpacing: 16,
-                      childAspectRatio: 1.5,
+                    // Bento stat cards
+                    Row(
                       children: [
-                        // Grid items
-                        _QuickStatTile(
-                          label: strings.t('coverage'),
-                          value: snapshot.coverageStatus,
-                          icon: Icons.verified_outlined,
-                          color: _coverageColor(snapshot.coverageStatus),
-                        ),
-                        
-                        if (isFamilyMember)
-                          _QuickStatTile(
-                            label: strings.t('eligibility'),
-                            value: snapshot.eligibility?['approved'] == true ? strings.t('eligible') : strings.t('pending'),
+                        Expanded(
+                          child: _QuickStatTile(
+                            label: strings.t('coverage'),
+                            value: snapshot.coverageStatus,
                             icon: Icons.verified_user_outlined,
-                            color: snapshot.eligibility?['approved'] == true ? AppTheme.success : AppTheme.warning,
-                          )
-                        else if (membershipType.toLowerCase() == 'paying')
-                          _QuickStatTile(
-                            label: strings.t('members'),
-                            value: snapshot.familyMembers.length.toString(),
-                            icon: Icons.family_restroom_outlined,
-                            color: AppTheme.primary,
-                          )
-                        else if (isIndigent)
-                          _QuickStatTile(
-                            label: strings.t('indigentApplication'),
-                            value: snapshot.household['indigentStatus']?.toString() ?? strings.t('pending'),
-                            icon: Icons.volunteer_activism_outlined,
-                            color: AppTheme.accent,
-                          )
-                        else
-                          _QuickStatTile(
-                            label: strings.t('members'),
-                            value: snapshot.familyMembers.length.toString(),
-                            icon: Icons.family_restroom_outlined,
-                            color: AppTheme.primary,
+                            color: _coverageColor(snapshot.coverageStatus),
                           ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: isFamilyMember
+                            ? _QuickStatTile(
+                                label: strings.t('eligibility'),
+                                value: snapshot.eligibility?['approved'] == true ? strings.t('eligible') : strings.t('pending'),
+                                icon: Icons.verified_user_outlined,
+                                color: snapshot.eligibility?['approved'] == true ? AppTheme.m3Tertiary : AppTheme.warning,
+                              )
+                            : isIndigent
+                              ? _QuickStatTile(
+                                  label: strings.t('indigentApplication'),
+                                  value: snapshot.household['indigentStatus']?.toString() ?? strings.t('pending'),
+                                  icon: Icons.volunteer_activism_outlined,
+                                  color: AppTheme.m3Primary,
+                                )
+                              : _QuickStatTile(
+                                  label: strings.t('members'),
+                                  value: snapshot.familyMembers.length.toString(),
+                                  icon: Icons.group_outlined,
+                                  color: AppTheme.m3Primary,
+                                ),
+                        ),
                       ],
                     ),
+
+                    const SizedBox(height: AppTheme.spacingM),
+
+                    // Quick nav tiles (3-column)
+                    _QuickNavTiles(snapshot: snapshot),
                     
                     if (isIndigent && snapshot.household['indigentStatus'] == 'PENDING_PROOF')
                       Padding(
@@ -219,117 +244,224 @@ class _CoverageHeroCard extends StatelessWidget {
         ? _formatDateLabel(endDate.toIso8601String())
         : '';
 
-    // Subtitle line
-    String subtitle;
-    if (snapshot.householdCode.isEmpty) {
-      subtitle = strings.t('noHouseholdSynced');
-    } else if (isFamilyMember) {
-      subtitle = '${strings.t('beneficiaryProfile')} \u2022 ${snapshot.householdCode}';
-    } else {
-      subtitle = '${strings.t('householdCode')}: ${snapshot.householdCode}';
+    // Status chip colors per M3 HealthShield spec
+    Color statusBg;
+    Color statusFg;
+    IconData statusIcon;
+    switch (status.toUpperCase()) {
+      case 'ACTIVE':
+        statusBg = AppTheme.m3TertiaryContainer;
+        statusFg = AppTheme.m3OnTertiaryContainer;
+        statusIcon = Icons.check_circle_outline;
+        break;
+      case 'EXPIRED':
+        statusBg = AppTheme.m3ErrorContainer;
+        statusFg = AppTheme.m3OnErrorContainer;
+        statusIcon = Icons.cancel_outlined;
+        break;
+      case 'PENDING_RENEWAL':
+      case 'PENDING':
+        statusBg = AppTheme.m3ErrorContainer;
+        statusFg = AppTheme.m3OnErrorContainer;
+        statusIcon = Icons.warning_amber_outlined;
+        break;
+      default:
+        statusBg = AppTheme.m3SurfaceContainerHigh;
+        statusFg = AppTheme.m3OnSurfaceVariant;
+        statusIcon = Icons.info_outline;
     }
 
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Card(
-      elevation: 0,
-      color: colorScheme.primaryContainer,
-      shape: RoundedRectangleBorder(
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.m3PrimaryContainer,
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          // Decorative circles
+          Positioned(
+            right: -40,
+            top: -40,
+            child: Container(
+              width: 160,
+              height: 160,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppTheme.m3Primary.withValues(alpha: 0.2),
+              ),
+            ),
+          ),
+          Positioned(
+            left: -20,
+            bottom: -20,
+            child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppTheme.m3Primary.withValues(alpha: 0.1),
+              ),
+            ),
+          ),
+          // Content
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  backgroundColor: colorScheme.primary,
-                  foregroundColor: colorScheme.onPrimary,
-                  child: Icon(
-                    isFamilyMember
-                        ? Icons.person
-                        : (isIndigent
-                            ? Icons.volunteer_activism_outlined
-                            : Icons.home_work_outlined),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Text(
-                    isFamilyMember
-                        ? strings.t('beneficiaryProfile')
-                        : strings.t('household'),
-                    style: theme.textTheme.titleMedium?.copyWith(
-                          color: colorScheme.onPrimaryContainer,
-                          fontWeight: FontWeight.w600,
+                Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Maya City CBHI',
+                          style: TextStyle(
+                            color: AppTheme.m3OnPrimaryContainer.withValues(alpha: 0.9),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.1,
+                          ),
                         ),
+                        Text(
+                          strings.t('communityHealthPlan'),
+                          style: TextStyle(
+                            color: AppTheme.m3OnPrimaryContainer,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.15,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    // Status badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: statusBg,
+                        borderRadius: BorderRadius.circular(999),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.08),
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(statusIcon, size: 14, color: statusFg),
+                          const SizedBox(width: 4),
+                          Text(
+                            status,
+                            style: TextStyle(
+                              color: statusFg,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                // Member name label
+                Text(
+                  strings.t('memberName').toUpperCase(),
+                  style: TextStyle(
+                    color: AppTheme.m3OnPrimaryContainer.withValues(alpha: 0.7),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 1.5,
                   ),
                 ),
-                // Status pill
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: _coverageColor(status).withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(16),
+                const SizedBox(height: 4),
+                Text(
+                  snapshot.householdCode.isEmpty
+                      ? strings.t('guestSession')
+                      : snapshot.viewerName,
+                  style: const TextStyle(
+                    color: AppTheme.m3OnPrimaryContainer,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                    height: 1.1,
                   ),
-                  child: Text(
-                    status,
-                    style: TextStyle(
-                      color: _coverageColor(status),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
+                ),
+                const SizedBox(height: 16),
+                // ID + Expiry row
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            strings.t('idLabel').toUpperCase(),
+                            style: TextStyle(
+                              color: AppTheme.m3OnPrimaryContainer.withValues(alpha: 0.7),
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            snapshot.viewerMembershipId.isEmpty
+                                ? '—'
+                                : snapshot.viewerMembershipId,
+                            style: const TextStyle(
+                              color: AppTheme.m3OnPrimaryContainer,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.15,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                    if (expiryLabel.isNotEmpty)
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              strings.t('validUntil').toUpperCase(),
+                              style: TextStyle(
+                                color: AppTheme.m3OnPrimaryContainer.withValues(alpha: 0.7),
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 1.5,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              expiryLabel,
+                              style: const TextStyle(
+                                color: AppTheme.m3OnPrimaryContainer,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
                 ),
               ],
             ),
-            const SizedBox(height: 24),
-            Text(
-              snapshot.householdCode.isEmpty
-                  ? strings.t('guestSession')
-                  : snapshot.viewerName,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                    color: colorScheme.onPrimaryContainer,
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              subtitle,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
-                  ),
-            ),
-            if (isFamilyMember || isIndigent || expiryLabel.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Icon(
-                    isFamilyMember 
-                      ? Icons.badge_outlined 
-                      : (isIndigent ? Icons.handshake_outlined : Icons.calendar_today_outlined),
-                    color: colorScheme.onPrimaryContainer,
-                    size: 16,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    isFamilyMember 
-                      ? strings.t('familyMemberSession')
-                      : (isIndigent ? strings.t('indigentMembership') : expiryLabel),
-                    style: TextStyle(
-                      color: colorScheme.onPrimaryContainer,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -353,32 +485,62 @@ class _QuickStatTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final iconColor = color ?? theme.colorScheme.primary;
+    final iconColor = color ?? AppTheme.m3Primary;
 
-    return Card(
-      elevation: 0,
-      color: theme.colorScheme.surfaceContainerLow,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.m3SurfaceContainerLow,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: AppTheme.m3SurfaceVariant,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, size: 16, color: AppTheme.m3OnSurfaceVariant),
+              ),
+              const Spacer(),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Status chip
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: iconColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, size: 20, color: iconColor),
-                const SizedBox(width: 8),
-                Expanded(
+                Icon(Icons.circle, size: 6, color: iconColor),
+                const SizedBox(width: 4),
+                Flexible(
                   child: Text(
-                    label,
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
+                    value,
+                    style: TextStyle(
+                      color: iconColor,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.3,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -386,14 +548,101 @@ class _QuickStatTile extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: AppTheme.m3OnSurfaceVariant,
+              fontSize: 13,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── _QuickNavTiles ──────────────────────────────────────────────────────────
+
+class _QuickNavTiles extends StatelessWidget {
+  const _QuickNavTiles({required this.snapshot});
+
+  final CbhiSnapshot snapshot;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = CbhiLocalizations.of(context);
+    final tiles = [
+      _QuickNavTile(
+        icon: Icons.search_outlined,
+        label: strings.t('findProvider'),
+        onTap: () {},
+      ),
+      _QuickNavTile(
+        icon: Icons.history_outlined,
+        label: strings.t('claimHistory'),
+        onTap: () => FamilyTabNotification().dispatch(context),
+      ),
+      _QuickNavTile(
+        icon: Icons.help_center_outlined,
+        label: strings.t('helpCenter'),
+        onTap: () {},
+      ),
+    ];
+
+    return Row(
+      children: tiles.map((tile) {
+        return Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(
+              right: tile == tiles.last ? 0 : 8,
+            ),
+            child: tile,
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class _QuickNavTile extends StatelessWidget {
+  const _QuickNavTile({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 88,
+        decoration: BoxDecoration(
+          color: AppTheme.m3SecondaryContainer,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: AppTheme.m3OnSecondaryContainer, size: 24),
+            const SizedBox(height: 6),
             Text(
-              value,
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: theme.colorScheme.onSurface,
-                fontWeight: FontWeight.bold,
+              label,
+              style: const TextStyle(
+                color: AppTheme.m3OnSecondaryContainer,
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
               ),
-              maxLines: 1,
+              textAlign: TextAlign.center,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
           ],
@@ -664,11 +913,36 @@ class _PaymentHistorySection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SectionTitle(
-          title: strings.t('paymentHistory'),
-          icon: Icons.payments_outlined,
+        Row(
+          children: [
+            Text(
+              strings.t('recentActivity'),
+              style: const TextStyle(
+                color: AppTheme.m3OnSurface,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const Spacer(),
+            if (snapshot.payments.isNotEmpty)
+              TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  foregroundColor: AppTheme.m3Primary,
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size(0, 32),
+                ),
+                child: Text(
+                  strings.t('viewAll'),
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+          ],
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 8),
         if (snapshot.payments.isEmpty)
           EmptyView(
             icon: Icons.payments_outlined,
@@ -676,72 +950,140 @@ class _PaymentHistorySection extends StatelessWidget {
             subtitle: strings.t('renewalTransactionsHere'),
           )
         else
-          ...snapshot.payments.take(3).toList().asMap().entries.map((entry) {
-            final payment = entry.value;
-            final method = _formatPaymentMethodLabel(payment['method']?.toString());
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Card(
-                elevation: 0,
-                color: Theme.of(context).colorScheme.surfaceContainerLow,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
-                ),
-                margin: EdgeInsets.zero,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 14),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: AppTheme.warning.withValues(alpha: 0.12),
-                        foregroundColor: AppTheme.warning,
-                        child: const Icon(Icons.payments_outlined, size: 20),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${payment['amount']?.toString() ?? '0'} ETB',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleSmall
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              '$method \u2022 ${_formatDateLabel(payment['paidAt'] ?? payment['createdAt'])}',
-                              style: Theme.of(context).textTheme.bodySmall,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: AppTheme.info.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Text(
-                          payment['status']?.toString() ?? 'UNKNOWN',
-                          style: const TextStyle(
-                            color: AppTheme.info,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+          Container(
+            decoration: BoxDecoration(
+              color: AppTheme.m3SurfaceContainerLowest,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
               ),
-            );
-          }),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.02),
+                  blurRadius: 8,
+                ),
+              ],
+            ),
+            child: Column(
+              children: snapshot.payments.take(3).toList().asMap().entries.map((entry) {
+                final idx = entry.key;
+                final payment = entry.value;
+                final method = _formatPaymentMethodLabel(payment['method']?.toString());
+                final isLast = idx == (snapshot.payments.take(3).length - 1);
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: AppTheme.m3SurfaceVariant,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.receipt_outlined,
+                              color: AppTheme.m3OnSurfaceVariant,
+                              size: 20,
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${payment['amount']?.toString() ?? '0'} ETB',
+                                  style: const TextStyle(
+                                    color: AppTheme.m3OnSurface,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  '$method • ${_formatDateLabel(payment['paidAt'] ?? payment['createdAt'])}',
+                                  style: const TextStyle(
+                                    color: AppTheme.m3OnSurfaceVariant,
+                                    fontSize: 13,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Status chip
+                          _M3StatusChip(
+                            status: payment['status']?.toString() ?? 'UNKNOWN',
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (!isLast)
+                      Divider(
+                        height: 1,
+                        color: AppTheme.m3OutlineVariant.withValues(alpha: 0.5),
+                        indent: 70,
+                      ),
+                  ],
+                );
+              }).toList(),
+            ),
+          ),
       ],
+    );
+  }
+}
+
+// ─── _M3StatusChip ───────────────────────────────────────────────────────────
+
+class _M3StatusChip extends StatelessWidget {
+  const _M3StatusChip({required this.status});
+
+  final String status;
+
+  @override
+  Widget build(BuildContext context) {
+    Color bg;
+    Color fg;
+    switch (status.toUpperCase()) {
+      case 'APPROVED':
+      case 'PAID':
+      case 'COMPLETED':
+        bg = AppTheme.m3TertiaryContainer.withValues(alpha: 0.2);
+        fg = AppTheme.m3Tertiary;
+        break;
+      case 'REJECTED':
+      case 'FAILED':
+        bg = AppTheme.m3ErrorContainer;
+        fg = AppTheme.m3OnErrorContainer;
+        break;
+      case 'PENDING':
+      case 'PROCESSING':
+        bg = AppTheme.m3SurfaceVariant;
+        fg = AppTheme.m3OnSurfaceVariant;
+        break;
+      default:
+        bg = AppTheme.m3PrimaryContainer.withValues(alpha: 0.2);
+        fg = AppTheme.m3Primary;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        status,
+        style: TextStyle(
+          color: fg,
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
     );
   }
 }
@@ -755,14 +1097,109 @@ class _BenefitUtilizationSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BenefitUtilizationWidget(
-      totalClaimed: snapshot.claims.fold(
-          0.0,
-          (sum, c) =>
-              sum + ((c['claimedAmount'] as num?)?.toDouble() ?? 0)),
-      annualCeiling:
-          (snapshot.coverage?['annualCeiling'] as num?)?.toDouble() ?? 0,
-      claimsCount: snapshot.claims.length,
+    final strings = CbhiLocalizations.of(context);
+    final totalClaimed = snapshot.claims.fold(
+        0.0,
+        (sum, c) => sum + ((c['claimedAmount'] as num?)?.toDouble() ?? 0));
+    final annualCeiling =
+        (snapshot.coverage?['annualCeiling'] as num?)?.toDouble() ?? 0;
+    final pct = annualCeiling > 0
+        ? (totalClaimed / annualCeiling).clamp(0.0, 1.0)
+        : 0.0;
+    final pctLabel = '${(pct * 100).toStringAsFixed(0)}%';
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.m3SurfaceContainerLow,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: AppTheme.m3SurfaceVariant,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.pie_chart_outline, size: 16, color: AppTheme.m3OnSurfaceVariant),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                strings.t('benefitUtilization'),
+                style: const TextStyle(
+                  color: AppTheme.m3OnSurface,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.15,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                pctLabel,
+                style: const TextStyle(
+                  color: AppTheme.m3Primary,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w600,
+                  height: 1,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 2),
+                child: Text(
+                  strings.t('usedThisYear'),
+                  style: const TextStyle(
+                    color: AppTheme.m3OnSurfaceVariant,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          // Progress bar
+          ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              value: pct,
+              minHeight: 10,
+              backgroundColor: AppTheme.m3SurfaceVariant,
+              valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.m3Primary),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            annualCeiling > 0
+                ? '${totalClaimed.toStringAsFixed(0)} / ${annualCeiling.toStringAsFixed(0)} ETB ${strings.t('used')}'
+                : strings.t('benefitUtilizationNoData'),
+            style: const TextStyle(
+              color: AppTheme.m3OnSurfaceVariant,
+              fontSize: 13,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1402,7 +1839,7 @@ class _SetupBannerState extends State<_SetupBanner> {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surfaceContainerLowest,
                   borderRadius: BorderRadius.circular(AppTheme.radiusS),
                   border: Border.all(
                       color: AppTheme.warning.withValues(alpha: 0.5)),

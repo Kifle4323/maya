@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Maya City CBHI - Membership Selection</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-container": "#1976d2",
+                      "on-background": "#1b1b1f",
+                      "secondary-fixed": "#e2e2e2",
+                      "outline-variant": "#c1c6d4",
+                      "inverse-surface": "#303034",
+                      "tertiary-fixed": "#a0f2e1",
+                      "on-error": "#ffffff",
+                      "surface-tint": "#005faf",
+                      "on-secondary-fixed-variant": "#454747",
+                      "on-tertiary-fixed-variant": "#005046",
+                      "surface-bright": "#fbf8fe",
+                      "on-tertiary-container": "#f8fffc",
+                      "on-primary-fixed": "#001c3a",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-high": "#eae7ed",
+                      "tertiary": "#00695c",
+                      "inverse-primary": "#a5c8ff",
+                      "surface-variant": "#e4e1e7",
+                      "surface-container": "#f0edf2",
+                      "on-tertiary-fixed": "#00201b",
+                      "outline": "#717783",
+                      "error-container": "#ffdad6",
+                      "on-secondary-container": "#5f6161",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-container": "#dcdddd",
+                      "primary-fixed-dim": "#a5c8ff",
+                      "primary": "#005dac",
+                      "on-surface-variant": "#414752",
+                      "secondary": "#5d5f5f",
+                      "on-secondary-fixed": "#1a1c1c",
+                      "error": "#ba1a1a",
+                      "on-error-container": "#93000a",
+                      "tertiary-container": "#2d8274",
+                      "secondary-fixed-dim": "#c6c6c7",
+                      "background": "#fbf8fe",
+                      "surface-container-highest": "#e4e1e7",
+                      "surface": "#fbf8fe",
+                      "on-primary": "#ffffff",
+                      "on-primary-fixed-variant": "#004786",
+                      "on-primary-container": "#fffdff",
+                      "tertiary-fixed-dim": "#84d5c5",
+                      "on-surface": "#1b1b1f",
+                      "surface-dim": "#dcd9de",
+                      "primary-fixed": "#d4e3ff",
+                      "inverse-on-surface": "#f3f0f5",
+                      "surface-container-low": "#f6f2f8",
+                      "on-secondary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "16px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "24px",
+                      "sm": "8px",
+                      "lg": "24px",
+                      "base": "4px",
+                      "xs": "4px",
+                      "xl": "32px",
+                      "md": "16px"
+              },
+              "fontFamily": {
+                      "label-lg": ["Inter"],
+                      "title-md": ["Inter"],
+                      "display-lg": ["Manrope"],
+                      "label-md": ["Inter"],
+                      "headline-md": ["Manrope"],
+                      "title-lg": ["Manrope"],
+                      "headline-lg": ["Manrope"],
+                      "body-md": ["Inter"],
+                      "body-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500" }],
+                      "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600" }],
+                      "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700" }],
+                      "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }],
+                      "headline-md": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                      "title-lg": ["22px", { "lineHeight": "28px", "fontWeight": "500" }],
+                      "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                      "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400" }],
+                      "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400" }]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-50 flex items-center justify-between w-full px-4 h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+<div class="flex items-center gap-4">
+<button class="text-blue-700 dark:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors rounded-full p-2 active:scale-95 duration-150">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<span class="text-lg font-extrabold tracking-tighter text-blue-700 dark:text-blue-400">Maya CBHI</span>
+</div>
+<div class="flex items-center">
+<button class="text-blue-700 dark:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors rounded-full p-2 active:scale-95 duration-150">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</header>
+<main class="flex-1 max-w-5xl mx-auto w-full p-gutter md:p-margin-desktop flex flex-col gap-lg">
+<!-- Registration Progress -->
+<section class="flex flex-col gap-sm">
+<p class="font-label-md text-label-md text-primary">Step 3 of 4</p>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Membership Selection</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+                Choose the CBHI membership tier that best fits your household's needs. The selected plan will apply to all registered members.
+            </p>
+<div class="flex gap-2 mt-4">
+<div class="h-2 flex-1 rounded-full bg-primary"></div>
+<div class="h-2 flex-1 rounded-full bg-primary"></div>
+<div class="h-2 flex-1 rounded-full bg-primary"></div>
+<div class="h-2 flex-1 rounded-full bg-surface-variant"></div>
+</div>
+</section>
+<!-- Plans Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-lg lg:gap-xl mt-md">
+<!-- Subsidized Plan -->
+<article class="bg-surface-container-low rounded-xl border border-surface-variant shadow-[0_4px_16px_rgba(0,0,0,0.02)] p-lg flex flex-col h-full relative">
+<div class="mb-xl flex-1">
+<h2 class="font-title-lg text-title-lg text-on-surface mb-xs">Subsidized</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-lg">For eligible low-income households.</p>
+<div class="flex items-baseline gap-1 mb-xl">
+<span class="font-headline-lg text-headline-lg text-on-surface">0</span>
+<span class="font-title-md text-title-md text-on-surface-variant">RWF</span>
+<span class="font-body-md text-body-md text-on-surface-variant">/ year</span>
+</div>
+<ul class="flex flex-col gap-md">
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary text-xl">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Basic consultation coverage</span>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary text-xl">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Essential generic medicines</span>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary text-xl">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Public health center access only</span>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-outline text-xl">cancel</span>
+<span class="font-body-md text-body-md text-outline">No specialist consultations</span>
+</li>
+</ul>
+</div>
+<button class="w-full py-3 px-4 rounded-full border-2 border-primary text-primary font-label-lg text-label-lg hover:bg-primary-fixed transition-colors">
+                    Select Subsidized
+                </button>
+</article>
+<!-- Standard Plan -->
+<article class="bg-surface-container-high rounded-xl border-2 border-primary shadow-[0_8px_24px_rgba(0,93,172,0.1)] p-lg flex flex-col h-full relative">
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-on-primary px-3 py-1 rounded-full font-label-md text-label-md shadow-sm">
+                    Most Popular
+                </div>
+<div class="mb-xl flex-1 mt-sm">
+<h2 class="font-title-lg text-title-lg text-on-surface mb-xs">Standard</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-lg">Comprehensive coverage for general households.</p>
+<div class="flex items-baseline gap-1 mb-xl">
+<span class="font-headline-lg text-headline-lg text-primary">12,000</span>
+<span class="font-title-md text-title-md text-on-surface-variant">RWF</span>
+<span class="font-body-md text-body-md text-on-surface-variant">/ year</span>
+</div>
+<ul class="flex flex-col gap-md">
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary text-xl">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Full consultation coverage</span>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary text-xl">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Comprehensive medicines list</span>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary text-xl">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Public &amp; select private partner access</span>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary text-xl">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Specialist referrals included</span>
+</li>
+</ul>
+</div>
+<div class="flex items-center gap-2 mb-4 bg-primary-fixed p-3 rounded-lg">
+<span class="material-symbols-outlined text-primary">info</span>
+<p class="font-label-md text-label-md text-on-surface">Current selection based on household assessment.</p>
+</div>
+<button class="w-full py-3 px-4 rounded-full bg-primary text-on-primary font-label-lg text-label-lg hover:bg-surface-tint transition-colors shadow-md flex justify-center items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check</span>
+                    Selected
+                </button>
+</article>
+</section>
+<!-- Actions -->
+<section class="mt-xl flex flex-col sm:flex-row justify-end gap-md pb-xl">
+<button class="px-6 py-3 rounded-full border border-outline text-on-surface font-label-lg text-label-lg hover:bg-surface-variant transition-colors">
+                Save &amp; Exit
+            </button>
+<button class="px-6 py-3 rounded-full bg-primary text-on-primary font-label-lg text-label-lg hover:bg-surface-tint transition-colors shadow-md">
+                Complete Registration
+            </button>
+</section>
+</main>
+</body></html>

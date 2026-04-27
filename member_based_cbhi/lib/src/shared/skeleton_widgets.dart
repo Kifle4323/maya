@@ -18,16 +18,18 @@ class SkeletonBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final shimmerBase = Theme.of(context).colorScheme.surfaceContainerHigh;
+    final shimmerHighlight = Theme.of(context).colorScheme.surfaceContainerHighest;
     return Container(
           width: width,
           height: height,
           decoration: BoxDecoration(
-            color: Colors.grey.shade200,
+            color: shimmerBase,
             borderRadius: BorderRadius.circular(borderRadius),
           ),
         )
         .animate(onPlay: (c) => c.repeat(reverse: true))
-        .shimmer(duration: 1200.ms, color: Colors.grey.shade100);
+        .shimmer(duration: 1200.ms, color: shimmerHighlight);
   }
 }
 
@@ -40,18 +42,18 @@ class SkeletonMetricCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(AppTheme.radiusM),
         boxShadow: AppTheme.subtleShadow,
       ),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SkeletonBox(width: 80, height: 12),
-          const SizedBox(height: 10),
-          const SkeletonBox(width: 120, height: 24, borderRadius: 6),
-          const SizedBox(height: 8),
-          const SkeletonBox(width: 40, height: 12),
+          SkeletonBox(width: 80, height: 12),
+          SizedBox(height: 10),
+          SkeletonBox(width: 120, height: 24, borderRadius: 6),
+          SizedBox(height: 8),
+          SkeletonBox(width: 40, height: 12),
         ],
       ),
     );
@@ -64,11 +66,12 @@ class SkeletonListCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final shimmerBase = Theme.of(context).colorScheme.surfaceContainerHigh;
     return Container(
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(AppTheme.radiusM),
         boxShadow: AppTheme.subtleShadow,
       ),
@@ -78,17 +81,17 @@ class SkeletonListCard extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
+                  color: shimmerBase,
                   shape: BoxShape.circle,
                 ),
               )
               .animate(onPlay: (c) => c.repeat(reverse: true))
-              .shimmer(duration: 1200.ms, color: Colors.grey.shade100),
+              .shimmer(duration: 1200.ms, color: Theme.of(context).colorScheme.surfaceContainerHighest),
           const SizedBox(width: 14),
-          Expanded(
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 SkeletonBox(height: 14),
                 SizedBox(height: 8),
                 SkeletonBox(width: 160, height: 12),
@@ -107,6 +110,8 @@ class DashboardSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final shimmerBase = Theme.of(context).colorScheme.surfaceContainerHigh;
+    final shimmerHighlight = Theme.of(context).colorScheme.surfaceContainerHighest;
     return ListView(
       padding: const EdgeInsets.all(AppTheme.spacingM),
       children: [
@@ -114,29 +119,29 @@ class DashboardSkeleton extends StatelessWidget {
         Container(
               height: 100,
               decoration: BoxDecoration(
-                color: Colors.grey.shade200,
+                color: shimmerBase,
                 borderRadius: BorderRadius.circular(AppTheme.radiusL),
               ),
             )
             .animate(onPlay: (c) => c.repeat(reverse: true))
-            .shimmer(duration: 1200.ms, color: Colors.grey.shade100),
+            .shimmer(duration: 1200.ms, color: shimmerHighlight),
 
         const SizedBox(height: 16),
 
         // Metric cards
-        Row(
+        const Row(
           children: [
-            Expanded(child: const SkeletonMetricCard()),
-            const SizedBox(width: 12),
-            Expanded(child: const SkeletonMetricCard()),
+            Expanded(child: SkeletonMetricCard()),
+            SizedBox(width: 12),
+            Expanded(child: SkeletonMetricCard()),
           ],
         ),
         const SizedBox(height: 12),
-        Row(
+        const Row(
           children: [
-            Expanded(child: const SkeletonMetricCard()),
-            const SizedBox(width: 12),
-            Expanded(child: const SkeletonMetricCard()),
+            Expanded(child: SkeletonMetricCard()),
+            SizedBox(width: 12),
+            Expanded(child: SkeletonMetricCard()),
           ],
         ),
 
@@ -157,6 +162,8 @@ class FamilyListSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final shimmerBase = Theme.of(context).colorScheme.surfaceContainerHigh;
+    final shimmerHighlight = Theme.of(context).colorScheme.surfaceContainerHighest;
     return ListView(
       padding: const EdgeInsets.all(AppTheme.spacingM),
       children: List.generate(
@@ -165,7 +172,7 @@ class FamilyListSkeleton extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surfaceContainer,
             borderRadius: BorderRadius.circular(AppTheme.radiusM),
             boxShadow: AppTheme.subtleShadow,
           ),
@@ -175,17 +182,17 @@ class FamilyListSkeleton extends StatelessWidget {
                     width: 56,
                     height: 56,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
+                      color: shimmerBase,
                       shape: BoxShape.circle,
                     ),
                   )
                   .animate(onPlay: (c) => c.repeat(reverse: true))
-                  .shimmer(duration: 1200.ms, color: Colors.grey.shade100),
+                  .shimmer(duration: 1200.ms, color: shimmerHighlight),
               const SizedBox(width: 14),
-              Expanded(
+              const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     SkeletonBox(height: 16),
                     SizedBox(height: 8),
                     SkeletonBox(width: 120, height: 12),

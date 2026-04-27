@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Maya City CBHI - Claims History</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#1976d2",
+                        "on-background": "#1b1b1f",
+                        "secondary-fixed": "#e2e2e2",
+                        "outline-variant": "#c1c6d4",
+                        "inverse-surface": "#303034",
+                        "tertiary-fixed": "#a0f2e1",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#005faf",
+                        "on-secondary-fixed-variant": "#454747",
+                        "on-tertiary-fixed-variant": "#005046",
+                        "surface-bright": "#fbf8fe",
+                        "on-tertiary-container": "#f8fffc",
+                        "on-primary-fixed": "#001c3a",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#eae7ed",
+                        "tertiary": "#00695c",
+                        "inverse-primary": "#a5c8ff",
+                        "surface-variant": "#e4e1e7",
+                        "surface-container": "#f0edf2",
+                        "on-tertiary-fixed": "#00201b",
+                        "outline": "#717783",
+                        "error-container": "#ffdad6",
+                        "on-secondary-container": "#5f6161",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-container": "#dcdddd",
+                        "primary-fixed-dim": "#a5c8ff",
+                        "primary": "#005dac",
+                        "on-surface-variant": "#414752",
+                        "secondary": "#5d5f5f",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#2d8274",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "background": "#fbf8fe",
+                        "surface-container-highest": "#e4e1e7",
+                        "surface": "#fbf8fe",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#004786",
+                        "on-primary-container": "#fffdff",
+                        "tertiary-fixed-dim": "#84d5c5",
+                        "on-surface": "#1b1b1f",
+                        "surface-dim": "#dcd9de",
+                        "primary-fixed": "#d4e3ff",
+                        "inverse-on-surface": "#f3f0f5",
+                        "surface-container-low": "#f6f2f8",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "24px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "base": "4px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "label-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "display-lg": ["Manrope"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Manrope"],
+                        "title-lg": ["Manrope"],
+                        "headline-lg": ["Manrope"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}],
+                        "title-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600"}],
+                        "display-lg": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+                        "headline-md": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                        "title-lg": ["22px", {"lineHeight": "28px", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col md:flex-row pb-20 md:pb-0 font-body-md">
+<!-- Desktop Navigation Rail (Hidden on Mobile) -->
+<nav class="hidden md:flex flex-col w-20 lg:w-64 h-screen sticky top-0 bg-surface-container border-r border-surface-variant z-40">
+<div class="p-gutter flex items-center justify-center lg:justify-start gap-4">
+<span class="material-symbols-outlined text-primary text-3xl">local_hospital</span>
+<span class="hidden lg:block font-title-lg text-primary">Maya CBHI</span>
+</div>
+<div class="flex-1 flex flex-col gap-2 p-sm mt-4">
+<a class="flex items-center gap-4 px-4 py-3 rounded-full text-on-surface-variant hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">home</span>
+<span class="hidden lg:block font-label-lg group-hover:text-primary transition-colors">Home</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-full text-on-surface-variant hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">group</span>
+<span class="hidden lg:block font-label-lg group-hover:text-primary transition-colors">Family</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-full text-on-surface-variant hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">contact_page</span>
+<span class="hidden lg:block font-label-lg group-hover:text-primary transition-colors">ID Card</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-full bg-secondary-container text-on-secondary-container group" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span class="hidden lg:block font-label-lg font-bold">Claims</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-full text-on-surface-variant hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">person</span>
+<span class="hidden lg:block font-label-lg group-hover:text-primary transition-colors">Account</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col w-full max-w-7xl mx-auto">
+<!-- TopAppBar (from JSON) -->
+<header class="sticky top-0 z-50 flex items-center justify-between w-full px-4 h-16 bg-white/80 backdrop-blur-md bg-slate-50 border-b border-slate-200">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-variant flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant">person</span>
+</div>
+<span class="font-['Manrope'] text-sm font-semibold tracking-tight text-lg font-extrabold tracking-tighter text-blue-700">Maya CBHI</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-slate-500">notifications</span>
+</button>
+</header>
+<div class="p-margin-mobile md:p-margin-desktop flex flex-col gap-lg">
+<!-- Page Header -->
+<div class="flex flex-col gap-2">
+<h1 class="font-headline-md text-on-background">Claims History</h1>
+<p class="font-body-md text-on-surface-variant">Track your submitted claims and automated billing.</p>
+</div>
+<!-- Status Banner -->
+<div class="bg-tertiary-container text-on-tertiary-container p-md rounded-xl flex items-start gap-4">
+<span class="material-symbols-outlined mt-1">auto_awesome</span>
+<div>
+<h3 class="font-title-md">Automated Direct Billing Active</h3>
+<p class="font-body-md mt-1 opacity-90">Most network facilities submit claims directly to CBHI on your behalf. You only need to submit manual claims for out-of-network or emergency care.</p>
+</div>
+</div>
+<!-- Main Content Bento Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Empty State (Span 2 cols on desktop) -->
+<div class="lg:col-span-2 bg-surface-container-low rounded-xl p-xl flex flex-col items-center justify-center text-center min-h-[400px] border border-outline-variant/30">
+<div class="w-48 h-48 mb-6 rounded-full bg-surface-variant flex items-center justify-center overflow-hidden">
+<img alt="Empty clipboard and pen representing no current claims on a light blue background" class="w-full h-full object-cover opacity-80 mix-blend-multiply" data-alt="Minimalist abstract illustration of an empty clipboard and a pen floating on a soft light blue background with gentle shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZRqzcrIYGL6P7ZuS1NBoNuB_s9TmMCv0KSlSXr72fnmB7aontf9MhzDXk-WVaW64X2FAxeZEmoJCvIaUEvTGJyd214fla57na_B9lKHpeIHCQ1qK1wLp3mX3V40VZrn-xdOIxpro-dHVClXNoD6bKpZi2CzE3aeEwUE8ye83dCvrzxSRwLdyprzp_qQC-4A0-OJ3TXwKgI6A9lZ9vkLRuYXHi4-5ZW44jxMHcI8vktq2uO272DVmF9g5E4E8w8CmH-j6pRPORXz0"/>
+</div>
+<h2 class="font-title-lg text-on-surface mb-2">No claims yet</h2>
+<p class="font-body-md text-on-surface-variant max-w-md mb-8">You haven't submitted any manual claims, and no automated claims have been processed for your account recently.</p>
+<button class="bg-primary text-on-primary px-6 py-3 rounded-full font-label-lg hover:bg-surface-tint transition-colors shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+                        Submit a Manual Claim
+                    </button>
+</div>
+<!-- Right Side Info & Resources -->
+<div class="flex flex-col gap-gutter">
+<!-- Processing Info -->
+<div class="bg-surface-container-low rounded-xl p-md border border-outline-variant/30">
+<h3 class="font-title-md text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">schedule</span>
+                            Processing Time
+                        </h3>
+<div class="flex flex-col gap-3">
+<div class="flex justify-between items-center border-b border-surface-variant pb-2">
+<span class="font-body-md text-on-surface-variant">Automated Billing</span>
+<span class="font-label-lg text-on-surface">1-3 Days</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-on-surface-variant">Manual Claims</span>
+<span class="font-label-lg text-on-surface">7-14 Days</span>
+</div>
+</div>
+</div>
+<!-- Verification Info -->
+<div class="bg-surface-container-low rounded-xl p-md border border-outline-variant/30">
+<h3 class="font-title-md text-on-surface mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary">verified_user</span>
+                            Claim Verification
+                        </h3>
+<p class="font-body-md text-on-surface-variant">Ensure all receipts and referral forms are clearly legible before submitting a manual claim to avoid delays.</p>
+</div>
+<!-- Resource Links -->
+<div class="bg-surface-container rounded-xl p-md">
+<h3 class="font-label-lg text-on-surface mb-3 uppercase tracking-wider text-xs">Resources</h3>
+<div class="flex flex-col gap-1">
+<a class="flex items-center justify-between p-2 rounded-lg hover:bg-surface-variant transition-colors text-primary font-label-lg" href="#">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">menu_book</span>
+                                    Claims Guide
+                                </div>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-2 rounded-lg hover:bg-surface-variant transition-colors text-primary font-label-lg" href="#">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">local_hospital</span>
+                                    Find Facilities
+                                </div>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-2 rounded-lg hover:bg-surface-variant transition-colors text-primary font-label-lg" href="#">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">support_agent</span>
+                                    Contact Support
+                                </div>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Mobile BottomNavBar (from JSON) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-white border-t border-slate-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+<a class="flex flex-col items-center justify-center text-slate-500 opacity-80 hover:text-blue-600 active:scale-90 transition-transform duration-200 w-16" href="#">
+<span class="material-symbols-outlined text-2xl">home</span>
+<span class="font-['Manrope'] text-[11px] font-medium mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 opacity-80 hover:text-blue-600 active:scale-90 transition-transform duration-200 w-16" href="#">
+<span class="material-symbols-outlined text-2xl">group</span>
+<span class="font-['Manrope'] text-[11px] font-medium mt-1">Family</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 opacity-80 hover:text-blue-600 active:scale-90 transition-transform duration-200 w-16" href="#">
+<span class="material-symbols-outlined text-2xl">contact_page</span>
+<span class="font-['Manrope'] text-[11px] font-medium mt-1">ID Card</span>
+</a>
+<a class="flex flex-col items-center justify-center text-blue-700 bg-blue-50/50 rounded-xl px-3 py-1 active:scale-90 transition-transform duration-200 w-16" href="#">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span class="font-['Manrope'] text-[11px] font-medium mt-1 font-bold">Claims</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 opacity-80 hover:text-blue-600 active:scale-90 transition-transform duration-200 w-16" href="#">
+<span class="material-symbols-outlined text-2xl">person</span>
+<span class="font-['Manrope'] text-[11px] font-medium mt-1">Account</span>
+</a>
+</nav>
+</body></html>

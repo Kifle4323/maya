@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Payment Options - CBHI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#f8fffc",
+                    "secondary": "#5d5f5f",
+                    "on-primary-fixed": "#001c3a",
+                    "primary-fixed-dim": "#a5c8ff",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "tertiary-container": "#2d8274",
+                    "on-error": "#ffffff",
+                    "inverse-on-surface": "#f3f0f5",
+                    "surface-container-high": "#eae7ed",
+                    "tertiary": "#00695c",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "background": "#fbf8fe",
+                    "on-primary-container": "#fffdff",
+                    "on-primary-fixed-variant": "#004786",
+                    "surface-container-low": "#f6f2f8",
+                    "primary-container": "#1976d2",
+                    "outline-variant": "#c1c6d4",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "outline": "#717783",
+                    "on-surface": "#1b1b1f",
+                    "on-tertiary-fixed": "#00201b",
+                    "surface-tint": "#005faf",
+                    "secondary-container": "#dcdddd",
+                    "tertiary-fixed": "#a0f2e1",
+                    "tertiary-fixed-dim": "#84d5c5",
+                    "surface-variant": "#e4e1e7",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#e4e1e7",
+                    "on-error-container": "#93000a",
+                    "surface": "#fbf8fe",
+                    "on-background": "#1b1b1f",
+                    "inverse-primary": "#a5c8ff",
+                    "on-surface-variant": "#414752",
+                    "error-container": "#ffdad6",
+                    "primary-fixed": "#d4e3ff",
+                    "primary": "#005dac",
+                    "on-secondary-container": "#5f6161",
+                    "surface-dim": "#dcd9de",
+                    "surface-bright": "#fbf8fe",
+                    "on-secondary-fixed-variant": "#454747",
+                    "on-secondary": "#ffffff",
+                    "inverse-surface": "#303034",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed": "#e2e2e2",
+                    "surface-container": "#f0edf2",
+                    "on-tertiary-fixed-variant": "#005046"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "4px",
+                    "margin-desktop": "24px",
+                    "lg": "24px",
+                    "sm": "8px",
+                    "gutter": "16px",
+                    "margin-mobile": "16px",
+                    "xs": "4px",
+                    "xl": "32px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Manrope"],
+                    "label-lg": ["Inter"],
+                    "headline-lg": ["Manrope"],
+                    "title-md": ["Inter"],
+                    "display-lg": ["Manrope"],
+                    "title-lg": ["Manrope"],
+                    "label-md": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400"}],
+                    "headline-md": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "title-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600"}],
+                    "display-lg": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700"}],
+                    "title-lg": ["22px", {"lineHeight": "28px", "fontWeight": "500"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        /* Hide scrollbar for cleaner UI */
+        ::-webkit-scrollbar { display: none; }
+        body { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Custom radio button styling to handle M3 active state */
+        input[type="radio"]:checked + div {
+            border-color: theme('colors.primary');
+            background-color: theme('colors.surface-container-lowest');
+        }
+        input[type="radio"]:checked + div .radio-icon {
+            color: theme('colors.primary');
+        }
+        input[type="radio"]:checked + div .radio-indicator {
+            display: block;
+        }
+        input[type="radio"]:not(:checked) + div .radio-indicator {
+            display: none;
+        }
+        input[type="radio"]:not(:checked) + div .unselected-indicator {
+            display: block;
+        }
+        input[type="radio"]:checked + div .unselected-indicator {
+            display: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col">
+<!-- TopAppBar from JSON -->
+<header class="flex justify-between items-center w-full px-4 h-16 bg-white dark:bg-slate-900 docked full-width top-0 border-b border-slate-200 dark:border-slate-800 flat no shadows relative z-10">
+<button class="text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors p-2 flex items-center justify-center">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-manrope font-semibold text-lg text-blue-700 dark:text-blue-400">Member Registration</h1>
+<button class="text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors p-2 flex items-center justify-center">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center py-8 px-4 sm:px-6 lg:px-8 w-full">
+<div class="w-full max-w-3xl">
+<!-- Progress Indicator -->
+<div class="mb-8 w-full">
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-md text-label-md text-on-surface-variant">Step 4 of 4</span>
+<span class="font-label-md text-label-md text-primary font-medium">100%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-500 ease-out" style="width: 100%;"></div>
+</div>
+</div>
+<!-- Page Header -->
+<div class="mb-8">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-2">Payment Options</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Select your preferred method to complete your Standard Membership registration.</p>
+</div>
+<!-- Payment Options Grid -->
+<form class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+<!-- Option 1: Pay Now -->
+<label class="relative cursor-pointer group">
+<input checked="" class="sr-only" name="payment_method" type="radio" value="pay_now"/>
+<div class="h-full bg-surface-container-low border-2 border-transparent rounded-xl p-6 transition-all duration-200 hover:bg-surface-container hover:shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center radio-icon transition-colors">
+<span class="material-symbols-outlined text-on-primary-fixed-variant" style="font-variation-settings: 'FILL' 1;">credit_card</span>
+</div>
+<!-- Custom Radio Indicators -->
+<span class="material-symbols-outlined text-primary radio-indicator" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div class="w-6 h-6 rounded-full border-2 border-outline unselected-indicator"></div>
+</div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-2">Pay Now</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">Complete your registration instantly using online payment methods.</p>
+</div>
+<div class="flex items-center gap-3 pt-4 border-t border-surface-variant">
+<span class="material-symbols-outlined text-outline">account_balance_wallet</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Card, Mobile Money</span>
+</div>
+</div>
+</label>
+<!-- Option 2: Pay Later -->
+<label class="relative cursor-pointer group">
+<input class="sr-only" name="payment_method" type="radio" value="pay_later"/>
+<div class="h-full bg-surface-container-low border-2 border-transparent rounded-xl p-6 transition-all duration-200 hover:bg-surface-container hover:shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center radio-icon text-on-secondary-container transition-colors">
+<span class="material-symbols-outlined">account_balance</span>
+</div>
+<!-- Custom Radio Indicators -->
+<span class="material-symbols-outlined text-primary radio-indicator" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div class="w-6 h-6 rounded-full border-2 border-outline unselected-indicator"></div>
+</div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-2">Pay Later</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">Generate an invoice to pay offline via bank transfer or at a local agent.</p>
+</div>
+<div class="flex items-center gap-3 pt-4 border-t border-surface-variant">
+<span class="material-symbols-outlined text-outline">receipt_long</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Invoice, Bank Transfer</span>
+</div>
+</div>
+</label>
+</div>
+<!-- Summary Section (Optional but good for M3 checkout flows) -->
+<div class="mt-8 bg-surface-container-lowest rounded-xl p-6 border border-outline-variant">
+<div class="flex justify-between items-center mb-4">
+<h4 class="font-title-md text-title-md text-on-surface">Order Summary</h4>
+</div>
+<div class="flex justify-between items-center py-2 border-b border-surface-variant">
+<span class="font-body-md text-body-md text-on-surface-variant">Standard Membership (Annual)</span>
+<span class="font-body-md text-body-md text-on-surface">$120.00</span>
+</div>
+<div class="flex justify-between items-center py-3">
+<span class="font-title-md text-title-md text-on-surface">Total Due</span>
+<span class="font-title-lg text-title-lg text-primary">$120.00</span>
+</div>
+</div>
+<!-- Action Button -->
+<div class="mt-8 pt-6 flex justify-end">
+<button class="w-full md:w-auto bg-primary text-on-primary hover:bg-primary/90 font-label-lg text-label-lg px-8 py-3.5 rounded-full transition-colors flex items-center justify-center gap-2 shadow-sm" type="button">
+                        Confirm Selection
+                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</form>
+</div>
+</main>
+<!-- BottomNavBar explicitly suppressed per "Linear/Transactional" rule in logic document -->
+</body></html>

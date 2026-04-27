@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,7 +21,6 @@ import 'notifications/notification_inbox_screen.dart';
 import 'profile/profile_screen.dart';
 import 'registration/registration_cubit.dart';
 import 'registration/registration_flow.dart';
-import 'shared/animated_widgets.dart';
 import 'shared/connectivity_banner.dart';
 import 'shared/connectivity_cubit.dart';
 import 'shared/help_screen.dart';
@@ -297,30 +295,30 @@ class _HomeShellState extends State<_HomeShell> {
   ) {
     return [
       NavigationDestination(
-        icon: const Icon(Icons.home_outlined, color: Color(0xFF0D7A5F)),
-        selectedIcon: const Icon(Icons.home_rounded, color: Color(0xFF0D7A5F)),
+        icon: const Icon(Icons.home_outlined),
+        selectedIcon: const Icon(Icons.home_rounded),
         label: strings.t('home'),
       ),
       if (!isFamilyMember)
         NavigationDestination(
-          icon: const Icon(Icons.family_restroom_outlined, color: Color(0xFF00BFA5)),
-          selectedIcon: const Icon(Icons.family_restroom, color: Color(0xFF00BFA5)),
+          icon: const Icon(Icons.group_outlined),
+          selectedIcon: const Icon(Icons.group),
           label: strings.t('family'),
         ),
       NavigationDestination(
-        icon: const Icon(Icons.badge_outlined, color: Color(0xFF1565C0)),
-        selectedIcon: const Icon(Icons.badge, color: Color(0xFF1565C0)),
+        icon: const Icon(Icons.contact_page_outlined),
+        selectedIcon: const Icon(Icons.contact_page),
         label: strings.t('card'),
       ),
       NavigationDestination(
-        icon: const Icon(Icons.receipt_long_outlined, color: Color(0xFFFF8F00)),
-        selectedIcon: const Icon(Icons.receipt_long, color: Color(0xFFFF8F00)),
+        icon: const Icon(Icons.receipt_long_outlined),
+        selectedIcon: const Icon(Icons.receipt_long),
         label: strings.t('claims'),
       ),
       NavigationDestination(
-        icon: const Icon(Icons.menu_outlined, color: Color(0xFFE53935)),
-        selectedIcon: const Icon(Icons.menu_rounded, color: Color(0xFFE53935)),
-        label: 'Menu', // Changed from Profile to Menu
+        icon: const Icon(Icons.person_outline),
+        selectedIcon: const Icon(Icons.person),
+        label: strings.t('account'),
       ),
     ];
   }
@@ -378,111 +376,14 @@ class _HomeShellState extends State<_HomeShell> {
           ),
         ],
         child: Scaffold(
-          appBar: AppBar(
-            title: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primary.withValues(alpha: 0.10),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Image.asset(
-                    'assets/images/logo.png',
-                    width: 20,
-                    height: 20,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Text(strings.t('appTitle')),
-                if (isFamilyMember) ...[
-                  const SizedBox(width: 8),
-                  StatusBadge(
-                    label: strings.t('familyMemberSession'),
-                    color: AppTheme.accent,
-                  ),
-                ],
-              ],
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(64),
+            child: _M3TopAppBar(
+              isFamilyMember: isFamilyMember,
+              snapshot: snapshot,
+              isSyncing: context.watch<AppCubit>().state.isSyncing,
+              appCubit: appCubit,
             ),
-            actions: [
-              BlocBuilder<AppCubit, AppState>(
-                builder: (context, state) {
-                  final snap = state.snapshot;
-                  final isPendingSync = snap?.isPendingSync ?? false;
-
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (isPendingSync)
-                        Semantics(
-                          label: 'Offline — changes pending sync',
-                          child: Container(
-                            margin: const EdgeInsets.only(right: 4),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: AppTheme.warning.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color:
-                                      AppTheme.warning.withValues(alpha: 0.3)),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(Icons.cloud_off_outlined,
-                                    color: AppTheme.warning, size: 14),
-                                const SizedBox(width: 4),
-                                Text(
-                                  strings.t('offlineBadge'),
-                                  style: const TextStyle(
-                                    color: AppTheme.warning,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      // Notification bell with unread badge
-                      _NotificationBell(snapshot: snap),
-                      Container(
-                        margin: const EdgeInsets.only(right: 8),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primary.withValues(alpha: 0.06),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: IconButton(
-                          tooltip: strings.t('syncNow'),
-                          onPressed: state.isSyncing
-                              ? null
-                              : () async {
-                                  final authCubit =
-                                      context.read<AuthCubit>();
-                                  final familyCubit =
-                                      context.read<MyFamilyCubit>();
-                                  await appCubit.sync();
-                                  await authCubit.refreshSession();
-                                  await familyCubit.load();
-                                },
-                          icon: state.isSyncing
-                              ? const SizedBox(
-                                  width: 18,
-                                  height: 18,
-                                  child: CircularProgressIndicator(
-                                      strokeWidth: 2),
-                                )
-                              : const Icon(Icons.sync),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ],
           ),
           body: Row(
             children: [
@@ -534,30 +435,17 @@ class _HomeShellState extends State<_HomeShell> {
                     MaterialPageRoute(builder: (_) => const HelpScreen()),
                   ),
                   icon: const Icon(Icons.help_outline),
-                  label: const Text('Help & FAQ'),
-                  backgroundColor: AppTheme.primary,
+                  label: Text(strings.t('helpAndFaq')),
+                  backgroundColor: AppTheme.m3Primary,
                   foregroundColor: Colors.white,
-                ).animate().scale(curve: Curves.easeOutBack, duration: 400.ms)
+                )
               : null,
           bottomNavigationBar: useSidebar
               ? null
-              : Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.06),
-                        blurRadius: 16,
-                        offset: const Offset(0, -4),
-                      ),
-                    ],
-                  ),
-                  child: NavigationBar(
-                    selectedIndex: safeIndex,
-                    onDestinationSelected: (value) =>
-                        setState(() => _index = value),
-                    destinations: destinations,
-                  ),
+              : _M3BottomNavBar(
+                  selectedIndex: safeIndex,
+                  onDestinationSelected: (value) => setState(() => _index = value),
+                  destinations: destinations,
                 ),
         ),
       ),
@@ -566,6 +454,257 @@ class _HomeShellState extends State<_HomeShell> {
     );
   }
     }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// M3 Top App Bar — frosted glass, avatar + "Maya CBHI" blue, notification bell
+// ═══════════════════════════════════════════════════════════════════════════
+
+class _M3TopAppBar extends StatelessWidget {
+  const _M3TopAppBar({
+    required this.isFamilyMember,
+    required this.snapshot,
+    required this.isSyncing,
+    required this.appCubit,
+  });
+
+  final bool isFamilyMember;
+  final CbhiSnapshot? snapshot;
+  final bool isSyncing;
+  final AppCubit appCubit;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = CbhiLocalizations.of(context);
+    final isPendingSync = snapshot?.isPendingSync ?? false;
+    final displayName = context.watch<AuthCubit>().state.session?.user.displayName ?? '';
+    final initials = _initials(displayName);
+
+    return Container(
+      height: 64,
+      decoration: BoxDecoration(
+        color: AppTheme.m3SurfaceContainerLowest.withValues(alpha: 0.92),
+        border: Border(
+          bottom: BorderSide(
+            color: AppTheme.m3OutlineVariant.withValues(alpha: 0.4),
+          ),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          children: [
+            // Avatar with initials
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppTheme.m3PrimaryContainer,
+                border: Border.all(
+                  color: AppTheme.m3OutlineVariant,
+                  width: 1,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  initials,
+                  style: const TextStyle(
+                    color: AppTheme.m3OnPrimaryContainer,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            // App title
+            Text(
+              strings.t('appTitle'),
+              style: const TextStyle(
+                color: AppTheme.m3Primary,
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.5,
+              ),
+            ),
+            if (isFamilyMember) ...[
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppTheme.m3TertiaryContainer.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(
+                    color: AppTheme.m3TertiaryContainer.withValues(alpha: 0.4),
+                  ),
+                ),
+                child: Text(
+                  strings.t('familyMemberSession'),
+                  style: const TextStyle(
+                    color: AppTheme.m3Tertiary,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+            const Spacer(),
+            // Offline badge
+            if (isPendingSync)
+              Container(
+                margin: const EdgeInsets.only(right: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppTheme.warning.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppTheme.warning.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.cloud_off_outlined, color: AppTheme.warning, size: 13),
+                    const SizedBox(width: 4),
+                    Text(
+                      strings.t('offlineBadge'),
+                      style: const TextStyle(
+                        color: AppTheme.warning,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            // Notification bell
+            _NotificationBell(snapshot: snapshot),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _initials(String name) {
+    final parts = name.trim().split(RegExp(r'\s+'));
+    if (parts.isEmpty || parts.first.isEmpty) return 'M';
+    if (parts.length == 1) return parts.first[0].toUpperCase();
+    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// M3 Bottom Nav Bar — white bg, top border, active pill state
+// ═══════════════════════════════════════════════════════════════════════════
+
+class _M3BottomNavBar extends StatelessWidget {
+  const _M3BottomNavBar({
+    required this.selectedIndex,
+    required this.onDestinationSelected,
+    required this.destinations,
+  });
+
+  final int selectedIndex;
+  final ValueChanged<int> onDestinationSelected;
+  final List<NavigationDestination> destinations;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.m3SurfaceContainerLowest,
+        border: Border(
+          top: BorderSide(
+            color: AppTheme.m3OutlineVariant.withValues(alpha: 0.4),
+          ),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        child: SizedBox(
+          height: 64,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: destinations.asMap().entries.map((entry) {
+              final idx = entry.key;
+              final dest = entry.value;
+              final isSelected = idx == selectedIndex;
+              return _NavBarItem(
+                destination: dest,
+                isSelected: isSelected,
+                onTap: () => onDestinationSelected(idx),
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NavBarItem extends StatelessWidget {
+  const _NavBarItem({
+    required this.destination,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final NavigationDestination destination;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: destination.label,
+      selected: isSelected,
+      button: true,
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? AppTheme.m3Primary.withValues(alpha: 0.08)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconTheme(
+                data: IconThemeData(
+                  color: isSelected ? AppTheme.m3Primary : AppTheme.m3OnSurfaceVariant,
+                  size: 24,
+                ),
+                child: isSelected
+                    ? (destination.selectedIcon ?? destination.icon)
+                    : destination.icon,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                destination.label,
+                style: TextStyle(
+                  fontFamily: 'Outfit',
+                  fontSize: 11,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  color: isSelected ? AppTheme.m3Primary : AppTheme.m3OnSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Notification Bell — AppBar action with unread badge
@@ -584,19 +723,13 @@ class _NotificationBell extends StatelessWidget {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        Container(
-          margin: const EdgeInsets.only(right: 4),
-          decoration: BoxDecoration(
-            color: AppTheme.primary.withValues(alpha: 0.06),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: IconButton(
-            tooltip: 'Notifications',
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const NotificationInboxScreen(),
-              ),
+        IconButton(
+          tooltip: 'Notifications',
+          icon: const Icon(Icons.notifications_outlined),
+          color: AppTheme.m3Primary,
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => const NotificationInboxScreen(),
             ),
           ),
         ),
@@ -608,7 +741,7 @@ class _NotificationBell extends StatelessWidget {
               width: 16,
               height: 16,
               decoration: const BoxDecoration(
-                color: AppTheme.accent,
+                color: AppTheme.error,
                 shape: BoxShape.circle,
               ),
               child: Center(

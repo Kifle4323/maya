@@ -170,10 +170,9 @@ class _FaqCard extends StatelessWidget {
           ),
           title: Text(
             strings.t(faq.questionKey),
-            style: const TextStyle(
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w600,
               fontSize: 14,
-              color: AppTheme.textDark,
             ),
           ),
           children: [
@@ -181,8 +180,7 @@ class _FaqCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               strings.t(faq.answerKey),
-              style: const TextStyle(
-                color: AppTheme.textDark,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 height: 1.6,
                 fontSize: 14,
               ),

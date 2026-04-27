@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Maya City CBHI - App Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-container": "#1976d2",
+                      "on-background": "#1b1b1f",
+                      "secondary-fixed": "#e2e2e2",
+                      "outline-variant": "#c1c6d4",
+                      "inverse-surface": "#303034",
+                      "tertiary-fixed": "#a0f2e1",
+                      "on-error": "#ffffff",
+                      "surface-tint": "#005faf",
+                      "on-secondary-fixed-variant": "#454747",
+                      "on-tertiary-fixed-variant": "#005046",
+                      "surface-bright": "#fbf8fe",
+                      "on-tertiary-container": "#f8fffc",
+                      "on-primary-fixed": "#001c3a",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-high": "#eae7ed",
+                      "tertiary": "#00695c",
+                      "inverse-primary": "#a5c8ff",
+                      "surface-variant": "#e4e1e7",
+                      "surface-container": "#f0edf2",
+                      "on-tertiary-fixed": "#00201b",
+                      "outline": "#717783",
+                      "error-container": "#ffdad6",
+                      "on-secondary-container": "#5f6161",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-container": "#dcdddd",
+                      "primary-fixed-dim": "#a5c8ff",
+                      "primary": "#005dac",
+                      "on-surface-variant": "#414752",
+                      "secondary": "#5d5f5f",
+                      "on-secondary-fixed": "#1a1c1c",
+                      "error": "#ba1a1a",
+                      "on-error-container": "#93000a",
+                      "tertiary-container": "#2d8274",
+                      "secondary-fixed-dim": "#c6c6c7",
+                      "background": "#fbf8fe",
+                      "surface-container-highest": "#e4e1e7",
+                      "surface": "#fbf8fe",
+                      "on-primary": "#ffffff",
+                      "on-primary-fixed-variant": "#004786",
+                      "on-primary-container": "#fffdff",
+                      "tertiary-fixed-dim": "#84d5c5",
+                      "on-surface": "#1b1b1f",
+                      "surface-dim": "#dcd9de",
+                      "primary-fixed": "#d4e3ff",
+                      "inverse-on-surface": "#f3f0f5",
+                      "surface-container-low": "#f6f2f8",
+                      "on-secondary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "16px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "24px",
+                      "sm": "8px",
+                      "lg": "24px",
+                      "base": "4px",
+                      "xs": "4px",
+                      "xl": "32px",
+                      "md": "16px"
+              },
+              "fontFamily": {
+                      "label-lg": ["Inter"],
+                      "title-md": ["Inter"],
+                      "display-lg": ["Manrope"],
+                      "label-md": ["Inter"],
+                      "headline-md": ["Manrope"],
+                      "title-lg": ["Manrope"],
+                      "headline-lg": ["Manrope"],
+                      "body-md": ["Inter"],
+                      "body-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}],
+                      "title-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600"}],
+                      "display-lg": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+                      "headline-md": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                      "title-lg": ["22px", {"lineHeight": "28px", "fontWeight": "500"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen flex flex-col md:flex-row">
+<!-- Desktop Navigation Rail (Hidden on Mobile) -->
+<nav class="hidden md:flex flex-col items-center w-[88px] bg-surface-container py-6 border-r border-outline-variant h-screen sticky top-0 shrink-0 z-40">
+<div class="mb-12">
+<span class="material-symbols-outlined icon-fill text-primary text-3xl">health_and_safety</span>
+</div>
+<div class="flex flex-col gap-6 w-full px-3">
+<a class="flex flex-col items-center justify-center gap-1 group" href="#">
+<div class="w-14 h-8 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined icon-fill text-on-primary">home</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 group" href="#">
+<div class="w-14 h-8 rounded-full flex items-center justify-center group-hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">group</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">Family</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 group" href="#">
+<div class="w-14 h-8 rounded-full flex items-center justify-center group-hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">contact_page</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">ID Card</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 group" href="#">
+<div class="w-14 h-8 rounded-full flex items-center justify-center group-hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">receipt_long</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">Claims</span>
+</a>
+</div>
+<div class="mt-auto flex flex-col gap-6 w-full px-3">
+<a class="flex flex-col items-center justify-center gap-1 group" href="#">
+<div class="w-14 h-8 rounded-full flex items-center justify-center group-hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">person</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">Account</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col pb-20 md:pb-0 w-full overflow-x-hidden">
+<!-- Shared Component: TopAppBar -->
+<header class="sticky top-0 z-50 flex items-center justify-between w-full px-4 h-16 bg-white/80 backdrop-blur-md border-b border-slate-200">
+<div class="flex items-center gap-3">
+<img alt="User profile photo" class="w-8 h-8 rounded-full object-cover border border-outline-variant" data-alt="professional headshot of an individual, well-lit, corporate style, small circular avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCSO_PLCnviAc8ioKJOj88Wk2j6tRmyJq81UP39bWRuOoS4ghYce0clzvx6llX84BFD_eSowxjBOd3w3aI6PR_p47Dk7F5hot-7G_FpVY1ENLj1K76E4C8Cad2r8jrnGoJb1z6MuTFA3YdAHzi7x10Ouqk9-zuA6TCI2YL52e697A9Totk2JNfX76GPYZEbiHzJzaHS5F8JxWc5XckD2eFaHenYKbKsFbyuEat644gHa2SzXvrDH4XaNDlX-6hLS7ZpmSOVkBZ1lE"/>
+<span class="text-lg font-extrabold tracking-tighter text-blue-700">Maya CBHI</span>
+</div>
+<div class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-100 transition-colors cursor-pointer active:scale-95 duration-150">
+<span class="material-symbols-outlined text-blue-700">notifications</span>
+</div>
+</header>
+<!-- Canvas -->
+<main class="flex-1 p-margin-mobile md:p-margin-desktop max-w-[1200px] w-full mx-auto flex flex-col gap-lg">
+<!-- Welcome Header -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-4 mt-4">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-background mb-1">Hello, Obsa</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Here is your health coverage summary.</p>
+</div>
+<button class="bg-primary text-on-primary font-label-lg text-label-lg px-6 py-3 rounded-full flex items-center justify-center gap-2 hover:opacity-90 transition-opacity shadow-sm self-start md:self-auto">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                    New Claim
+                </button>
+</section>
+<!-- Bento Grid: Status Cards & Quick Navigation -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-md">
+<!-- Household Status Card -->
+<article class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/30 flex flex-col gap-4 shadow-[0_4px_16px_rgba(0,0,0,0.02)] md:col-span-4">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">family_home</span>
+</div>
+<h2 class="font-title-md text-title-md text-on-surface">Household Status</h2>
+</div>
+<span class="material-symbols-outlined text-outline">more_vert</span>
+</div>
+<div class="mt-2 flex-1 flex flex-col justify-center">
+<div class="inline-flex items-center px-3 py-1 rounded-md bg-error-container text-on-error-container w-fit mb-2">
+<span class="material-symbols-outlined text-[16px] mr-1">warning</span>
+<span class="font-label-md text-label-md">Pending Renewal</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Your household coverage expires in 14 days. Please renew to avoid interruption.</p>
+</div>
+</article>
+<!-- Coverage Status Card -->
+<article class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/30 flex flex-col gap-4 shadow-[0_4px_16px_rgba(0,0,0,0.02)] md:col-span-4">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">verified_user</span>
+</div>
+<h2 class="font-title-md text-title-md text-on-surface">Coverage Status</h2>
+</div>
+</div>
+<div class="mt-2 flex-1 flex flex-col justify-center">
+<div class="inline-flex items-center px-3 py-1 rounded-md bg-primary-container text-on-primary-fixed w-fit mb-2">
+<span class="material-symbols-outlined text-[16px] mr-1">check_circle</span>
+<span class="font-label-md text-label-md">Active</span>
+</div>
+<div class="flex flex-col gap-1 mt-3">
+<div class="flex justify-between font-body-md text-body-md text-on-surface-variant">
+<span>Member ID</span>
+<span class="font-medium text-on-surface">MCB-8820-4A</span>
+</div>
+<div class="flex justify-between font-body-md text-body-md text-on-surface-variant">
+<span>Plan Type</span>
+<span class="font-medium text-on-surface">Standard Family</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Benefit Utilization Card -->
+<article class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/30 flex flex-col gap-4 shadow-[0_4px_16px_rgba(0,0,0,0.02)] md:col-span-4">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">pie_chart</span>
+</div>
+<h2 class="font-title-md text-title-md text-on-surface">Benefit Utilization</h2>
+</div>
+</div>
+<div class="mt-auto flex flex-col gap-3">
+<div class="flex items-end justify-between">
+<span class="font-headline-md text-headline-md text-primary tracking-tight">62%</span>
+<span class="font-label-md text-label-md text-on-surface-variant mb-1">used this year</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-2.5 overflow-hidden">
+<div class="bg-primary h-2.5 rounded-full" style="width: 62%"></div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Remaining allowance covers major outpatient services.</p>
+</div>
+</article>
+<!-- Quick Navigation Tiles -->
+<article class="md:col-span-12 grid grid-cols-3 gap-sm md:gap-md mt-2">
+<a class="bg-secondary-container hover:bg-secondary-container/80 transition-colors rounded-lg p-4 flex flex-col items-center justify-center gap-2 text-center h-24" href="#">
+<span class="material-symbols-outlined text-on-secondary-container">search</span>
+<span class="font-label-md text-label-md text-on-secondary-container">Find Provider</span>
+</a>
+<a class="bg-secondary-container hover:bg-secondary-container/80 transition-colors rounded-lg p-4 flex flex-col items-center justify-center gap-2 text-center h-24" href="#">
+<span class="material-symbols-outlined text-on-secondary-container">history</span>
+<span class="font-label-md text-label-md text-on-secondary-container">Claim History</span>
+</a>
+<a class="bg-secondary-container hover:bg-secondary-container/80 transition-colors rounded-lg p-4 flex flex-col items-center justify-center gap-2 text-center h-24" href="#">
+<span class="material-symbols-outlined text-on-secondary-container">help_center</span>
+<span class="font-label-md text-label-md text-on-secondary-container">Help Center</span>
+</a>
+</article>
+</section>
+<!-- Recent Activity List -->
+<section class="flex flex-col gap-4 mt-4">
+<div class="flex items-center justify-between px-1">
+<h2 class="font-title-lg text-title-lg text-on-surface">Recent Activity</h2>
+<a class="font-label-lg text-label-lg text-primary hover:underline" href="#">View All</a>
+</div>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant divide-y divide-outline-variant/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+<!-- Activity Item 1 -->
+<div class="p-4 flex items-start gap-4 hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center shrink-0 mt-1">
+<span class="material-symbols-outlined text-on-surface-variant">receipt</span>
+</div>
+<div class="flex-1 flex flex-col gap-1">
+<div class="flex items-start justify-between">
+<h3 class="font-label-lg text-label-lg text-on-surface">Outpatient Consultation</h3>
+<span class="font-label-md text-label-md text-on-surface-variant whitespace-nowrap">Oct 12, 2023</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">City General Hospital</p>
+<div class="mt-1 inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-tertiary-container/20 text-tertiary">
+                                Approved
+                            </div>
+</div>
+</div>
+<!-- Activity Item 2 -->
+<div class="p-4 flex items-start gap-4 hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center shrink-0 mt-1">
+<span class="material-symbols-outlined text-on-surface-variant">medication</span>
+</div>
+<div class="flex-1 flex flex-col gap-1">
+<div class="flex items-start justify-between">
+<h3 class="font-label-lg text-label-lg text-on-surface">Pharmacy Claim</h3>
+<span class="font-label-md text-label-md text-on-surface-variant whitespace-nowrap">Oct 05, 2023</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Maya Central Pharmacy</p>
+<div class="mt-1 inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-surface-variant text-on-surface-variant">
+                                Processing
+                            </div>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- Shared Component: BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-white border-t border-slate-200 md:hidden shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+<a class="flex flex-col items-center justify-center text-blue-700 bg-blue-50/50 rounded-xl px-3 py-1 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined icon-fill">home</span>
+<span class="font-['Manrope'] text-[11px] font-medium mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 opacity-80 hover:text-blue-600 active:scale-90 transition-transform duration-200 px-3 py-1" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-['Manrope'] text-[11px] font-medium mt-1">Family</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 opacity-80 hover:text-blue-600 active:scale-90 transition-transform duration-200 px-3 py-1" href="#">
+<span class="material-symbols-outlined">contact_page</span>
+<span class="font-['Manrope'] text-[11px] font-medium mt-1">ID Card</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 opacity-80 hover:text-blue-600 active:scale-90 transition-transform duration-200 px-3 py-1" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-['Manrope'] text-[11px] font-medium mt-1">Claims</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 opacity-80 hover:text-blue-600 active:scale-90 transition-transform duration-200 px-3 py-1" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Manrope'] text-[11px] font-medium mt-1">Account</span>
+</a>
+</nav>
+</body></html>

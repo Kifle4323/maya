@@ -714,18 +714,20 @@ class ShimmerBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final shimmerBase = Theme.of(context).colorScheme.surfaceContainerHigh;
+    final shimmerHighlight = Theme.of(context).colorScheme.surfaceContainerHighest;
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: AppTheme.surfaceLight,
+        color: shimmerBase,
         borderRadius: BorderRadius.circular(borderRadius ?? AppTheme.radiusS),
       ),
     )
         .animate(onPlay: (c) => c.repeat())
         .shimmer(
           duration: 1200.ms,
-          color: AppTheme.primary.withValues(alpha: 0.06),
+          color: shimmerHighlight,
         );
   }
 }

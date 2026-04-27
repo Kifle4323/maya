@@ -11,14 +11,12 @@ import '../benefits/benefit_package_screen.dart';
 import '../coverage/coverage_history_screen.dart';
 import '../grievances/grievance_screen.dart';
 import '../indigent/indigent_application_screen.dart';
-import '../shared/animated_widgets.dart';
 import '../shared/biometric_service.dart';
 import '../shared/help_screen.dart';
 import '../shared/passkey_service.dart';
-import '../shared/premium_widgets.dart';
 import '../theme/app_theme.dart';
 
-/// Profile screen — settings, language, dark mode, biometric, account actions.
+/// Profile screen — M3 HealthShield account settings redesign.
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
@@ -28,456 +26,278 @@ class ProfileScreen extends StatelessWidget {
     final session = authState.session;
     final snapshot =
         context.watch<AppCubit>().state.snapshot ?? CbhiSnapshot.empty();
-    final member = snapshot.currentMember;
-    final eligibility = snapshot.eligibility ?? const <String, dynamic>{};
     final strings = CbhiLocalizations.of(context);
 
     return ListView(
-      padding: const EdgeInsets.all(AppTheme.spacingM),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
       children: [
-        // Profile header
-        Container(
-          decoration: BoxDecoration(
-            gradient: AppTheme.heroGradient,
-            borderRadius: BorderRadius.circular(AppTheme.radiusL),
-          ),
-          padding: const EdgeInsets.all(24),
-          child: Row(
-            children: [
-              // ProfileAvatar with initials fallback — no hardcoded Icons.person
-              ProfileAvatar(
-                name: session?.user.displayName ?? 'Member',
-                radius: 30,
-                backgroundColor: Colors.white.withValues(alpha: 0.20),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      session?.user.displayName ?? 'Member',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                          ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    if ((session?.user.phoneNumber ?? '').isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        session!.user.phoneNumber!,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.white.withValues(alpha: 0.85),
-                            ),
-                      ),
-                    ],
-                    if ((session?.user.membershipId ?? '').isNotEmpty) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        'ID: ${session!.user.membershipId}',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.white.withValues(alpha: 0.7),
-                            ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
+        // Page title
+        Text(
+          strings.t('accountSettings'),
+          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+            height: 1.2,
           ),
         ),
-
         const SizedBox(height: 20),
 
-        // Profile details card
-        Card(
-          elevation: 0,
-          color: Theme.of(context).colorScheme.surfaceContainerLow,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(strings.t('profileDetails'), style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 16),
-              _ProfileRow(
-                icon: Icons.home_work_outlined,
-                label: strings.t('household'),
-                value: snapshot.householdCode.isEmpty ? strings.t('notSynced') : snapshot.householdCode,
-              ),
-              _ProfileRow(
-                icon: Icons.verified_outlined,
-                label: strings.t('coverage'),
-                value: snapshot.coverageStatus,
-              ),
-              if (member?.dateOfBirth != null)
-                _ProfileRow(
-                  icon: Icons.cake_outlined,
-                  label: strings.t('dobLabel'),
-                  value: _formatDateLabel(member?.dateOfBirth),
-                ),
-              if ((member?.relationshipToHouseholdHead ?? '').isNotEmpty)
-                _ProfileRow(
-                  icon: Icons.people_outline,
-                  label: strings.t('relationshipToHouseholdHead'),
-                  value: member!.relationshipToHouseholdHead!,
-                ),
-              _ProfileRow(
-                icon: Icons.verified_user_outlined,
-                label: strings.t('eligibility'),
-                value: eligibility['approved'] == true ? strings.t('eligible') : strings.t('pending'),
-              ),
-              if ((eligibility['reason']?.toString() ?? '').isNotEmpty) ...[
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppTheme.surfaceLight,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusS),
-                  ),
-                  child: Text(eligibility['reason'].toString(),
-                      style: Theme.of(context).textTheme.bodySmall),
-                ),
-              ],
-              const SizedBox(height: 8),
-              StatusBadge(
-                label: eligibility['canLoginIndependently'] == true
-                    ? strings.t('independentAccessLabel')
-                    : strings.t('householdManagedLabel'),
-              ),
-            ],
-          ),
-          ),
+        // Profile header card
+        _M3ProfileHeaderCard(
+          session: session,
+          snapshot: snapshot,
+          strings: strings,
         ),
 
-        const SizedBox(height: 20),
+        const SizedBox(height: 16),
 
-        if (!authState.isFamilyMember && session != null) ...[
-          Card(
-            elevation: 0,
-            color: Theme.of(context).colorScheme.surfaceContainerLow,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
-            ),
-            child: ListTile(
-              leading: Icon(Icons.volunteer_activism_outlined,
-                  color: Theme.of(context).colorScheme.primary),
-              title: Text(strings.t('indigentApplicationMenuTitle')),
-              subtitle: Text(strings.t('indigentApplicationMenuSubtitle')),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () async {
-                final appCubit = context.read<AppCubit>();
-                final repo = appCubit.repository;
-                final uid = session.user.id;
-                final memberCount = snapshot.familyMembers.isNotEmpty
-                    ? snapshot.familyMembers.length
-                    : ((snapshot.household['memberCount'] as num?)?.toInt() ?? 1);
-                final employment =
-                    snapshot.household['headEmploymentStatus']?.toString() ??
-                        snapshot.household['employmentStatus']?.toString() ??
-                        'unemployed';
-                await Navigator.of(context).push<void>(
-                  MaterialPageRoute<void>(
-                    builder: (ctx) => IndigentApplicationScreen(
-                      repository: repo,
-                      userId: uid,
-                      familySize: memberCount,
-                      employmentStatus: employment,
-                      onSubmitted: (result) {
-                        Navigator.of(ctx).pop();
-                        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-                          SnackBar(content: Text(strings.t('indigentApplicationSubmitted'))),
-                        );
-                        context.read<AppCubit>().sync();
-                      },
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          // Benefit Package — what's covered
-          Card(
-            elevation: 0,
-            color: Theme.of(context).colorScheme.surfaceContainerLow,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
-            ),
-            child: ListTile(
-              leading: const Icon(Icons.health_and_safety_outlined, color: AppTheme.primary),
-              title: Text(strings.t('benefitPackageTitle')),
-              subtitle: Text(strings.t('benefitPackageInfo')),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => BenefitPackageScreen(repository: context.read<AppCubit>().repository),
-              )),
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          // Coverage History
-          Card(
-            elevation: 0,
-            color: Theme.of(context).colorScheme.surfaceContainerLow,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
-            ),
-            child: ListTile(
-              leading: const Icon(Icons.history_outlined, color: AppTheme.accent),
-              title: Text(strings.t('coverageHistory')),
-              subtitle: Text(strings.t('noCoverageHistorySubtitle')),
-              trailing: const Icon(Icons.chevron_right),
+        // Plan & Coverage
+        _M3SettingsSection(
+          icon: Icons.health_and_safety_outlined,
+          title: strings.t('planAndCoverage'),
+          children: [
+            _M3SettingsTile(
+              icon: Icons.history_outlined,
+              label: strings.t('coverageHistory'),
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                 builder: (_) => CoverageHistoryScreen(repository: context.read<AppCubit>().repository),
               )),
             ),
-          ),
-          const SizedBox(height: 12),
-
-          // Grievances
-          Card(
-            elevation: 0,
-            color: Theme.of(context).colorScheme.surfaceContainerLow,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
-            ),
-            child: ListTile(
-              leading: const Icon(Icons.gavel_outlined, color: AppTheme.warning),
-              title: Text(strings.t('grievancesTitle')),
-              subtitle: Text(strings.t('noGrievancesSubtitle')),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => GrievanceScreen(repository: context.read<AppCubit>().repository),
-              )),
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
-
-        // Language selection
-        Card(
-          elevation: 0,
-          color: Theme.of(context).colorScheme.surfaceContainerLow,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primary.withValues(alpha: 0.10),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(Icons.translate, color: AppTheme.primary, size: 20),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(strings.t('language'), style: Theme.of(context).textTheme.titleMedium),
-                ],
+            if (!authState.isFamilyMember && session != null) ...[
+              _M3SettingsTile(
+                icon: Icons.health_and_safety_outlined,
+                label: strings.t('benefitPackageTitle'),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => BenefitPackageScreen(repository: context.read<AppCubit>().repository),
+                )),
               ),
-              const SizedBox(height: 16),
-              Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: CbhiLocalizations.supportedLocales.map((locale) {
-                  final isSelected =
-                      context.watch<AppCubit>().state.locale.languageCode ==
-                          locale.languageCode;
-                  final label = switch (locale.languageCode) {
-                    'en' => 'English',
-                    'am' => 'አማርኛ',
-                    'om' => 'Afaan Oromoo',
-                    _ => locale.languageCode.toUpperCase(),
-                  };
-                  return ChoiceChip(
-                    label: Text(label),
-                    selected: isSelected,
-                    onSelected: (_) => context.read<AppCubit>().setLocale(locale),
+              _M3SettingsTile(
+                icon: Icons.volunteer_activism_outlined,
+                label: strings.t('indigentApplicationMenuTitle'),
+                onTap: () async {
+                  final appCubit = context.read<AppCubit>();
+                  final repo = appCubit.repository;
+                  final uid = session.user.id;
+                  final memberCount = snapshot.familyMembers.isNotEmpty
+                      ? snapshot.familyMembers.length
+                      : ((snapshot.household['memberCount'] as num?)?.toInt() ?? 1);
+                  final employment =
+                      snapshot.household['headEmploymentStatus']?.toString() ??
+                          snapshot.household['employmentStatus']?.toString() ??
+                          'unemployed';
+                  await Navigator.of(context).push<void>(
+                    MaterialPageRoute<void>(
+                      builder: (ctx) => IndigentApplicationScreen(
+                        repository: repo,
+                        userId: uid,
+                        familySize: memberCount,
+                        employmentStatus: employment,
+                        onSubmitted: (result) {
+                          Navigator.of(ctx).pop();
+                          context.read<AppCubit>().sync();
+                        },
+                      ),
+                    ),
                   );
-                }).toList(growable: false),
-              ),
-            ],
-          ),
-        ),
-        ),
-
-        const SizedBox(height: 16),
-
-        // Theme Mode selection
-        Card(
-          elevation: 0,
-          color: Theme.of(context).colorScheme.surfaceContainerLow,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primary.withValues(alpha: 0.10),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(Icons.palette_outlined, color: AppTheme.primary, size: 20),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(strings.t('appearance'), style: Theme.of(context).textTheme.titleMedium),
-                ],
-              ),
-              const SizedBox(height: 16),
-              SegmentedButton<ThemeMode>(
-                segments: [
-                  ButtonSegment(
-                    value: ThemeMode.light,
-                    icon: const Icon(Icons.light_mode_outlined),
-                    label: Text(strings.t('light')),
-                  ),
-                  ButtonSegment(
-                    value: ThemeMode.dark,
-                    icon: const Icon(Icons.dark_mode_outlined),
-                    label: Text(strings.t('dark')),
-                  ),
-                  ButtonSegment(
-                    value: ThemeMode.system,
-                    icon: const Icon(Icons.settings_suggest_outlined),
-                    label: Text(strings.t('system')),
-                  ),
-                ],
-                selected: {context.watch<AppCubit>().state.themeMode},
-                onSelectionChanged: (Set<ThemeMode> newSelection) {
-                  context.read<AppCubit>().setThemeMode(newSelection.first);
                 },
               ),
+              _M3SettingsTile(
+                icon: Icons.gavel_outlined,
+                label: strings.t('grievancesTitle'),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => GrievanceScreen(repository: context.read<AppCubit>().repository),
+                )),
+              ),
             ],
-          ),
-        ),
+          ],
         ),
 
         const SizedBox(height: 16),
 
-        // Biometric login toggle
-        const _BiometricToggle(),
-
-        const SizedBox(height: 16),
-
-        // Passkeys section (web only)
-        if (kIsWeb) ...[
-          _PasskeysSection(repository: context.read<AppCubit>().repository),
-          const SizedBox(height: 16),
-        ],
-
-        // App info card
-        Card(
-          elevation: 0,
-          color: Theme.of(context).colorScheme.surfaceContainerLow,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+        // Preferences
+        _M3SettingsSection(
+          icon: Icons.tune_outlined,
+          title: strings.t('preferences'),
+          children: [
+            // Language
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppTheme.accent.withValues(alpha: 0.10),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(Icons.info_outline, color: AppTheme.accent, size: 20),
-                  ),
+                  const Icon(Icons.language_outlined, size: 20, color: AppTheme.m3OnSurfaceVariant),
                   const SizedBox(width: 12),
-                  Text(strings.t('about'), style: Theme.of(context).textTheme.titleMedium),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          strings.t('language'),
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 15),
+                        ),
+                        Text(
+                          _currentLanguageLabel(context),
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => _showLanguageSheet(context, strings),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppTheme.m3Primary,
+                      padding: EdgeInsets.zero,
+                      minimumSize: const Size(0, 32),
+                    ),
+                    child: Text(strings.t('change')),
+                  ),
                 ],
               ),
-              const SizedBox(height: 12),
-              _ProfileRow(
-                icon: Icons.verified_outlined,
-                label: strings.t('platform'),
-                value: strings.t('platformVersion'),
+            ),
+            Divider(height: 1, color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3), indent: 16),
+            // Appearance
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.palette_outlined, size: 20, color: AppTheme.m3OnSurfaceVariant),
+                      const SizedBox(width: 12),
+                      Text(strings.t('appearance'), style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 15)),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.m3SurfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.all(4),
+                    child: Row(
+                      children: [
+                        _AppearanceBtn(
+                          label: strings.t('system'),
+                          selected: context.watch<AppCubit>().state.themeMode == ThemeMode.system,
+                          onTap: () => context.read<AppCubit>().setThemeMode(ThemeMode.system),
+                        ),
+                        _AppearanceBtn(
+                          label: strings.t('light'),
+                          selected: context.watch<AppCubit>().state.themeMode == ThemeMode.light,
+                          onTap: () => context.read<AppCubit>().setThemeMode(ThemeMode.light),
+                        ),
+                        _AppearanceBtn(
+                          label: strings.t('dark'),
+                          selected: context.watch<AppCubit>().state.themeMode == ThemeMode.dark,
+                          onTap: () => context.read<AppCubit>().setThemeMode(ThemeMode.dark),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              _ProfileRow(
-                icon: Icons.account_balance_outlined,
-                label: strings.t('authority'),
-                value: strings.t('ehia'),
-              ),
-              _ProfileRow(
-                icon: Icons.local_hospital_outlined,
-                label: strings.t('ministry'),
-                value: strings.t('fmoh'),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
+
+        const SizedBox(height: 16),
+
+        // Security
+        _M3SettingsSection(
+          icon: Icons.security_outlined,
+          title: strings.t('security'),
+          children: [
+            // Passkeys (web only)
+            if (kIsWeb) ...[
+              _PasskeysSection(repository: context.read<AppCubit>().repository),
+              Divider(height: 1, color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3), indent: 16),
+            ],
+            // Biometric
+            const _BiometricToggle(),
+            Divider(height: 1, color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3), indent: 16),
+            // Change password
+            _M3SettingsTile(
+              icon: Icons.lock_reset_outlined,
+              label: strings.t('changePassword'),
+              onTap: () => _showChangePasswordDialog(context),
+            ),
+            _M3SettingsTile(
+              icon: Icons.help_outline,
+              label: strings.t('helpAndFaq'),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const HelpScreen()),
+              ),
+            ),
+          ],
         ),
 
         const SizedBox(height: 24),
 
-        OutlinedButton.icon(
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const HelpScreen()),
+        // Sign out
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: () async => context.read<AuthCubit>().logout(),
+            icon: const Icon(Icons.logout),
+            label: Text(strings.t('signOut')),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppTheme.m3OnSurface,
+              side: BorderSide(color: AppTheme.m3OutlineVariant),
+              shape: const StadiumBorder(),
+              minimumSize: const Size(double.infinity, 52),
+              backgroundColor: AppTheme.m3SurfaceContainer,
+            ),
           ),
-          icon: const Icon(Icons.help_outline),
-          label: Text(strings.t('helpAndFaq')),
-        ),
-
-        const SizedBox(height: 12),
-
-        OutlinedButton.icon(
-          onPressed: () => _showChangePasswordDialog(context),
-          icon: const Icon(Icons.lock_reset_outlined),
-          label: Text(strings.t('changePassword')),
-        ),
-
-        const SizedBox(height: 12),
-
-        OutlinedButton.icon(
-          onPressed: () async => context.read<AuthCubit>().logout(),
-          icon: const Icon(Icons.logout),
-          label: Text(strings.t('signOut')),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: AppTheme.error,
-            side: BorderSide(color: AppTheme.error.withValues(alpha: 0.5)),
-          ),
-        ),
-
-        const SizedBox(height: 12),
-
-        TextButton.icon(
-          onPressed: () => _showDeleteAccountDialog(context),
-          icon: const Icon(Icons.delete_forever_outlined, color: AppTheme.error),
-          label: Text(strings.t('deleteAccount'),
-              style: const TextStyle(color: AppTheme.error)),
         ),
 
         const SizedBox(height: 24),
       ],
+    );
+  }
+
+  String _currentLanguageLabel(BuildContext context) {
+    final code = context.watch<AppCubit>().state.locale.languageCode;
+    return switch (code) {
+      'en' => 'English (US)',
+      'am' => 'አማርኛ',
+      'om' => 'Afaan Oromoo',
+      _ => code.toUpperCase(),
+    };
+  }
+
+  void _showLanguageSheet(BuildContext context, dynamic strings) {
+    showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(strings.t('language'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 16),
+            ...CbhiLocalizations.supportedLocales.map((locale) {
+              final isSelected = context.read<AppCubit>().state.locale.languageCode == locale.languageCode;
+              final label = switch (locale.languageCode) {
+                'en' => 'English',
+                'am' => 'አማርኛ',
+                'om' => 'Afaan Oromoo',
+                _ => locale.languageCode.toUpperCase(),
+              };
+              return ListTile(
+                title: Text(label),
+                trailing: isSelected ? const Icon(Icons.check, color: AppTheme.m3Primary) : null,
+                onTap: () {
+                  context.read<AppCubit>().setLocale(locale);
+                  Navigator.pop(ctx);
+                },
+              );
+            }),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -640,75 +460,7 @@ Future<void> _showChangePasswordDialog(BuildContext context) async {
   );
 }
 
-Future<void> _showDeleteAccountDialog(BuildContext context) async {
-  final strings = CbhiLocalizations.of(context);
-  final confirmed = await showDialog<bool>(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      title: Text(strings.t('deleteAccountTitle')),
-      content: Text(strings.t('deleteAccountMessage')),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(ctx, false),
-          child: Text(strings.t('cancel')),
-        ),
-        FilledButton(
-          onPressed: () => Navigator.pop(ctx, true),
-          style: FilledButton.styleFrom(backgroundColor: AppTheme.error),
-          child: Text(strings.t('deleteAccount')),
-        ),
-      ],
-    ),
-  );
-  if (confirmed != true || !context.mounted) return;
-  try {
-    await context.read<AppCubit>().repository.deleteAccount();
-    if (context.mounted) await context.read<AuthCubit>().logout();
-  } catch (e) {
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString()), backgroundColor: AppTheme.error),
-      );
-    }
-  }
-}
-
 // ── Private widgets ───────────────────────────────────────────────────────────
-
-class _ProfileRow extends StatelessWidget {
-  const _ProfileRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-
-  final IconData icon;
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        children: [
-          Icon(icon, size: 18, color: AppTheme.textSecondary),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(label, style: Theme.of(context).textTheme.bodySmall),
-          ),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.textDark,
-                ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _BiometricToggle extends StatefulWidget {
   const _BiometricToggle();
@@ -1124,6 +876,340 @@ class _PasskeysSectionState extends State<_PasskeysSection> {
           ),
         ],
       ),
+    );
+  }
+}
+
+// ── M3 Profile Header Card ────────────────────────────────────────────────────
+
+class _M3ProfileHeaderCard extends StatelessWidget {
+  const _M3ProfileHeaderCard({
+    required this.session,
+    required this.snapshot,
+    required this.strings,
+  });
+
+  final dynamic session;
+  final CbhiSnapshot snapshot;
+  final dynamic strings;
+
+  @override
+  Widget build(BuildContext context) {
+    final displayName = session?.user?.displayName?.toString() ?? strings.t('member');
+    final memberId = snapshot.viewerMembershipId;
+    final coverageStatus = snapshot.coverageStatus;
+    final isHead = !(context.read<AuthCubit>().state.isFamilyMember);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.m3SurfaceContainerLow,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 24,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Avatar
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppTheme.m3PrimaryContainer.withValues(alpha: 0.2),
+              border: Border.all(
+                color: AppTheme.m3Primary.withValues(alpha: 0.2),
+                width: 2,
+              ),
+            ),
+            child: Center(
+              child: Text(
+                _initials(displayName),
+                style: const TextStyle(
+                  color: AppTheme.m3Primary,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  displayName,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                if (memberId.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    '${strings.t('memberIdLabel')}: $memberId',
+                    style: const TextStyle(
+                      color: AppTheme.m3OnSurfaceVariant,
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 6,
+                  children: [
+                    if (isHead)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppTheme.m3TertiaryContainer.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(
+                            color: AppTheme.m3TertiaryContainer.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Text(
+                          strings.t('headOfHousehold'),
+                          style: const TextStyle(
+                            color: AppTheme.m3TertiaryContainer,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppTheme.m3Primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(999),
+                        border: Border.all(
+                          color: AppTheme.m3Primary.withValues(alpha: 0.2),
+                        ),
+                      ),
+                      child: Text(
+                        coverageStatus,
+                        style: const TextStyle(
+                          color: AppTheme.m3Primary,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _initials(String name) {
+    final parts = name.trim().split(RegExp(r'\s+'));
+    if (parts.isEmpty || parts.first.isEmpty) return 'M';
+    if (parts.length == 1) return parts.first[0].toUpperCase();
+    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+  }
+}
+
+// ── M3 Settings Section ───────────────────────────────────────────────────────
+
+class _M3SettingsSection extends StatelessWidget {
+  const _M3SettingsSection({
+    required this.icon,
+    required this.title,
+    required this.children,
+  });
+
+  final IconData icon;
+  final String title;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.m3SurfaceContainerLow,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 24,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Section header
+          Container(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+            decoration: BoxDecoration(
+              color: AppTheme.m3SurfaceContainerLowest.withValues(alpha: 0.5),
+              border: Border(
+                bottom: BorderSide(
+                  color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
+                ),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(icon, size: 18, color: AppTheme.m3Primary),
+                const SizedBox(width: 10),
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.15,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Children
+          ...children,
+        ],
+      ),
+    );
+  }
+}
+
+// ── M3 Settings Tile ──────────────────────────────────────────────────────────
+
+class _M3SettingsTile extends StatelessWidget {
+  const _M3SettingsTile({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.trailing,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: AppTheme.m3OnSurfaceVariant),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+            trailing ?? const Icon(
+              Icons.chevron_right,
+              size: 20,
+              color: AppTheme.m3OnSurfaceVariant,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Appearance Button ─────────────────────────────────────────────────────────
+
+class _AppearanceBtn extends StatelessWidget {
+  const _AppearanceBtn({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: selected ? AppTheme.m3SurfaceContainerLowest : Colors.transparent,
+            borderRadius: BorderRadius.circular(6),
+            boxShadow: selected
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+              color: selected
+                  ? Theme.of(context).colorScheme.onSurface
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── GlassCard (legacy compat) ─────────────────────────────────────────────────
+
+class GlassCard extends StatelessWidget {
+  const GlassCard({super.key, required this.child, this.padding});
+  final Widget child;
+  final EdgeInsets? padding;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.m3SurfaceContainerLow,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
+        ),
+      ),
+      padding: padding ?? const EdgeInsets.all(16),
+      child: child,
     );
   }
 }

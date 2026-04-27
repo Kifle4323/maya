@@ -372,25 +372,27 @@ class _IndigentApplicationScreenState
           _AcceptedTypesExpansion(),
           const SizedBox(height: 12),
           if (_documents.isEmpty)
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: AppTheme.surfaceLight,
-                borderRadius: BorderRadius.circular(AppTheme.radiusS),
-                border: Border.all(color: Colors.grey.shade200),
-              ),
-              child: Center(
-                child: Column(
-                  children: [
-                    const Icon(Icons.upload_file_outlined,
-                        size: 40, color: AppTheme.textSecondary),
-                    const SizedBox(height: 8),
-                    Text(strings.t('noDocumentsYet'),
-                        style: const TextStyle(color: AppTheme.textSecondary)),
-                    Text(strings.t('tapAddToUpload'),
-                        style: const TextStyle(
-                            color: AppTheme.textSecondary, fontSize: 12)),
-                  ],
+            Builder(
+              builder: (context) => Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(AppTheme.radiusS),
+                  border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+                ),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Icon(Icons.upload_file_outlined,
+                          size: 40, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      const SizedBox(height: 8),
+                      Text(strings.t('noDocumentsYet'),
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                      Text(strings.t('tapAddToUpload'),
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12)),
+                    ],
+                  ),
                 ),
               ),
             )
@@ -618,7 +620,7 @@ class _DocumentCard extends StatelessWidget {
                           width: 52,
                           height: 52,
                           errorWidget: Container(
-                            color: AppTheme.surfaceLight,
+                            color: AppTheme.m3SurfaceContainerLow,
                             child: const Icon(Icons.description_outlined,
                                 color: AppTheme.textSecondary, size: 28),
                           ),

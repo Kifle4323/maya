@@ -6,7 +6,9 @@ import '../cbhi_localizations.dart';
 import '../cbhi_state.dart';
 import '../theme/app_theme.dart';
 
-/// Full-screen notification inbox — shows all notifications with read/unread state.
+/// Full-screen notification inbox — M3 HealthShield redesign.
+/// Today/Yesterday category tags, colored icon circles, unread blue dot,
+/// Featured Health Insight bento card at bottom.
 class NotificationInboxScreen extends StatelessWidget {
   const NotificationInboxScreen({super.key});
 
@@ -14,8 +16,20 @@ class NotificationInboxScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final strings = CbhiLocalizations.of(context);
     return Scaffold(
+      backgroundColor: AppTheme.m3SurfaceContainerLow,
       appBar: AppBar(
-        title: Text(strings.t('allNotifications')),
+        backgroundColor: AppTheme.m3SurfaceContainerLowest,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        title: Text(
+          strings.t('allNotifications'),
+          style: const TextStyle(
+            fontFamily: 'Outfit',
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.m3OnSurface,
+          ),
+        ),
         actions: [
           BlocBuilder<AppCubit, AppState>(
             builder: (context, state) {
@@ -25,8 +39,12 @@ class NotificationInboxScreen extends StatelessWidget {
               if (unread == 0) return const SizedBox.shrink();
               return TextButton.icon(
                 onPressed: () => _markAllRead(context, state),
-                icon: const Icon(Icons.done_all, size: 18),
-                label: Text(strings.t('markAllRead')),
+                icon: const Icon(Icons.done_all, size: 18,
+                    color: AppTheme.m3Primary),
+                label: Text(
+                  strings.t('markAllRead'),
+                  style: const TextStyle(color: AppTheme.m3Primary),
+                ),
               );
             },
           ),
@@ -36,7 +54,8 @@ class NotificationInboxScreen extends StatelessWidget {
         builder: (context, state) {
           final notifications = state.snapshot?.notifications ?? [];
           if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+                child: CircularProgressIndicator(color: AppTheme.m3Primary));
           }
           if (notifications.isEmpty) {
             return _EmptyInbox(
@@ -44,27 +63,138 @@ class NotificationInboxScreen extends StatelessWidget {
               onRefresh: () => context.read<AppCubit>().sync(),
             );
           }
+
+          // Group notifications by date
+          final today = <Map<String, dynamic>>[];
+          final yesterday = <Map<String, dynamic>>[];
+          final older = <Map<String, dynamic>>[];
+
+          final now = DateTime.now();
+          for (final n in notifications) {
+            final raw = n['createdAt']?.toString() ?? '';
+            final dt = DateTime.tryParse(raw);
+            if (dt == null) {
+              older.add(n);
+            } else {
+              final diff = now.difference(dt).inDays;
+              if (diff == 0) {
+                today.add(n);
+              } else if (diff == 1) {
+                yesterday.add(n);
+              } else {
+                older.add(n);
+              }
+            }
+          }
+
           return RefreshIndicator(
-            color: AppTheme.primary,
+            color: AppTheme.m3Primary,
             onRefresh: () => context.read<AppCubit>().sync(),
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              itemCount: notifications.length,
-              separatorBuilder: (_, __) => const Divider(height: 1, indent: 72),
-              itemBuilder: (context, index) {
-                final n = notifications[index];
-                return _NotificationTile(
-                  notification: n,
-                  onTap: n['id'] == null
-                      ? null
-                      : () => context
-                          .read<AppCubit>()
-                          .markNotificationRead(n['id'].toString()),
-                ).animate().fadeIn(
-                  duration: 300.ms,
-                  delay: Duration(milliseconds: index * 40),
-                );
-              },
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+              children: [
+                // Page header
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      strings.t('allNotifications'),
+                      style: const TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 28,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.m3OnSurface,
+                        height: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      strings.t('coverageAlertsHere'),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: AppTheme.m3OnSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ).animate().fadeIn(duration: 300.ms),
+
+                const SizedBox(height: 20),
+
+                // Today group
+                if (today.isNotEmpty) ...[
+                  _CategoryTag(label: 'Today'),
+                  const SizedBox(height: 8),
+                  ...today.asMap().entries.map((e) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: _M3NotificationTile(
+                          notification: e.value,
+                          isUnread: e.value['isRead'] != true,
+                          onTap: e.value['id'] == null
+                              ? null
+                              : () => context
+                                  .read<AppCubit>()
+                                  .markNotificationRead(
+                                      e.value['id'].toString()),
+                        ).animate().fadeIn(
+                              duration: 300.ms,
+                              delay: Duration(milliseconds: e.key * 50),
+                            ),
+                      )),
+                  const SizedBox(height: 8),
+                ],
+
+                // Yesterday group
+                if (yesterday.isNotEmpty) ...[
+                  _CategoryTag(label: 'Yesterday'),
+                  const SizedBox(height: 8),
+                  ...yesterday.asMap().entries.map((e) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: _M3NotificationTile(
+                          notification: e.value,
+                          isUnread: false,
+                          onTap: e.value['id'] == null
+                              ? null
+                              : () => context
+                                  .read<AppCubit>()
+                                  .markNotificationRead(
+                                      e.value['id'].toString()),
+                        ).animate().fadeIn(
+                              duration: 300.ms,
+                              delay: Duration(milliseconds: e.key * 50),
+                            ),
+                      )),
+                  const SizedBox(height: 8),
+                ],
+
+                // Older group
+                if (older.isNotEmpty) ...[
+                  _CategoryTag(label: 'Earlier'),
+                  const SizedBox(height: 8),
+                  ...older.asMap().entries.map((e) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: _M3NotificationTile(
+                          notification: e.value,
+                          isUnread: false,
+                          onTap: e.value['id'] == null
+                              ? null
+                              : () => context
+                                  .read<AppCubit>()
+                                  .markNotificationRead(
+                                      e.value['id'].toString()),
+                        ).animate().fadeIn(
+                              duration: 300.ms,
+                              delay: Duration(milliseconds: e.key * 50),
+                            ),
+                      )),
+                  const SizedBox(height: 8),
+                ],
+
+                // Featured Health Insight bento card
+                const SizedBox(height: 16),
+                _HealthInsightCard()
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 200.ms),
+              ],
             ),
           );
         },
@@ -83,82 +213,175 @@ class NotificationInboxScreen extends StatelessWidget {
   }
 }
 
-class _NotificationTile extends StatelessWidget {
-  const _NotificationTile({
+// ── Category Tag ──────────────────────────────────────────────────────────────
+
+class _CategoryTag extends StatelessWidget {
+  const _CategoryTag({required this.label});
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppTheme.m3SecondaryContainer,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          color: AppTheme.m3OnSecondaryContainer,
+          letterSpacing: 0.1,
+        ),
+      ),
+    );
+  }
+}
+
+// ── M3 Notification Tile ──────────────────────────────────────────────────────
+
+class _M3NotificationTile extends StatelessWidget {
+  const _M3NotificationTile({
     required this.notification,
+    required this.isUnread,
     this.onTap,
   });
 
   final Map<String, dynamic> notification;
+  final bool isUnread;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    final isRead = notification['isRead'] == true;
     final type = notification['type']?.toString() ?? '';
     final title = notification['title']?.toString() ?? '';
     final message = notification['message']?.toString() ?? '';
     final createdAt = notification['createdAt']?.toString() ?? '';
 
-    return ListTile(
+    return GestureDetector(
       onTap: onTap,
-      leading: Container(
-        width: 44,
-        height: 44,
+      child: Container(
         decoration: BoxDecoration(
-          color: _iconColor(type).withValues(alpha: isRead ? 0.08 : 0.14),
-          shape: BoxShape.circle,
-        ),
-        child: Icon(
-          _iconData(type),
-          color: _iconColor(type).withValues(alpha: isRead ? 0.5 : 1.0),
-          size: 22,
-        ),
-      ),
-      title: Text(
-        title,
-        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-          fontWeight: isRead ? FontWeight.w400 : FontWeight.w700,
-          color: isRead ? AppTheme.textSecondary : null,
-        ),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 2),
-          Text(
-            message,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: isRead ? AppTheme.textSecondary : null,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+          color: isUnread
+              ? AppTheme.m3SurfaceContainerLow
+              : AppTheme.m3SurfaceContainerLowest,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isUnread
+                ? AppTheme.m3OutlineVariant.withValues(alpha: 0.5)
+                : AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
           ),
-          if (createdAt.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text(
-              _formatDate(createdAt),
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: AppTheme.textSecondary,
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Icon circle with optional unread dot
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: _iconBg(type),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    _iconData(type),
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                if (isUnread)
+                  Positioned(
+                    top: -2,
+                    right: -2,
+                    child: Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: AppTheme.m3Primary,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppTheme.m3SurfaceContainerLow,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(width: 12),
+            // Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: isUnread
+                                ? FontWeight.w600
+                                : FontWeight.w500,
+                            color: AppTheme.m3OnSurface,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        _formatDate(createdAt),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.m3OnSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    message,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isUnread
+                          ? AppTheme.m3OnSurface
+                          : AppTheme.m3OnSurfaceVariant,
+                      height: 1.4,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
             ),
           ],
-        ],
+        ),
       ),
-      trailing: isRead
-          ? null
-          : Container(
-              width: 8,
-              height: 8,
-              decoration: const BoxDecoration(
-                color: AppTheme.accent,
-                shape: BoxShape.circle,
-              ),
-            ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     );
+  }
+
+  Color _iconBg(String type) {
+    switch (type) {
+      case 'CLAIM_UPDATE':
+        return AppTheme.m3TertiaryContainer;
+      case 'PAYMENT_CONFIRMATION':
+        return AppTheme.m3PrimaryContainer;
+      case 'RENEWAL_REMINDER':
+        return const Color(0xFFF57C00);
+      case 'SYSTEM_ALERT':
+        return AppTheme.m3Primary;
+      default:
+        return AppTheme.m3PrimaryContainer;
+    }
   }
 
   IconData _iconData(String type) {
@@ -170,26 +393,9 @@ class _NotificationTile extends StatelessWidget {
       case 'RENEWAL_REMINDER':
         return Icons.autorenew_outlined;
       case 'SYSTEM_ALERT':
-        return Icons.info_outline;
-      case 'HEALTH_PROMOTION':
-        return Icons.health_and_safety_outlined;
+        return Icons.lock_reset_outlined;
       default:
         return Icons.notifications_outlined;
-    }
-  }
-
-  Color _iconColor(String type) {
-    switch (type) {
-      case 'CLAIM_UPDATE':
-        return AppTheme.primary;
-      case 'PAYMENT_CONFIRMATION':
-        return AppTheme.gold;
-      case 'RENEWAL_REMINDER':
-        return AppTheme.warning;
-      case 'SYSTEM_ALERT':
-        return AppTheme.accent;
-      default:
-        return AppTheme.primary;
     }
   }
 
@@ -202,10 +408,134 @@ class _NotificationTile extends StatelessWidget {
     if (diff.inHours < 1) return '${diff.inMinutes}m ago';
     if (diff.inDays < 1) return '${diff.inHours}h ago';
     if (diff.inDays < 7) return '${diff.inDays}d ago';
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
     return '${dt.day} ${months[dt.month - 1]} ${dt.year}';
   }
 }
+
+// ── Health Insight Bento Card ─────────────────────────────────────────────────
+
+class _HealthInsightCard extends StatelessWidget {
+  const _HealthInsightCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Main insight card
+        Expanded(
+          flex: 2,
+          child: Container(
+            height: 200,
+            decoration: BoxDecoration(
+              color: AppTheme.m3PrimaryContainer,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  'HEALTH UPDATE',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: AppTheme.m3PrimaryFixed,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Your quarterly wellness checkup is due',
+                  style: TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.m3OnPrimaryContainer,
+                    height: 1.3,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Text(
+                    'Schedule Now',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.m3Primary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        // Vitals card
+        Expanded(
+          child: Container(
+            height: 200,
+            decoration: BoxDecoration(
+              color: AppTheme.m3SurfaceContainerHighest,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFA0F2E1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.favorite_outline,
+                    color: AppTheme.m3Tertiary,
+                    size: 28,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Stable Vitals',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.m3OnSurface,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'Sync your device to get real-time health alerts.',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: AppTheme.m3OnSurfaceVariant,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ── Empty Inbox ───────────────────────────────────────────────────────────────
 
 class _EmptyInbox extends StatelessWidget {
   const _EmptyInbox({required this.strings, this.onRefresh});
@@ -221,25 +551,30 @@ class _EmptyInbox extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: AppTheme.primary.withValues(alpha: 0.08),
+              color: AppTheme.m3Primary.withValues(alpha: 0.08),
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.notifications_none_outlined,
               size: 48,
-              color: AppTheme.primary,
+              color: AppTheme.m3Primary,
             ),
           ),
           const SizedBox(height: 20),
           Text(
             strings.t('noNotificationsYet'),
-            style: Theme.of(context).textTheme.titleMedium,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: AppTheme.m3OnSurface,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             strings.t('coverageAlertsHere'),
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppTheme.textSecondary,
+            style: const TextStyle(
+              fontSize: 14,
+              color: AppTheme.m3OnSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -249,6 +584,11 @@ class _EmptyInbox extends StatelessWidget {
               onPressed: onRefresh,
               icon: const Icon(Icons.sync, size: 18),
               label: Text(strings.t('syncNow')),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppTheme.m3Primary,
+                side: const BorderSide(color: AppTheme.m3Primary),
+                shape: const StadiumBorder(),
+              ),
             ),
           ],
         ],

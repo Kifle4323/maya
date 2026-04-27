@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Registration Complete</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-container": "#f8fffc",
+                        "secondary": "#5d5f5f",
+                        "on-primary-fixed": "#001c3a",
+                        "primary-fixed-dim": "#a5c8ff",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "tertiary-container": "#2d8274",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#f3f0f5",
+                        "surface-container-high": "#eae7ed",
+                        "tertiary": "#00695c",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "background": "#fbf8fe",
+                        "on-primary-container": "#fffdff",
+                        "on-primary-fixed-variant": "#004786",
+                        "surface-container-low": "#f6f2f8",
+                        "primary-container": "#1976d2",
+                        "outline-variant": "#c1c6d4",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "outline": "#717783",
+                        "on-surface": "#1b1b1f",
+                        "on-tertiary-fixed": "#00201b",
+                        "surface-tint": "#005faf",
+                        "secondary-container": "#dcdddd",
+                        "tertiary-fixed": "#a0f2e1",
+                        "tertiary-fixed-dim": "#84d5c5",
+                        "surface-variant": "#e4e1e7",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e4e1e7",
+                        "on-error-container": "#93000a",
+                        "surface": "#fbf8fe",
+                        "on-background": "#1b1b1f",
+                        "inverse-primary": "#a5c8ff",
+                        "on-surface-variant": "#414752",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#d4e3ff",
+                        "primary": "#005dac",
+                        "on-secondary-container": "#5f6161",
+                        "surface-dim": "#dcd9de",
+                        "surface-bright": "#fbf8fe",
+                        "on-secondary-fixed-variant": "#454747",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#303034",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#e2e2e2",
+                        "surface-container": "#f0edf2",
+                        "on-tertiary-fixed-variant": "#005046"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "base": "4px",
+                        "margin-desktop": "24px",
+                        "lg": "24px",
+                        "sm": "8px",
+                        "gutter": "16px",
+                        "margin-mobile": "16px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "md": "16px"
+                    },
+                    fontFamily: {
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Manrope"],
+                        "label-lg": ["Inter"],
+                        "headline-lg": ["Manrope"],
+                        "title-md": ["Inter"],
+                        "display-lg": ["Manrope"],
+                        "title-lg": ["Manrope"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    fontSize: {
+                        "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400" }],
+                        "headline-md": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600" }],
+                        "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700" }],
+                        "title-lg": ["22px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background min-h-screen flex flex-col items-center justify-center p-6 antialiased">
+<!-- Main Content Canvas -->
+<main class="w-full max-w-md flex flex-col items-center text-center">
+<!-- Success Icon -->
+<div class="mb-8 relative">
+<div class="absolute inset-0 bg-tertiary-container rounded-full blur-xl opacity-50"></div>
+<div class="relative bg-tertiary text-on-tertiary w-24 h-24 rounded-full flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[48px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<!-- Headers -->
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">Registration Complete!</h1>
+<h2 class="font-title-lg text-title-lg text-primary mb-4">Welcome to Maya City CBHI!</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-10 max-w-sm">
+            Your registration is complete and your coverage is now ACTIVE.
+        </p>
+<!-- Summary Card (M3 Tonal Layer) -->
+<div class="bg-surface-container-low w-full rounded-[24px] p-6 mb-10 text-left border border-outline-variant/30">
+<div class="flex flex-col gap-4">
+<!-- Data Row 1 -->
+<div class="flex justify-between items-center pb-4 border-b border-outline-variant/50">
+<span class="font-label-lg text-label-lg text-on-surface-variant">Member ID</span>
+<span class="font-title-md text-title-md text-on-surface">MC-84729-XA</span>
+</div>
+<!-- Data Row 2 -->
+<div class="flex justify-between items-center">
+<span class="font-label-lg text-label-lg text-on-surface-variant">Plan Tier</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-tertiary" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-title-md text-title-md text-on-surface">Standard Household</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Primary Action -->
+<button class="w-full bg-primary text-on-primary font-label-lg text-label-lg rounded-full py-4 px-8 hover:bg-on-primary-fixed-variant transition-colors shadow-sm">
+            Start Using App
+        </button>
+</main>
+</body></html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Verify Eligibility - Member Registration</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Design System Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#f8fffc",
+                    "secondary": "#5d5f5f",
+                    "on-primary-fixed": "#001c3a",
+                    "primary-fixed-dim": "#a5c8ff",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "tertiary-container": "#2d8274",
+                    "on-error": "#ffffff",
+                    "inverse-on-surface": "#f3f0f5",
+                    "surface-container-high": "#eae7ed",
+                    "tertiary": "#00695c",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "background": "#fbf8fe",
+                    "on-primary-container": "#fffdff",
+                    "on-primary-fixed-variant": "#004786",
+                    "surface-container-low": "#f6f2f8",
+                    "primary-container": "#1976d2",
+                    "outline-variant": "#c1c6d4",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "outline": "#717783",
+                    "on-surface": "#1b1b1f",
+                    "on-tertiary-fixed": "#00201b",
+                    "surface-tint": "#005faf",
+                    "secondary-container": "#dcdddd",
+                    "tertiary-fixed": "#a0f2e1",
+                    "tertiary-fixed-dim": "#84d5c5",
+                    "surface-variant": "#e4e1e7",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#e4e1e7",
+                    "on-error-container": "#93000a",
+                    "surface": "#fbf8fe",
+                    "on-background": "#1b1b1f",
+                    "inverse-primary": "#a5c8ff",
+                    "on-surface-variant": "#414752",
+                    "error-container": "#ffdad6",
+                    "primary-fixed": "#d4e3ff",
+                    "primary": "#005dac",
+                    "on-secondary-container": "#5f6161",
+                    "surface-dim": "#dcd9de",
+                    "surface-bright": "#fbf8fe",
+                    "on-secondary-fixed-variant": "#454747",
+                    "on-secondary": "#ffffff",
+                    "inverse-surface": "#303034",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed": "#e2e2e2",
+                    "surface-container": "#f0edf2",
+                    "on-tertiary-fixed-variant": "#005046"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "4px",
+                    "margin-desktop": "24px",
+                    "lg": "24px",
+                    "sm": "8px",
+                    "gutter": "16px",
+                    "margin-mobile": "16px",
+                    "xs": "4px",
+                    "xl": "32px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Manrope"],
+                    "label-lg": ["Inter"],
+                    "headline-lg": ["Manrope"],
+                    "title-md": ["Inter"],
+                    "display-lg": ["Manrope"],
+                    "title-lg": ["Manrope"],
+                    "label-md": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400"}],
+                    "headline-md": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "title-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600"}],
+                    "display-lg": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700"}],
+                    "title-lg": ["22px", {"lineHeight": "28px", "fontWeight": "500"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-lg">
+<!-- TopAppBar (From Shared Components) -->
+<header class="bg-white dark:bg-slate-900 sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center w-full px-4 h-16 shadow-sm">
+<button aria-label="Go back" class="text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors p-2 flex items-center justify-center">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-manrope font-extrabold text-blue-700 dark:text-blue-400 text-lg tracking-tight">Member Registration</h1>
+<button aria-label="Help" class="text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors p-2 flex items-center justify-center">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow w-full max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-lg flex flex-col gap-xl">
+<!-- Progress Header -->
+<section class="flex flex-col gap-sm">
+<div class="flex justify-between items-end mb-xs">
+<span class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Step 4 of 4</span>
+<span class="font-title-md text-title-md text-primary">100%</span>
+</div>
+<div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary w-full rounded-full transition-all duration-500 ease-out"></div>
+</div>
+<div class="mt-md">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-xs">Verify Eligibility</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+                    To complete your subsidized membership registration, please select how you would like to provide your household assessment or income proof.
+                </p>
+</div>
+</section>
+<!-- Verification Options (M3 Tonal Cards) -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<!-- Option 1: Verify Now (Styled as Selected for demonstration) -->
+<label class="relative flex flex-col gap-md p-lg rounded-xl bg-primary-fixed border-2 border-primary cursor-pointer transition-all hover:shadow-md">
+<div class="flex justify-between items-start w-full">
+<div class="p-2 bg-primary rounded-lg text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">upload_file</span>
+</div>
+<div class="flex items-center justify-center h-6 w-6 rounded-full border-2 border-primary bg-primary text-on-primary">
+<div class="w-2 h-2 rounded-full bg-on-primary"></div>
+</div>
+</div>
+<div class="flex flex-col gap-xs flex-grow">
+<h3 class="font-title-lg text-title-lg text-on-primary-fixed">Verify Now</h3>
+<p class="font-body-md text-body-md text-on-primary-fixed-variant">
+                        Upload your official household assessment or proof of income immediately using your device.
+                    </p>
+</div>
+<div class="mt-auto pt-sm border-t border-primary/20">
+<span class="inline-flex items-center gap-xs text-primary font-label-md text-label-md">
+<span class="material-symbols-outlined text-[16px]">bolt</span>
+                        Fastest way to active coverage
+                    </span>
+</div>
+<!-- Hidden input for form submission -->
+<input checked="" class="hidden" name="verification_method" type="radio" value="now"/>
+</label>
+<!-- Option 2: Verify Later (Unselected) -->
+<label class="relative flex flex-col gap-md p-lg rounded-xl bg-surface-container-low border border-outline-variant cursor-pointer transition-all hover:bg-surface-container hover:border-outline">
+<div class="flex justify-between items-start w-full">
+<div class="p-2 bg-surface-variant rounded-lg text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined">schedule</span>
+</div>
+<div class="flex items-center justify-center h-6 w-6 rounded-full border-2 border-outline"></div>
+</div>
+<div class="flex flex-col gap-xs flex-grow">
+<h3 class="font-title-lg text-title-lg text-on-surface">Verify Later</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                        Complete your application now and submit your documents within 30 days at a local office or online.
+                    </p>
+</div>
+<div class="mt-auto pt-sm flex items-center">
+<div class="inline-flex items-center gap-xs px-3 py-1.5 rounded-full bg-secondary-container text-on-secondary-container font-label-md text-label-md">
+<span class="material-symbols-outlined text-[14px]">info</span>
+                        Coverage pending verification
+                    </div>
+</div>
+<!-- Hidden input for form submission -->
+<input class="hidden" name="verification_method" type="radio" value="later"/>
+</label>
+</section>
+<!-- Action Area -->
+<section class="mt-auto pt-lg border-t border-surface-variant flex flex-col sm:flex-row justify-end items-center gap-md">
+<button class="w-full sm:w-auto px-6 py-3 rounded-full border border-outline text-on-surface font-label-lg text-label-lg hover:bg-surface-variant transition-colors flex items-center justify-center gap-2" type="button">
+                Cancel
+            </button>
+<button class="w-full sm:w-auto px-8 py-3 rounded-full bg-primary text-on-primary font-label-lg text-label-lg hover:bg-surface-tint transition-colors shadow-sm flex items-center justify-center gap-2" type="button">
+                Confirm Selection
+                <span class="material-symbols-outlined text-[18px]">check_circle</span>
+</button>
+</section>
+</main>
+</body></html>

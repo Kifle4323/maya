@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Maya City CBHI - Family Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#1976d2",
+                        "on-background": "#1b1b1f",
+                        "secondary-fixed": "#e2e2e2",
+                        "outline-variant": "#c1c6d4",
+                        "inverse-surface": "#303034",
+                        "tertiary-fixed": "#a0f2e1",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#005faf",
+                        "on-secondary-fixed-variant": "#454747",
+                        "on-tertiary-fixed-variant": "#005046",
+                        "surface-bright": "#fbf8fe",
+                        "on-tertiary-container": "#f8fffc",
+                        "on-primary-fixed": "#001c3a",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#eae7ed",
+                        "tertiary": "#00695c",
+                        "inverse-primary": "#a5c8ff",
+                        "surface-variant": "#e4e1e7",
+                        "surface-container": "#f0edf2",
+                        "on-tertiary-fixed": "#00201b",
+                        "outline": "#717783",
+                        "error-container": "#ffdad6",
+                        "on-secondary-container": "#5f6161",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-container": "#dcdddd",
+                        "primary-fixed-dim": "#a5c8ff",
+                        "primary": "#005dac",
+                        "on-surface-variant": "#414752",
+                        "secondary": "#5d5f5f",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#2d8274",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "background": "#fbf8fe",
+                        "surface-container-highest": "#e4e1e7",
+                        "surface": "#fbf8fe",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#004786",
+                        "on-primary-container": "#fffdff",
+                        "tertiary-fixed-dim": "#84d5c5",
+                        "on-surface": "#1b1b1f",
+                        "surface-dim": "#dcd9de",
+                        "primary-fixed": "#d4e3ff",
+                        "inverse-on-surface": "#f3f0f5",
+                        "surface-container-low": "#f6f2f8",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "24px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "base": "4px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "label-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "display-lg": ["Manrope"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Manrope"],
+                        "title-lg": ["Manrope"],
+                        "headline-lg": ["Manrope"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600" }],
+                        "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }],
+                        "headline-md": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "title-lg": ["22px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen font-body-md">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-50 flex items-center justify-between w-full px-4 h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<img alt="Maya CBHI Logo" class="w-8 h-8 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdJqJh84Qg2l23MoCTne6n9Emb2FdurRhPIVAQ1430MPsgfm7KgCamdXRGuYl4Uj73C2F9OzeBfpXQsGkJNKD7DjuYNrV5jnsmHI5GbMcYhDZWddxjqbLRTKYE173TaxUtgKjvGT__jsH74-pD-A31nADuIAubPl-J2CKfBBDECYWfy2ud_P3IxeeSgLBy8YaS4_5szifASRvPQlcvtdkMUnqx_A7w5FJcO7YMm297tM9CpPd6J2jUkRapb4qgmY4cqPhVF7lA368"/>
+<span class="text-lg font-extrabold tracking-tighter text-blue-700 dark:text-blue-400">Maya CBHI</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-blue-700 dark:text-blue-400 font-bold" data-icon="notifications">notifications</span>
+</button>
+</header>
+<div class="flex h-[calc(100vh-4rem)]">
+<!-- Navigation Rail (Desktop) -->
+<nav class="hidden md:flex flex-col w-20 bg-surface-container h-full pt-4 items-center gap-4 border-r border-outline-variant">
+<!-- Home -->
+<a class="flex flex-col items-center justify-center w-14 h-14 rounded-xl text-on-surface-variant hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined mb-1 group-hover:text-primary transition-colors" data-icon="home">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<!-- Family (Active) -->
+<a class="flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-primary-container text-on-primary-container transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="group" data-weight="fill">group</span>
+<span class="font-label-md text-label-md font-bold">Family</span>
+</a>
+<!-- ID Card -->
+<a class="flex flex-col items-center justify-center w-14 h-14 rounded-xl text-on-surface-variant hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined mb-1 group-hover:text-primary transition-colors" data-icon="contact_page">contact_page</span>
+<span class="font-label-md text-label-md">ID Card</span>
+</a>
+<!-- Claims -->
+<a class="flex flex-col items-center justify-center w-14 h-14 rounded-xl text-on-surface-variant hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined mb-1 group-hover:text-primary transition-colors" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-md text-label-md">Claims</span>
+</a>
+<!-- Account -->
+<a class="flex flex-col items-center justify-center w-14 h-14 rounded-xl text-on-surface-variant hover:bg-surface-variant transition-colors group mt-auto mb-4" href="#">
+<span class="material-symbols-outlined mb-1 group-hover:text-primary transition-colors" data-icon="person">person</span>
+<span class="font-label-md text-label-md">Account</span>
+</a>
+</nav>
+<!-- Main Content -->
+<main class="flex-1 overflow-y-auto p-gutter md:p-margin-desktop pb-24 md:pb-margin-desktop">
+<div class="max-w-4xl mx-auto space-y-lg">
+<!-- Header & Search -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<h1 class="font-headline-md text-headline-md text-on-surface">Family Management</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage your household members and benefits.</p>
+</div>
+<div class="relative w-full md:w-72">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full h-12 pl-10 pr-4 rounded-full bg-surface-container-high border-none text-on-surface font-body-md text-body-md placeholder:text-on-surface-variant focus:ring-2 focus:ring-primary focus:bg-surface transition-colors" placeholder="Search members..." type="text"/>
+</div>
+</div>
+<!-- Head of Household Bento Card -->
+<div class="bg-surface-container-low rounded-xl p-md border border-outline-variant/30 flex flex-col md:flex-row gap-md items-start md:items-center relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -z-10"></div>
+<img alt="Marcus Thompson" class="w-20 h-20 rounded-full object-cover border-4 border-surface" data-alt="Portrait of Marcus Thompson, a professional man with short hair and a confident smile, warm lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCd37_zz-mQpKBEKK949teV5_cOhOtiT45AwG4ZLs2e2OZkcnYsBZO98z-lNMcNKdT2haLET0UQA7ivX0RGxHhRmsXuaSw1PWoMTqU1wkiAUnyL1Fh0-2OOxnj7rMu0rEfZPfTCo7uPt_qKaYzo-PKKDGl8sz9s4VcdkHCNEqU8JxhjG3MwgAUjavgutbDiHAwMJ2d731tJ5jKCMd4S3KqgtFErsbmTwnx0fUpQBU11MXFmlal5L1qLlnzg96hRqJbCQtXbded1EAI"/>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-tertiary-container text-on-tertiary-container font-label-md text-label-md px-2 py-0.5 rounded-full">Head of Household</span>
+<span class="flex items-center gap-1 text-primary font-label-md text-label-md">
+<span class="material-symbols-outlined text-[16px]" data-icon="check_circle" data-weight="fill">check_circle</span> Active
+                            </span>
+</div>
+<h2 class="font-title-lg text-title-lg text-on-surface">Marcus Thompson</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">ID: CBHI-9824-MT</p>
+</div>
+<div class="flex gap-4 bg-surface rounded-lg p-3 border border-outline-variant/50">
+<div class="text-center">
+<p class="font-title-md text-title-md text-on-surface">3</p>
+<p class="font-label-md text-label-md text-on-surface-variant">Dependents</p>
+</div>
+<div class="w-px bg-outline-variant/50"></div>
+<div class="text-center">
+<p class="font-title-md text-title-md text-on-surface">Valid</p>
+<p class="font-label-md text-label-md text-on-surface-variant">Coverage</p>
+</div>
+</div>
+</div>
+<!-- Household Members Section -->
+<div>
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-title-md text-title-md text-on-surface">Household Members</h3>
+<button class="flex items-center gap-2 bg-primary text-on-primary font-label-lg text-label-lg px-4 py-2 rounded-full hover:bg-primary/90 transition-colors shadow-sm">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                            Add Member
+                        </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+<!-- Member Card: Elena -->
+<div class="bg-surface-container-low rounded-xl p-md border border-outline-variant/30 hover:border-primary/50 transition-colors group cursor-pointer relative overflow-hidden">
+<div class="flex items-start justify-between mb-3">
+<img alt="Elena Thompson" class="w-12 h-12 rounded-full object-cover" data-alt="Portrait of Elena Thompson, a middle-aged woman with a warm smile, natural daylight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCD1vsWATHi6hlI0BYLAIN3OZrZpSFQSDDJOBaE9O5umovkc8Khanm4_Mjr2Xt1KjMHEVSbwG2bfsb5pejlKMqgjOJ1NWLF3220F4HSKuWqjNBqlHHFGqBGp7lnYVZAJBHyVfuPyCddZcTSHAoOkQrk2FvPeNzmifX959tSX2klq0LSXJNnhtDozI2g1Xdyi9SINVuhDKUkl8LAC1mIIkijLi1-o5_wKdP3o8kph8JstMzE6e5_VgMS6SOQSbjPCeeLAa_CkwG7Yzw"/>
+<button class="text-on-surface-variant group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<h4 class="font-title-md text-title-md text-on-surface">Elena Thompson</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mb-3">Spouse • 42 yrs</p>
+<div class="flex items-center justify-between pt-3 border-t border-outline-variant/30">
+<span class="bg-tertiary/10 text-tertiary font-label-md text-label-md px-2 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="verified" data-weight="fill">verified</span> Verified
+                                </span>
+<span class="text-primary font-label-md text-label-md flex items-center gap-1 group-hover:underline">
+                                    View Details <span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</span>
+</div>
+</div>
+<!-- Member Card: Leo -->
+<div class="bg-surface-container-low rounded-xl p-md border border-outline-variant/30 hover:border-primary/50 transition-colors group cursor-pointer relative overflow-hidden">
+<div class="flex items-start justify-between mb-3">
+<img alt="Leo Thompson" class="w-12 h-12 rounded-full object-cover" data-alt="Portrait of Leo Thompson, a teenage boy looking casually at the camera." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFAHC33NpcsgEgM7BQuMZNqSK9izqY9sTXbsPADA9CPdxCC2Fpvq61_JnELadxAPYBLYpbDDrerD-RUpn2REpKDzIKbkym2GXKo4bC3ozUVViAED83v5wKSXRCzcsEEkcGO_Alneff2_IkyZcBhkYbScZfkAce9XDaE7W3d_YXLIX0iz4nM0GnIC0A35TQvdkivP7IKiAm6IeCRS1Aoy9Z1U9CdGpIm79PwArY852u_JPBGymNzmrzEq8PJP_X9YJF48T8PTX_0y4"/>
+<button class="text-on-surface-variant group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<h4 class="font-title-md text-title-md text-on-surface">Leo Thompson</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mb-3">Child • 16 yrs</p>
+<div class="flex items-center justify-between pt-3 border-t border-outline-variant/30">
+<span class="bg-tertiary/10 text-tertiary font-label-md text-label-md px-2 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="verified" data-weight="fill">verified</span> Verified
+                                </span>
+<span class="text-primary font-label-md text-label-md flex items-center gap-1 group-hover:underline">
+                                    View Details <span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</span>
+</div>
+</div>
+<!-- Member Card: Maya -->
+<div class="bg-surface-container-low rounded-xl p-md border border-outline-variant/30 hover:border-primary/50 transition-colors group cursor-pointer relative overflow-hidden">
+<div class="flex items-start justify-between mb-3">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-title-lg text-title-lg">
+                                    M
+                                </div>
+<button class="text-on-surface-variant group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<h4 class="font-title-md text-title-md text-on-surface">Maya Thompson</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mb-3">Child • 8 yrs</p>
+<div class="flex items-center justify-between pt-3 border-t border-outline-variant/30">
+<span class="bg-surface-variant text-on-surface-variant font-label-md text-label-md px-2 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="pending">pending</span> Pending
+                                </span>
+<span class="text-primary font-label-md text-label-md flex items-center gap-1 group-hover:underline">
+                                    View Details <span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] rounded-t-lg">
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 opacity-80 hover:text-blue-600 dark:hover:text-blue-300 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-['Manrope'] text-[11px] font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-blue-700 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/20 rounded-xl px-3 py-1 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="group" data-weight="fill">group</span>
+<span class="font-['Manrope'] text-[11px] font-medium">Family</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 opacity-80 hover:text-blue-600 dark:hover:text-blue-300 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="contact_page">contact_page</span>
+<span class="font-['Manrope'] text-[11px] font-medium">ID Card</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 opacity-80 hover:text-blue-600 dark:hover:text-blue-300 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="receipt_long">receipt_long</span>
+<span class="font-['Manrope'] text-[11px] font-medium">Claims</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 opacity-80 hover:text-blue-600 dark:hover:text-blue-300 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-['Manrope'] text-[11px] font-medium">Account</span>
+</a>
+</nav>
+</body></html>

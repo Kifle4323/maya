@@ -239,93 +239,428 @@ class _RegistrationCompletedViewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.m3SurfaceContainerLow,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: BlocBuilder<AuthCubit, AuthState>(
-            builder: (context, auth) {
-              final strings = CbhiLocalizations.of(context);
+        child: BlocBuilder<AuthCubit, AuthState>(
+          builder: (context, auth) {
+            final strings = CbhiLocalizations.of(context);
 
-              // Show spinner while session is being adopted
-              if (auth.isBusy) {
-                return const Center(child: CircularProgressIndicator());
-              }
+            if (auth.isBusy) {
+              return const Center(
+                  child: CircularProgressIndicator(
+                      color: AppTheme.m3Primary));
+            }
 
-              final authenticated = auth.status == AuthStatus.authenticated;
+            final authenticated = auth.status == AuthStatus.authenticated;
 
-              // If authenticated, dashboard will open automatically via BlocListener.
-              // Show a brief success screen with the temp password warning.
-              if (authenticated) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.check_circle, size: 80, color: AppTheme.success),
-                    const SizedBox(height: 16),
-                    Text(
-                      strings.t('registrationCompleted'),
-                      style: Theme.of(context).textTheme.headlineSmall,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      strings.t('registrationSuccessMessage'),
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                    if (_tempPassword != null) ...[
-                      const SizedBox(height: 24),
-                      _TempPasswordCard(tempPassword: _tempPassword!),
-                    ],
-                    const SizedBox(height: 24),
-                    const CircularProgressIndicator(),
-                    const SizedBox(height: 8),
-                    Text(strings.t('loading'),
-                        style: Theme.of(context).textTheme.bodySmall),
-                  ],
-                );
-              }
+            if (authenticated) {
+              // M3 Registration Complete screen
+              return _M3RegistrationCompleteScreen(
+                strings: strings,
+                tempPassword: _tempPassword,
+                snapshot: widget.snapshot,
+                isOffline: false,
+              );
+            }
 
-              // Not authenticated — show offline mode with temp password
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+            // Offline / pending — Registration Received screen
+            return _M3RegistrationReceivedScreen(
+              strings: strings,
+              tempPassword: _tempPassword,
+              onGoToDashboard: () =>
+                  context.read<AuthCubit>().adoptRegisteredSession(
+                    personalInfo: widget.personalInfo,
+                    offlineSnapshot: widget.snapshot,
+                  ),
+              onBackToSignIn: () {
+                context.read<RegistrationCubit>().reset();
+                context.read<AuthCubit>().leaveGuest();
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+// ── M3 Registration Complete Screen ──────────────────────────────────────────
+
+class _M3RegistrationCompleteScreen extends StatelessWidget {
+  const _M3RegistrationCompleteScreen({
+    required this.strings,
+    required this.tempPassword,
+    required this.snapshot,
+    required this.isOffline,
+  });
+
+  final dynamic strings;
+  final String? tempPassword;
+  final dynamic snapshot;
+  final bool isOffline;
+
+  @override
+  Widget build(BuildContext context) {
+    final memberId = snapshot?.viewerMembershipId?.toString() ?? '—';
+    final planTier = snapshot?.household?['membershipType']?.toString() ??
+        strings.t('payingMembership');
+
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 440),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Success icon with glow
+              Stack(
+                alignment: Alignment.center,
                 children: [
-                  const Icon(Icons.check_circle, size: 80, color: AppTheme.success),
-                  const SizedBox(height: 16),
-                  Text(
-                    strings.t('registrationSavedForSync'),
-                    style: Theme.of(context).textTheme.headlineSmall,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    strings.t('offlineQueueMessage'),
-                    style: Theme.of(context).textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                  if (_tempPassword != null) ...[
-                    const SizedBox(height: 24),
-                    _TempPasswordCard(tempPassword: _tempPassword!),
-                  ],
-                  const SizedBox(height: 28),
-                  FilledButton.icon(
-                    icon: const Icon(Icons.home_outlined),
-                    label: Text(strings.t('home')),
-                    onPressed: () => context.read<AuthCubit>().adoptRegisteredSession(
-                      personalInfo: widget.personalInfo,
-                      offlineSnapshot: widget.snapshot,
+                  Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: AppTheme.m3TertiaryContainer
+                          .withValues(alpha: 0.3),
+                      shape: BoxShape.circle,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  TextButton(
-                    onPressed: () {
-                      context.read<RegistrationCubit>().reset();
-                      context.read<AuthCubit>().leaveGuest();
-                    },
-                    child: Text(strings.t('backToSignIn')),
+                  Container(
+                    width: 96,
+                    height: 96,
+                    decoration: BoxDecoration(
+                      color: AppTheme.m3Tertiary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check_circle,
+                      color: Colors.white,
+                      size: 48,
+                    ),
                   ),
                 ],
-              );
-            },
+              ),
+
+              const SizedBox(height: 24),
+
+              Text(
+                strings.t('registrationCompleteTitle'),
+                style: const TextStyle(
+                  fontFamily: 'Outfit',
+                  fontSize: 32,
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.m3OnSurface,
+                  height: 1.2,
+                ),
+                textAlign: TextAlign.center,
+              ),
+
+              const SizedBox(height: 8),
+
+              Text(
+                strings.t('welcomeToMayaCbhi'),
+                style: const TextStyle(
+                  fontFamily: 'Outfit',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: AppTheme.m3Primary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+
+              const SizedBox(height: 12),
+
+              Text(
+                strings.t('registrationCompleteBody'),
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: AppTheme.m3OnSurfaceVariant,
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+
+              const SizedBox(height: 32),
+
+              // Summary card
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: AppTheme.m3SurfaceContainerLow,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
+                  ),
+                ),
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    // Member ID row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          strings.t('memberIdLabel'),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: AppTheme.m3OnSurfaceVariant,
+                          ),
+                        ),
+                        Text(
+                          memberId,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.m3OnSurface,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Divider(
+                      height: 24,
+                      color: AppTheme.m3OutlineVariant.withValues(alpha: 0.5),
+                    ),
+                    // Plan tier row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          strings.t('planTierLabel'),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: AppTheme.m3OnSurfaceVariant,
+                          ),
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.verified,
+                                size: 18, color: AppTheme.m3Tertiary),
+                            const SizedBox(width: 6),
+                            Text(
+                              planTier,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppTheme.m3OnSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              if (tempPassword != null) ...[
+                const SizedBox(height: 16),
+                _TempPasswordCard(tempPassword: tempPassword!),
+              ],
+
+              const SizedBox(height: 32),
+
+              // Start Using App button
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: FilledButton(
+                  onPressed: () {},
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppTheme.m3Primary,
+                    foregroundColor: AppTheme.m3OnPrimary,
+                    shape: const StadiumBorder(),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        strings.t('startUsingApp'),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                        constraints: BoxConstraints(
+                            maxWidth: 16, maxHeight: 16),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── M3 Registration Received Screen ──────────────────────────────────────────
+
+class _M3RegistrationReceivedScreen extends StatelessWidget {
+  const _M3RegistrationReceivedScreen({
+    required this.strings,
+    required this.tempPassword,
+    required this.onGoToDashboard,
+    required this.onBackToSignIn,
+  });
+
+  final dynamic strings;
+  final String? tempPassword;
+  final VoidCallback onGoToDashboard;
+  final VoidCallback onBackToSignIn;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 440),
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppTheme.m3SurfaceContainerLow,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: AppTheme.m3SurfaceContainer,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Success icon
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFA0F2E1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.check_circle,
+                    color: AppTheme.m3Tertiary,
+                    size: 40,
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                Text(
+                  strings.t('registrationReceivedTitle'),
+                  style: const TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 28,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.m3OnSurface,
+                    height: 1.2,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+
+                const SizedBox(height: 8),
+
+                Text(
+                  strings.t('registrationReceivedSubtitle'),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.m3OnSurfaceVariant,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+
+                const SizedBox(height: 12),
+
+                // Status chip
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppTheme.m3SurfaceVariant,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.schedule,
+                          size: 16,
+                          color: AppTheme.m3OnSurfaceVariant),
+                      const SizedBox(width: 6),
+                      Text(
+                        strings.t('statusPendingChip').toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: AppTheme.m3OnSurfaceVariant,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                Text(
+                  strings.t('registrationReceivedBody'),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: AppTheme.m3OnSurfaceVariant,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+
+                if (tempPassword != null) ...[
+                  const SizedBox(height: 16),
+                  _TempPasswordCard(tempPassword: tempPassword!),
+                ],
+
+                const SizedBox(height: 24),
+
+                // Go to Dashboard button
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: FilledButton.icon(
+                    onPressed: onGoToDashboard,
+                    icon: const Icon(Icons.arrow_forward, size: 18),
+                    label: Text(strings.t('goToDashboard')),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppTheme.m3Primary,
+                      foregroundColor: AppTheme.m3OnPrimary,
+                      shape: const StadiumBorder(),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                TextButton(
+                  onPressed: onBackToSignIn,
+                  child: Text(
+                    strings.t('backToSignIn'),
+                    style: const TextStyle(color: AppTheme.m3OnSurfaceVariant),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -388,7 +723,7 @@ class _TempPasswordCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surfaceContainerLowest,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: AppTheme.warning),
             ),
