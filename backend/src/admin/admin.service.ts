@@ -33,7 +33,7 @@ import { Payment } from '../payments/payment.entity';
 import { SmsService } from '../sms/sms.service';
 import { SystemSetting } from '../system-settings/system-setting.entity';
 import { User } from '../users/user.entity';
-import { AuditLog } from '../audit/audit-log.entity';
+import { AuditLog, AuditAction } from '../audit/audit-log.entity';
 import { Referral } from '../referrals/referral.entity';
 import {
   ReportsQueryDto,
@@ -121,6 +121,20 @@ export class AdminService {
     const application = await this.indigentService.overrideApplication(
       applicationId,
       dto,
+    );
+
+    // Audit log: record the indigent application review
+    const reviewer = await this.userRepository.findOne({ where: { id: userId } });
+    await this.auditLogRepository.save(
+      this.auditLogRepository.create({
+        userId: reviewer?.id ?? null,
+        userEmail: reviewer?.email ?? null,
+        userRole: reviewer?.role ?? null,
+        action: AuditAction.INDIGENT_REVIEW,
+        entityType: 'IndigentApplication',
+        entityId: application.id,
+        newValue: { status: application.status, reason: application.reason },
+      }),
     );
 
     const user = application.userId
@@ -229,6 +243,24 @@ export class AdminService {
           ? claim.claimedAmount
           : '0.00';
     await this.claimRepository.save(claim);
+
+    // Audit log: record the claim review action
+    await this.auditLogRepository.save(
+      this.auditLogRepository.create({
+        userId: reviewer?.id ?? null,
+        userEmail: reviewer?.email ?? null,
+        userRole: reviewer?.role ?? null,
+        action: AuditAction.CLAIM_REVIEW,
+        entityType: 'Claim',
+        entityId: claim.id,
+        oldValue: { status: claim.status },
+        newValue: {
+          status: dto.status,
+          approvedAmount: claim.approvedAmount,
+          decisionNote: claim.decisionNote,
+        },
+      }),
+    );
 
     const recipients = [claim.household?.headUser, claim.beneficiary?.userAccount]
       .filter((user): user is User => !!user?.id)
@@ -356,6 +388,21 @@ export class AdminService {
     setting.value = dto.value;
     setting.isSensitive = dto.isSensitive ?? setting.isSensitive;
     await this.settingRepository.save(setting);
+
+    // Audit log: record settings change
+    const adminUser = await this.userRepository.findOne({ where: { id: userId } });
+    await this.auditLogRepository.save(
+      this.auditLogRepository.create({
+        userId: adminUser?.id ?? null,
+        userEmail: adminUser?.email ?? null,
+        userRole: adminUser?.role ?? null,
+        action: AuditAction.SETTINGS_UPDATE,
+        entityType: 'SystemSetting',
+        entityId: normalizedKey,
+        newValue: { value: setting.isSensitive ? '[REDACTED]' : dto.value },
+      }),
+    );
+
     return this.getSystemConfiguration(userId);
   }
 

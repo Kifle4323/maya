@@ -272,17 +272,13 @@ class _CoverageHeroCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: status.toUpperCase() == 'ACTIVE' 
-                        ? Colors.green.shade100 
-                        : Colors.orange.shade100,
+                    color: _coverageColor(status).withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
                     status,
                     style: TextStyle(
-                      color: status.toUpperCase() == 'ACTIVE' 
-                          ? Colors.green.shade900 
-                          : Colors.orange.shade900,
+                      color: _coverageColor(status),
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
                     ),
@@ -459,8 +455,8 @@ class _RenewalSection extends StatelessWidget {
             Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: Colors.orange.shade100,
-                  foregroundColor: Colors.orange.shade900,
+                  backgroundColor: AppTheme.warning.withValues(alpha: 0.15),
+                  foregroundColor: AppTheme.warning,
                   child: const Icon(Icons.payments_outlined, size: 20),
                 ),
                 const SizedBox(width: 16),
@@ -476,13 +472,13 @@ class _RenewalSection extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.green.shade100,
+                      color: AppTheme.success.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(
                       strings.t('active'),
-                      style: TextStyle(
-                        color: Colors.green.shade900,
+                      style: const TextStyle(
+                        color: AppTheme.success,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
@@ -504,7 +500,7 @@ class _RenewalSection extends StatelessWidget {
                           ? '${snapshot.premiumAmount.toStringAsFixed(0)} ETB'
                           : _calcDisplayPremium(snapshot),
                       icon: Icons.payments_outlined,
-                      color: Colors.orange.shade900,
+                      color: AppTheme.warning,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -596,8 +592,8 @@ class _SyncStatusCard extends StatelessWidget {
         child: Row(
           children: [
             CircleAvatar(
-              backgroundColor: isPending ? Colors.orange.shade100 : Colors.green.shade100,
-              foregroundColor: isPending ? Colors.orange.shade900 : Colors.green.shade900,
+              backgroundColor: isPending ? AppTheme.warning.withValues(alpha: 0.12) : AppTheme.success.withValues(alpha: 0.12),
+              foregroundColor: isPending ? AppTheme.warning : AppTheme.success,
               child: Icon(syncIcon, size: 20),
             ),
             const SizedBox(width: 16),
@@ -699,8 +695,8 @@ class _PaymentHistorySection extends StatelessWidget {
                   child: Row(
                     children: [
                       CircleAvatar(
-                        backgroundColor: Colors.orange.shade100,
-                        foregroundColor: Colors.orange.shade900,
+                        backgroundColor: AppTheme.warning.withValues(alpha: 0.12),
+                        foregroundColor: AppTheme.warning,
                         child: const Icon(Icons.payments_outlined, size: 20),
                       ),
                       const SizedBox(width: 14),
@@ -727,13 +723,13 @@ class _PaymentHistorySection extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.blue.shade100,
+                          color: AppTheme.info.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(
                           payment['status']?.toString() ?? 'UNKNOWN',
-                          style: TextStyle(
-                            color: Colors.blue.shade900,
+                          style: const TextStyle(
+                            color: AppTheme.info,
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                           ),

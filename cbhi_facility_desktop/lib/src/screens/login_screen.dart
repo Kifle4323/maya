@@ -80,15 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
             flex: 2,
             child: Container(
               decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFF065A45),
-                    Color(0xFF0D7A5F),
-                    Color(0xFF00BFA5),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                gradient: FacilityTheme.headerGradient,
               ),
               padding: const EdgeInsets.all(48),
               child: Column(

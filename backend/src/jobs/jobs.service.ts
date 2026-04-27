@@ -15,6 +15,7 @@ import {
 } from '../common/enums/cbhi.enums';
 import { SmsService } from '../sms/sms.service';
 import { FcmService } from '../notifications/fcm.service';
+import { NotificationService } from '../notifications/notification.service';
 
 /**
  * JobsService — business logic for all scheduled background jobs.
@@ -39,6 +40,7 @@ export class JobsService {
     private readonly claimRepository: Repository<Claim>,
     private readonly smsService: SmsService,
     private readonly fcmService: FcmService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async runDailyJobs(): Promise<void> {
@@ -84,16 +86,12 @@ export class JobsService {
         const isUrgent = daysLeft <= 7;
         const expiryDate = coverage.endDate.toISOString().split('T')[0];
 
-        await this.notificationRepository.save(
-          this.notificationRepository.create({
-            recipient: headUser,
-            type: NotificationType.RENEWAL_REMINDER,
-            title: isUrgent ? 'Urgent: Coverage expiring soon!' : 'Coverage renewal reminder',
-            message: `Your household coverage (${household.householdCode}) expires on ${expiryDate}. ${isUrgent ? 'Renew immediately to avoid service interruption.' : 'Please renew within 30 days.'}`,
-            payload: { householdCode: household.householdCode, expiryDate, daysLeft },
-            language: headUser.preferredLanguage ?? PreferredLanguage.ENGLISH,
-            isRead: false,
-          }),
+        await this.notificationService.createAndSend(
+          headUser,
+          NotificationType.RENEWAL_REMINDER,
+          isUrgent ? 'Urgent: Coverage expiring soon!' : 'Coverage renewal reminder',
+          `Your household coverage (${household.householdCode}) expires on ${expiryDate}. ${isUrgent ? 'Renew immediately to avoid service interruption.' : 'Please renew within 30 days.'}`,
+          { householdCode: household.householdCode, expiryDate, daysLeft },
         );
 
         if (headUser.phoneNumber) {
@@ -166,26 +164,22 @@ export class JobsService {
             }
           }
 
-          // B2: Create persistent expiry notification
+          // B2: Create persistent expiry notification with FCM push
           if (coverage.household.headUser) {
             try {
-              await this.notificationRepository.save(
-                this.notificationRepository.create({
-                  recipient: coverage.household.headUser,
-                  type: NotificationType.RENEWAL_REMINDER,
-                  title: 'Coverage expired',
-                  message: `Your household coverage (${coverage.household.householdCode}) has expired. Please renew to restore access to health services.`,
-                  payload: {
-                    householdCode: coverage.household.householdCode,
-                    coverageNumber: coverage.coverageNumber,
-                    expiredAt: coverage.endDate.toISOString(),
-                  },
-                  language: coverage.household.headUser.preferredLanguage ?? PreferredLanguage.ENGLISH,
-                  isRead: false,
-                }),
+              await this.notificationService.createAndSend(
+                coverage.household.headUser,
+                NotificationType.COVERAGE_EXPIRY,
+                'Coverage expired',
+                `Your household coverage (${coverage.household.householdCode}) has expired. Please renew to restore access to health services.`,
+                {
+                  householdCode: coverage.household.householdCode,
+                  coverageNumber: coverage.coverageNumber,
+                  expiredAt: coverage.endDate.toISOString(),
+                },
               );
             } catch (notifErr) {
-              this.logger.warn(`Expiry notification save failed: ${(notifErr as Error).message}`);
+              this.logger.warn(`Expiry notification failed: ${(notifErr as Error).message}`);
             }
           }
         }

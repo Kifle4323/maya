@@ -8,6 +8,7 @@ import { Grievance } from '../grievances/grievance.entity';
 import { Household } from '../households/household.entity';
 import { Notification } from '../notifications/notification.entity';
 import { FcmService } from '../notifications/fcm.service';
+import { NotificationService } from '../notifications/notification.service';
 import { SmsModule } from '../sms/sms.module';
 import { JobsService } from './jobs.service';
 import { JobsProcessor, CBHI_JOBS_QUEUE } from './jobs.processor';
@@ -21,7 +22,7 @@ import { JobsScheduler } from './jobs.scheduler';
       name: CBHI_JOBS_QUEUE,
     }),
   ],
-  providers: [JobsService, FcmService, JobsProcessor, JobsScheduler],
+  providers: [JobsService, FcmService, NotificationService, JobsProcessor, JobsScheduler],
   exports: [JobsService],
 })
 export class JobsModule {}

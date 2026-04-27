@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { IsString, IsNotEmpty } from 'class-validator';
+import { Throttle } from '@nestjs/throttler';
 import { Public } from '../common/decorators/public.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { User } from '../users/user.entity';
@@ -27,6 +28,7 @@ export class AuthController {
   ) {}
 
   @Public()
+  @Throttle({ default: { ttl: 600_000, limit: 5 } }) // 5 attempts per 10 min per IP
   @Post('login')
   login(@Body() dto: PasswordLoginDto) {
     return this.authService.loginWithPassword(dto);

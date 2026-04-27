@@ -6,15 +6,38 @@ import 'i18n/app_localizations.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_shell.dart';
 
-const Color kPrimary = Color(0xFF1565C0);
-const Color kAccent = Color(0xFF00B0FF);
-const Color kSurface = Color(0xFFF5F7FA);
-const Color kSidebarBg = Color(0xFF0D1B2A);
-const Color kTextDark = Color(0xFF0D1B2A);
-const Color kTextSecondary = Color(0xFF4A6572);
-const Color kSuccess = Color(0xFF2E7D32);
-const Color kError = Color(0xFFD32F2F);
-const Color kWarning = Color(0xFFF57C00);
+/// CBHI standard palette — matches AdminTheme and AppTheme exactly.
+class FacilityTheme {
+  FacilityTheme._();
+
+  static const Color primary = Color(0xFF1565C0);
+  static const Color accent = Color(0xFF00B0FF);
+  static const Color gold = Color(0xFFFFA000);
+  static const Color error = Color(0xFFD32F2F);
+  static const Color success = Color(0xFF2E7D32);
+  static const Color warning = Color(0xFFF57C00);
+  static const Color surface = Color(0xFFF5F7FA);
+  static const Color sidebarBg = Color(0xFF0D1B2A);
+  static const Color textDark = Color(0xFF0D1B2A);
+  static const Color textSecondary = Color(0xFF4A6572);
+
+  static const LinearGradient headerGradient = LinearGradient(
+    colors: [Color(0xFF1565C0), Color(0xFF00B0FF)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+}
+
+// Legacy top-level constants kept for backward compatibility with existing screens.
+const Color kPrimary = FacilityTheme.primary;
+const Color kAccent = FacilityTheme.accent;
+const Color kSurface = FacilityTheme.surface;
+const Color kSidebarBg = FacilityTheme.sidebarBg;
+const Color kTextDark = FacilityTheme.textDark;
+const Color kTextSecondary = FacilityTheme.textSecondary;
+const Color kSuccess = FacilityTheme.success;
+const Color kError = FacilityTheme.error;
+const Color kWarning = FacilityTheme.warning;
 
 class CbhiFacilityApp extends StatefulWidget {
   const CbhiFacilityApp({super.key, required this.repository});
@@ -39,21 +62,33 @@ class _CbhiFacilityAppState extends State<CbhiFacilityApp> {
 
   Future<void> _init() async {
     await widget.repository.init();
-     if (widget.repository.isAuthenticated) {
+    if (widget.repository.isAuthenticated) {
       final valid = await widget.repository.ping();
       if (!valid) {
-        setState(() { _authenticated = true; _loading = false; });
+        setState(() {
+          _authenticated = true;
+          _loading = false;
+        });
         return;
       }
       try {
         await widget.repository.getClaims();
-        setState(() { _authenticated = true; _loading = false; });
+        setState(() {
+          _authenticated = true;
+          _loading = false;
+        });
       } catch (e) {
         await widget.repository.logout();
-        setState(() { _authenticated = false; _loading = false; });
+        setState(() {
+          _authenticated = false;
+          _loading = false;
+        });
       }
     } else {
-      setState(() { _authenticated = false; _loading = false; });
+      setState(() {
+        _authenticated = false;
+        _loading = false;
+      });
     }
   }
 
@@ -63,12 +98,13 @@ class _CbhiFacilityAppState extends State<CbhiFacilityApp> {
     final base = ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: kPrimary,
-        primary: kPrimary,
-        secondary: kAccent,
-        surface: kSurface,
+        seedColor: FacilityTheme.primary,
+        primary: FacilityTheme.primary,
+        secondary: FacilityTheme.accent,
+        surface: FacilityTheme.surface,
+        error: FacilityTheme.error,
       ),
-      scaffoldBackgroundColor: kSurface,
+      scaffoldBackgroundColor: FacilityTheme.surface,
     );
 
     return MaterialApp(
@@ -109,7 +145,7 @@ class _CbhiFacilityAppState extends State<CbhiFacilityApp> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: kPrimary, width: 2),
+            borderSide: const BorderSide(color: FacilityTheme.primary, width: 2),
           ),
         ),
         filledButtonTheme: FilledButtonThemeData(
@@ -120,10 +156,10 @@ class _CbhiFacilityAppState extends State<CbhiFacilityApp> {
           ),
         ),
         dataTableTheme: DataTableThemeData(
-          headingRowColor: WidgetStateProperty.all(kSurface),
+          headingRowColor: WidgetStateProperty.all(FacilityTheme.surface),
           dataRowColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.hovered)) {
-              return kPrimary.withValues(alpha: 0.04);
+              return FacilityTheme.primary.withValues(alpha: 0.04);
             }
             return Colors.white;
           }),
@@ -131,6 +167,7 @@ class _CbhiFacilityAppState extends State<CbhiFacilityApp> {
           columnSpacing: 24,
         ),
       ),
+      home: _loading
           ? Scaffold(
               body: Center(
                 child: Image.asset(
