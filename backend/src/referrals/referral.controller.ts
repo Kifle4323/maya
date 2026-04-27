@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Query, UseGuards, UnauthorizedException } from '@nestjs/common';
 import { ReferralService } from './referral.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { User } from '../users/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';

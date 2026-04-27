@@ -130,7 +130,7 @@ export class FacilityService {
       FacilityLevel.SPECIALIZED_HOSPITAL,
     ].includes(context.facility.serviceLevel as FacilityLevel);
 
-    let referral = null;
+    let referral: Awaited<ReturnType<typeof this.referralService.validateReferral>> | null = null;
     if (isHospital) {
       if (!dto.referralCode) {
         throw new BadRequestException(

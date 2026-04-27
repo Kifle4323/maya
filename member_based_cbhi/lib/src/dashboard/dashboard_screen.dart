@@ -572,7 +572,6 @@ class _SyncStatusCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final strings = CbhiLocalizations.of(context);
     final isPending = snapshot.isPendingSync;
-    final syncColor = isPending ? AppTheme.warning : AppTheme.success;
     final syncIcon = isPending
         ? Icons.cloud_upload_outlined
         : Icons.cloud_done_outlined;

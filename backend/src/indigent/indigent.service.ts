@@ -82,21 +82,22 @@ export class IndigentService {
     return { score, status, reason };
   }
 
-    const visionResults = [];
+  async applyApplication(data: CreateIndigentApplicationDto) {
+    const visionResults: any[] = [];
     if (data.documents?.length) {
-       // If documents are passed as base64, validate them. 
-       // Note: Currently documents are expected to be URLs or Base64 depending on the source.
-       // We only validate if they look like base64.
-       for (const doc of data.documents) {
-         if (doc.length > 500) { // likely base64
-           try {
-             const res = await this.visionService.validateIndigentDocument(doc);
-             visionResults.push(res);
-           } catch (e) {
-             this.logger.error(`Vision validation failed: ${e.message}`);
-           }
-         }
-       }
+      // If documents are passed as base64, validate them.
+      // Note: Currently documents are expected to be URLs or Base64 depending on the source.
+      // We only validate if they look like base64.
+      for (const doc of data.documents) {
+        if (doc.length > 500) { // likely base64
+          try {
+            const res = await this.visionService.validateIndigentDocument(doc);
+            visionResults.push(res);
+          } catch (e) {
+            this.logger.error(`Vision validation failed: ${(e as Error).message}`);
+          }
+        }
+      }
     }
 
     const decision = this.evaluateIndigentApplication(data);
@@ -112,6 +113,8 @@ export class IndigentService {
         decision.reason += ` | Vision validation pending: ${visionResults[0]?.issues?.[0] ?? 'low confidence'}`;
       }
     }
+
+    const hasExpiredDocuments = visionResults.some(r => r.isExpired === true);
     const application = this.indigentRepository.create({
       income: data.income,
       employmentStatus: data.employmentStatus,

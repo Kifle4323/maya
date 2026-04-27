@@ -143,7 +143,7 @@ export class RegistrationService {
     beneficiary.nationalId = user.nationalId;
 
     // Automation: Two-way proof for Indigent HHs
-    const visionResults = [];
+    const visionResults: any[] = [];
     if (dto.membershipType === MembershipType.INDIGENT && dto.indigentProofUploads?.length) {
       // Validate all proofs in parallel via Google Vision
       const results = await Promise.all(

@@ -11,6 +11,7 @@ import { Claim } from '../claims/claim.entity';
 import {
   ClaimStatus,
   CoverageStatus,
+  FacilityLevel,
   FacilityUserRole,
   IndigentApplicationStatus,
   MembershipType,
@@ -645,13 +646,13 @@ export class AdminService {
         name: dto.name.trim(),
         facilityCode: dto.facilityCode?.trim() || null,
         licenseNumber: dto.licenseNumber?.trim() || null,
-        serviceLevel: dto.serviceLevel?.trim() || null,
+        serviceLevel: (dto.serviceLevel?.trim() || null) as FacilityLevel | null,
         phoneNumber: dto.phoneNumber?.trim() || null,
         email: dto.email?.trim().toLowerCase() || null,
         addressLine: dto.addressLine?.trim() || null,
         isAccredited: true,
       }),
-    );
+    ) as HealthFacility;
     return this.toFacilitySummary(facility);
   }
 
@@ -661,7 +662,7 @@ export class AdminService {
     if (!facility) throw new NotFoundException('Facility not found.');
 
     if (dto.name) facility.name = dto.name.trim();
-    if (dto.serviceLevel !== undefined) facility.serviceLevel = dto.serviceLevel?.trim() || null;
+    if (dto.serviceLevel !== undefined) facility.serviceLevel = (dto.serviceLevel?.trim() || null) as FacilityLevel | null;
     if (dto.phoneNumber !== undefined) facility.phoneNumber = dto.phoneNumber?.trim() || null;
     if (dto.email !== undefined) facility.email = dto.email?.trim().toLowerCase() || null;
     if (dto.addressLine !== undefined) facility.addressLine = dto.addressLine?.trim() || null;

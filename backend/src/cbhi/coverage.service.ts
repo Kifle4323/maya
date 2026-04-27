@@ -307,35 +307,6 @@ export class CoverageService {
     };
   }
 
-  private calculateTierPremium(tier: MembershipTier, householdSize: number): number {
-    let base = 500;
-    let extraRate = 150;
-
-    switch (tier) {
-      case MembershipTier.LOW_INCOME:
-        base = 350;
-        extraRate = 100;
-        break;
-      case MembershipTier.MIDDLE_INCOME:
-        base = 500;
-        extraRate = 150;
-        break;
-      case MembershipTier.HIGH_INCOME:
-        base = 650;
-        extraRate = 200;
-        break;
-      case MembershipTier.INDIGENT:
-        return 0;
-      default:
-        base = 500;
-        extraRate = 150;
-    }
-
-    const standardSize = 5;
-    const additionalMembers = Math.max(0, householdSize - standardSize);
-    return base + additionalMembers * extraRate;
-  }
-
   private addMonths(date: Date, months: number) {
     const result = new Date(date);
     result.setMonth(result.getMonth() + months);
