@@ -143,26 +143,32 @@ export class VerificationService {
       idMatchScore * 0.2 +
       freshnessScore * 0.1;
 
+    const roundedConfidence = Math.round(confidence * 1000) / 1000;
+
     // ── Step 10: Persist ───────────────────────────────────────────────────
+    const extractedData: Record<string, unknown> = {
+      name: extractedName,
+      idNumber: extractedId,
+      expiryDate: expiryDate ? expiryDate.toISOString().split('T')[0] : null,
+      documentType: detectedDocumentType,
+      nameMatchScore: nameMatchResult.score,
+      rawText: ocrText || null,
+    };
+
     const entity = this.verificationRepo.create({
-      userId,
+      userId: userId ?? null,
       documentType: dto.documentType,
-      extractedName: extractedName ?? undefined,
-      extractedId: extractedId ?? undefined,
-      expiryDate: expiryDate ?? undefined,
-      matchScore: nameMatchResult.score,
-      confidenceScore: Math.round(confidence * 1000) / 1000,
       status: decision.status,
-      rawText: ocrText || undefined,
-      reasons: decision.reasons,
-      isDemo: false,
+      confidence: roundedConfidence,
+      extractedData,
+      validationErrors: decision.reasons,
     });
 
     const saved = await this.verificationRepo.save(entity);
 
     const result: VerificationResultDto = {
       status: decision.status,
-      confidence: Math.round(confidence * 1000) / 1000,
+      confidence: roundedConfidence,
       extracted: {
         name: extractedName,
         idNumber: extractedId,
@@ -227,13 +233,12 @@ export class VerificationService {
     reason: string,
   ): Promise<VerificationResultDto> {
     const entity = this.verificationRepo.create({
-      userId,
+      userId: userId ?? null,
       documentType: dto.documentType,
-      matchScore: 0,
-      confidenceScore: 0,
       status: 'manual_review',
-      reasons: [reason],
-      isDemo: false,
+      confidence: 0,
+      extractedData: null,
+      validationErrors: [reason],
     });
     const saved = await this.verificationRepo.save(entity);
 

@@ -68,6 +68,10 @@ export class Beneficiary extends AuditableEntity {
   @Column({ default: true })
   isEligible!: boolean;
 
+  /** Optional membership ID for cross-system reference */
+  @Column({ type: 'varchar', length: 80, nullable: true })
+  membershipId?: string | null;
+
   @ManyToOne(() => Household, (household) => household.beneficiaries, {
     onDelete: 'CASCADE',
   })

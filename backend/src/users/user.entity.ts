@@ -118,6 +118,10 @@ export class User extends AuditableEntity {
   @Column({ type: 'timestamptz', nullable: true })
   fcmTokenUpdatedAt?: Date | null;
 
+  /** Optional membership ID for cross-system reference */
+  @Column({ type: 'varchar', length: 80, nullable: true })
+  membershipId?: string | null;
+
   @OneToOne(() => Household, (household) => household.headUser)
   household?: Household | null;
 

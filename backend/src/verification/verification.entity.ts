@@ -1,42 +1,33 @@
 import { Column, Entity } from 'typeorm';
 import { AuditableEntity } from '../common/entities/auditable.entity';
 
+/**
+ * Persists the result of a document verification attempt.
+ * Column names match the `verifications` table created by the schema-fix script.
+ */
 @Entity('verifications')
 export class Verification extends AuditableEntity {
-  @Column({ nullable: true })
-  userId?: string;
+  /** FK to users.id — nullable because anonymous verifications are allowed */
+  @Column({ type: 'varchar', nullable: true })
+  userId?: string | null;
 
-  @Column({ length: 50 })
+  /** 'ID_CARD' | 'INDIGENT_PROOF' */
+  @Column({ type: 'varchar', length: 80 })
   documentType!: string;
 
-  @Column({ nullable: true })
-  extractedName?: string;
-
-  @Column({ nullable: true })
-  extractedId?: string;
-
-  @Column({ type: 'date', nullable: true })
-  expiryDate?: Date;
-
-  @Column({ type: 'float', default: 0 })
-  matchScore!: number;
-
-  @Column({ type: 'float', default: 0 })
-  confidenceScore!: number;
-
   /** 'approved' | 'rejected' | 'manual_review' */
-  @Column({ length: 20 })
+  @Column({ type: 'varchar', length: 32 })
   status!: string;
 
-  @Column({ type: 'text', nullable: true })
-  rawText?: string;
+  /** Overall confidence score 0–1 */
+  @Column({ type: 'decimal', precision: 5, scale: 4, default: 0 })
+  confidence!: number;
 
-  @Column({ nullable: true })
-  fileUrl?: string;
+  /** Structured data extracted from the document (name, idNumber, expiryDate, etc.) */
+  @Column({ type: 'jsonb', nullable: true })
+  extractedData?: Record<string, unknown> | null;
 
+  /** List of validation error messages */
   @Column({ type: 'jsonb', default: [] })
-  reasons!: string[];
-
-  @Column({ default: false })
-  isDemo!: boolean;
+  validationErrors!: string[];
 }

@@ -7,7 +7,7 @@ import {
   OneToOne,
 } from 'typeorm';
 import { AuditableEntity } from '../common/entities/auditable.entity';
-import { CoverageStatus, MembershipType } from '../common/enums/cbhi.enums';
+import { CoverageStatus, MembershipTier, MembershipType } from '../common/enums/cbhi.enums';
 import { Location } from '../locations/location.entity';
 import { User } from '../users/user.entity';
 import { Beneficiary } from '../beneficiaries/beneficiary.entity';
@@ -49,6 +49,22 @@ export class Household extends AuditableEntity {
 
   @Column({ type: 'int', default: 0 })
   memberCount!: number;
+
+  /** Indigent status string (e.g. 'approved', 'pending', 'rejected') */
+  @Column({ type: 'varchar', length: 80, nullable: true })
+  indigentStatus?: string | null;
+
+  /** Employment status of the household head */
+  @Column({ type: 'varchar', length: 80, nullable: true })
+  headEmploymentStatus?: string | null;
+
+  /** General employment status of the household */
+  @Column({ type: 'varchar', length: 80, nullable: true })
+  employmentStatus?: string | null;
+
+  /** Membership tier for premium calculation */
+  @Column({ type: 'enum', enum: MembershipTier, nullable: true })
+  membershipTier?: MembershipTier | null;
 
   @ManyToOne(() => Location, { nullable: true, onDelete: 'SET NULL' })
   location?: Location | null;

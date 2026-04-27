@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { AuditableEntity } from '../common/entities/auditable.entity';
-import { CoverageStatus } from '../common/enums/cbhi.enums';
+import { CoverageStatus, MembershipType } from '../common/enums/cbhi.enums';
 import { BenefitPackage } from '../benefit-packages/benefit-package.entity';
 import { Household } from '../households/household.entity';
 import { Payment } from '../payments/payment.entity';
@@ -37,6 +37,9 @@ export class Coverage extends AuditableEntity {
 
   @Column({ type: 'date', nullable: true })
   claimsEligibleFrom?: Date | null;
+
+  @Column({ type: 'enum', enum: MembershipType, nullable: true })
+  membershipType?: MembershipType | null;
 
   @ManyToOne(() => Household, (household) => household.coverages, {
     onDelete: 'CASCADE',
