@@ -39,6 +39,115 @@ class _IndigentScreenState extends State<IndigentScreen> {
     }
   }
 
+  Future<void> _viewEvidence(Map<String, dynamic> app) async {
+    final strings = AppLocalizations.of(context);
+    await showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(strings.t('evidenceFor', {'name': app['fullName'] ?? strings.t('notAvailable')})),
+        content: SizedBox(
+          width: 500,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Applicant info
+                Text(strings.t('applicantInfo'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                const SizedBox(height: 8),
+                if (app['householdCode'] != null)
+                  Text('${strings.t('householdCode')}: ${app['householdCode']}'),
+                Text('${strings.t('employment')}: ${app['employmentStatus'] ?? strings.t('notAvailable')}'),
+                Text('${strings.t('familySize')}: ${app['familySize'] ?? 0}'),
+                Text('${strings.t('income')}: ${app['income'] ?? 0}'),
+                const Divider(height: 24),
+
+                // Submitted documents
+                Text(strings.t('submittedDocuments'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                const SizedBox(height: 8),
+                if (app['documents'] != null && (app['documents'] as List).isNotEmpty)
+                  ...((app['documents'] as List).map((doc) {
+                    final docStr = doc.toString();
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: Row(
+                        children: [
+                          Icon(Icons.description_outlined, size: 16, color: AdminTheme.primary),
+                          const SizedBox(width: 8),
+                          Expanded(child: Text(docStr, style: TextStyle(fontSize: 13))),
+                        ],
+                      ),
+                    );
+                  }))
+                else
+                  Text(strings.t('noDocumentsSubmitted'), style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 12)),
+                const Divider(height: 24),
+
+                // Vision validation results
+                Text(strings.t('visionValidationResults'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                const SizedBox(height: 8),
+                if (app['documentMeta'] != null && (app['documentMeta'] as List).isNotEmpty)
+                  ...((app['documentMeta'] as List).map((meta) {
+                    final isExp = meta['isExpired'] == true;
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: isExp ? AdminTheme.error.withValues(alpha: 0.05) : AdminTheme.success.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: isExp ? AdminTheme.error.withValues(alpha: 0.2) : AdminTheme.success.withValues(alpha: 0.2)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(isExp ? Icons.error_outline : Icons.check_circle_outline, size: 14, color: isExp ? AdminTheme.error : AdminTheme.success),
+                              const SizedBox(width: 4),
+                              Text(
+                                meta['documentType']?.toString() ?? 'Unknown Doc',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: isExp ? AdminTheme.error : AdminTheme.success),
+                              ),
+                            ],
+                          ),
+                          if (meta['detectedDate'] != null)
+                            Text('Issued: ${meta['detectedDate']}', style: TextStyle(fontSize: 11)),
+                          if (meta['validationSummary'] != null)
+                            Text(meta['validationSummary']!, style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic)),
+                          if (meta['url'] != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: InkWell(
+                                onTap: () => _openUrl(meta['url'].toString()),
+                                child: Text(meta['url'].toString(), style: TextStyle(fontSize: 11, color: AdminTheme.primary, decoration: TextDecoration.underline), maxLines: 1, overflow: TextOverflow.ellipsis),
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  }))
+                else
+                  Text(strings.t('noVisionDataAvailable'), style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 12)),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(strings.t('close')),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _openUrl(String url) {
+    // In desktop app, launch URL externally
+    // ignore: avoid_print
+    print('Open URL: $url');
+  }
+
   Future<void> _review(Map<String, dynamic> app, String status) async {
     final strings = AppLocalizations.of(context);
     final reasonCtrl = TextEditingController();
@@ -57,9 +166,9 @@ class _IndigentScreenState extends State<IndigentScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                strings.t('userIdValue', {
-                  'userId':
-                      app['userId']?.toString() ?? strings.t('notAvailable'),
+                strings.t('applicantValue', {
+                  'name':
+                      app['fullName']?.toString() ?? strings.t('notAvailable'),
                 }),
               ),
               Text(
@@ -257,11 +366,13 @@ class _IndigentScreenState extends State<IndigentScreen> {
                       scrollDirection: Axis.horizontal,
                       child: DataTable(
                         columns: [
-                          DataColumn(label: Text(strings.t('userId'))),
+                          DataColumn(label: Text(strings.t('applicant'))),
+                          DataColumn(label: Text(strings.t('householdCode'))),
                           DataColumn(label: Text(strings.t('income'))),
                           DataColumn(label: Text(strings.t('employment'))),
                           DataColumn(label: Text(strings.t('familySize'))),
                           DataColumn(label: Text(strings.t('score'))),
+                          DataColumn(label: Text(strings.t('evidence'))),
                           DataColumn(label: Text(strings.t('status'))),
                           DataColumn(label: Text(strings.t('actions'))),
                         ],
@@ -271,7 +382,17 @@ class _IndigentScreenState extends State<IndigentScreen> {
                                 cells: [
                                   DataCell(
                                     Text(
-                                      app['userId']?.toString() ??
+                                      app['fullName']?.toString() ??
+                                          strings.t('notAvailable'),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Text(
+                                      app['householdCode']?.toString() ??
                                           strings.t('notAvailable'),
                                       style: TextStyle(
                                         fontFamily: 'monospace',
@@ -312,6 +433,16 @@ class _IndigentScreenState extends State<IndigentScreen> {
                                               ? AdminTheme.success
                                               : AdminTheme.warning,
                                         ),
+                                      ),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    TextButton.icon(
+                                      onPressed: () => _viewEvidence(app),
+                                      icon: Icon(Icons.visibility_outlined, size: 16),
+                                      label: Text(strings.t('viewEvidence')),
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: AdminTheme.primary,
                                       ),
                                     ),
                                   ),

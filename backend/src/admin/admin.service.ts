@@ -94,6 +94,7 @@ export class AdminService {
     await this.assertOfficerAccess(userId, 'claims');
     const [applications, total] = await this.indigentRepository.findAndCount({
       where: { status: IndigentApplicationStatus.PENDING },
+      relations: ['user', 'user.household'],
       order: { createdAt: 'ASC' },
       skip: (page - 1) * limit,
       take: limit,
@@ -103,12 +104,15 @@ export class AdminService {
       applications: applications.map((application) => ({
         id: application.id,
         userId: application.userId,
+        fullName: [application.user?.firstName, application.user?.middleName, application.user?.lastName].filter(Boolean).join(' ') || application.user?.phoneNumber || null,
+        householdCode: application.user?.household?.householdCode ?? null,
         income: application.income,
         employmentStatus: application.employmentStatus,
         familySize: application.familySize,
         hasProperty: application.hasProperty,
         disabilityStatus: application.disabilityStatus,
         documents: application.documents,
+        documentMeta: application.documentMeta ?? null,
         score: application.score,
         status: application.status,
         reason: application.reason,
