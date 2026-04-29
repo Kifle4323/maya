@@ -18,6 +18,13 @@ if (!process.env.DB_HOST && !process.env.DATABASE_URL) {
   }
 }
 
+// Supabase pgBouncer pooler (port 6543) does NOT support DDL / advisory locks needed by migrations.
+// Force direct connection (port 5432) for the migration runner only.
+if (process.env.DB_PORT === '6543') {
+  console.log('[MIGRATION] Detected Supabase pooler port 6543 — switching to direct port 5432 for migrations');
+  process.env.DB_PORT = '5432';
+}
+
 const { AppDataSource } = require('../dist/src/database/data-source');
 
 async function main() {
