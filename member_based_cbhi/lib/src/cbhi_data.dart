@@ -28,7 +28,7 @@ double _toDouble(dynamic v) {
 String get kDefaultApiBaseUrl {
   const envUrl = String.fromEnvironment('CBHI_API_BASE_URL');
   // Normalize: strip trailing slash, ensure /api/v1 suffix
-  var url = envUrl.isNotEmpty ? envUrl : 'https://member-based-cbhi.vercel.app/api/v1';
+  var url = envUrl.isNotEmpty ? envUrl : 'https://maya-u8mf.onrender.com/api/v1';
   url = url.trimRight();
   if (url.endsWith('/')) url = url.substring(0, url.length - 1);
   if (!url.endsWith('/api/v1')) url = '$url/api/v1';

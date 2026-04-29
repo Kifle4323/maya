@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 const String kAdminApiBase = String.fromEnvironment(
   'CBHI_API_BASE_URL',
-  defaultValue: 'https://member-based-cbhi.vercel.app/api/v1',
+  defaultValue: 'https://maya-u8mf.onrender.com/api/v1',
 );
 
 /// Normalize the API base URL at runtime:
