@@ -26,12 +26,20 @@ class IdentityModel {
     required this.identityType,
     required this.identityNumber,
     this.identityPhotoPath,
+    this.idFrontPath,
+    this.idBackPath,
+    this.verificationId,
+    this.verificationStatus,
     required this.employmentStatus,
   });
 
   final String identityType;
   final String identityNumber;
   final String? identityPhotoPath;
+  final String? idFrontPath;
+  final String? idBackPath;
+  final String? verificationId;
+  final String? verificationStatus; // 'approved', 'rejected', 'manual_review'
   final String employmentStatus;
 
   /// Backend `/cbhi/registration/step-2` expects lowercase snake_case.
@@ -43,6 +51,10 @@ class IdentityModel {
       'identityType': identityType,
       'identityNumber': identityNumber,
       'employmentStatus': employmentStatus,
+      if (idFrontPath != null) 'idFrontPath': idFrontPath,
+      if (idBackPath != null) 'idBackPath': idBackPath,
+      if (verificationId != null) 'verificationId': verificationId,
+      if (verificationStatus != null) 'verificationStatus': verificationStatus,
     };
   }
 
@@ -51,6 +63,10 @@ class IdentityModel {
       identityType: json['identityType']?.toString() ?? 'NATIONAL_ID',
       identityNumber: json['identityNumber']?.toString() ?? '',
       identityPhotoPath: json['identityPhotoPath']?.toString(),
+      idFrontPath: json['idFrontPath']?.toString(),
+      idBackPath: json['idBackPath']?.toString(),
+      verificationId: json['verificationId']?.toString(),
+      verificationStatus: json['verificationStatus']?.toString(),
       employmentStatus: json['employmentStatus']?.toString() ?? 'unemployed',
     );
   }

@@ -165,7 +165,7 @@ class _ClaimsScreenState extends State<ClaimsScreen> {
       children: [
         // Filter bar
         Container(
-          color: Colors.white,
+          color: AdminTheme.cardBgFor(Theme.of(context).brightness),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           child: Row(
             children: [
@@ -323,10 +323,10 @@ class _ClaimsScreenState extends State<ClaimsScreen> {
                                           ),
                                         ],
                                       )
-                                    : const Text(
+                                    : Text(
                                         '—',
                                         style: TextStyle(
-                                          color: AdminTheme.textSecondary,
+                                          color: AdminTheme.textSecondaryFor(Theme.of(context).brightness),
                                         ),
                                       ),
                               ),

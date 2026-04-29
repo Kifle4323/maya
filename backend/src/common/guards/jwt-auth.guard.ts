@@ -22,7 +22,20 @@ export class JwtAuthGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
-    if (isPublic) return true;
+    if (isPublic) {
+      // Still try to attach user from JWT if present, so @CurrentUser() works
+      const request = context.switchToHttp().getRequest<Request>();
+      const authorization = request.headers['authorization'];
+      if (authorization) {
+        try {
+          const user = await this.authService.requireUserFromAuthorization(authorization);
+          (request as Request & { user: typeof user }).user = user;
+        } catch {
+          // Invalid token on a public route — just proceed without user
+        }
+      }
+      return true;
+    }
 
     // Always allow health check endpoint (any path prefix)
     const request = context.switchToHttp().getRequest<Request>();

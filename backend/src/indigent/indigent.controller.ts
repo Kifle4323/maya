@@ -31,6 +31,7 @@ export class IndigentController {
    * Submit an indigent application.
    * Documents are validated server-side before scoring.
    */
+  @Public()
   @Post('apply')
   apply(@Body() dto: CreateIndigentApplicationDto) {
     return this.indigentService.applyApplication(dto);

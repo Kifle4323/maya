@@ -46,6 +46,7 @@ export enum RelationshipToHouseholdHead {
 }
 
 export enum CoverageStatus {
+  PENDING = 'PENDING',
   ACTIVE = 'ACTIVE',
   PENDING_RENEWAL = 'PENDING_RENEWAL',
   WAITING_PERIOD = 'WAITING_PERIOD',

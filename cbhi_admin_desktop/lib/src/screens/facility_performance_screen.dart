@@ -57,7 +57,7 @@ class _FacilityPerformanceScreenState extends State<FacilityPerformanceScreen> {
     final strings = AppLocalizations.of(context);
 
     if (_loading) return const Center(child: CircularProgressIndicator(color: AdminTheme.primary));
-    if (_error != null) return Center(child: Text(_error!, style: const TextStyle(color: AdminTheme.error)));
+    if (_error != null) return Center(child: Text(_error!, style: TextStyle(color: AdminTheme.error)));
 
     final sorted = _sorted;
 
@@ -65,18 +65,18 @@ class _FacilityPerformanceScreenState extends State<FacilityPerformanceScreen> {
       children: [
         // Header
         Container(
-          color: Colors.white,
+          color: AdminTheme.cardBgFor(Theme.of(context).brightness),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           child: Row(
             children: [
-              Text(strings.t('facilityPerformance'), style: const TextStyle(fontWeight: FontWeight.w600, color: AdminTheme.textDark)),
+              Text(strings.t('facilityPerformance'), style: TextStyle(fontWeight: FontWeight.w600, color: AdminTheme.textPrimaryFor(Theme.of(context).brightness))),
               const SizedBox(width: 16),
-              Text(strings.t('sortBy'), style: const TextStyle(color: AdminTheme.textSecondary, fontSize: 13)),
+              Text(strings.t('sortBy'), style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 13)),
               const SizedBox(width: 8),
               DropdownButton<String>(
                 value: _sortBy,
                 underline: const SizedBox(),
-                style: const TextStyle(color: AdminTheme.primary, fontWeight: FontWeight.w600, fontSize: 13),
+                style: TextStyle(color: AdminTheme.primary, fontWeight: FontWeight.w600, fontSize: 13),
                 items: [
                   DropdownMenuItem(value: 'totalClaims', child: Text(strings.t('totalClaims'))),
                   DropdownMenuItem(value: 'approvalRate', child: Text(strings.t('approvalRate'))),
@@ -110,7 +110,7 @@ class _FacilityPerformanceScreenState extends State<FacilityPerformanceScreen> {
                         margin: const EdgeInsets.only(bottom: 12),
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AdminTheme.cardBgFor(Theme.of(context).brightness),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(color: Colors.grey.shade100),
                           boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 8, offset: const Offset(0, 2))],
@@ -144,8 +144,8 @@ class _FacilityPerformanceScreenState extends State<FacilityPerformanceScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(f['facilityName']?.toString() ?? '—', style: const TextStyle(fontWeight: FontWeight.w700, color: AdminTheme.textDark, fontSize: 14)),
-                                  Text(f['serviceLevel']?.toString() ?? '', style: const TextStyle(color: AdminTheme.textSecondary, fontSize: 12)),
+                                  Text(f['facilityName']?.toString() ?? '—', style: TextStyle(fontWeight: FontWeight.w700, color: AdminTheme.textPrimaryFor(Theme.of(context).brightness), fontSize: 14)),
+                                  Text(f['serviceLevel']?.toString() ?? '', style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 12)),
                                 ],
                               ),
                             ),
@@ -212,7 +212,7 @@ class _PerfMetric extends StatelessWidget {
       children: [
         Text(value, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: color)),
         const SizedBox(height: 2),
-        Text(label, style: const TextStyle(fontSize: 10, color: AdminTheme.textSecondary)),
+        Text(label, style: TextStyle(fontSize: 10, color: AdminTheme.textSecondaryFor(Theme.of(context).brightness))),
       ],
     );
   }

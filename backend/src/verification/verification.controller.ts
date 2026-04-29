@@ -10,6 +10,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { File as MulterFile } from 'multer';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { Public } from '../common/decorators/public.decorator';
 import { User } from '../users/user.entity';
 import { VerificationResultDto, VerifyDocumentDto } from './verification.dto';
 import { VerificationService } from './verification.service';
@@ -21,6 +22,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 export class VerificationController {
   constructor(private readonly verificationService: VerificationService) {}
 
+  @Public()
   @Post('verify-document')
   @UseInterceptors(
     FileInterceptor('file', {

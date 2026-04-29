@@ -79,12 +79,13 @@ export class JobsService {
         const headUser = household?.headUser;
         if (!headUser) continue;
 
+        const endDate = coverage.endDate instanceof Date ? coverage.endDate : new Date(coverage.endDate);
         const daysLeft = Math.ceil(
-          (coverage.endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+          (endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
         );
 
         const isUrgent = daysLeft <= 7;
-        const expiryDate = coverage.endDate.toISOString().split('T')[0];
+        const expiryDate = endDate.toISOString().split('T')[0];
 
         await this.notificationService.createAndSend(
           headUser,
@@ -153,7 +154,8 @@ export class JobsService {
           const headUser = coverage.household.headUser;
           if (headUser?.phoneNumber) {
             try {
-              const expiryDate = coverage.endDate.toISOString().split('T')[0];
+              const endDate = coverage.endDate instanceof Date ? coverage.endDate : new Date(coverage.endDate);
+              const expiryDate = endDate.toISOString().split('T')[0];
               await this.smsService.sendRenewalReminder(
                 headUser.phoneNumber,
                 coverage.household.householdCode,
@@ -175,7 +177,7 @@ export class JobsService {
                 {
                   householdCode: coverage.household.householdCode,
                   coverageNumber: coverage.coverageNumber,
-                  expiredAt: coverage.endDate.toISOString(),
+                  expiredAt: (coverage.endDate instanceof Date ? coverage.endDate : new Date(coverage.endDate)).toISOString(),
                 },
               );
             } catch (notifErr) {

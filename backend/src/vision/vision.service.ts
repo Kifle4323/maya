@@ -61,81 +61,25 @@ const DOC_VALIDITY_MONTHS: Record<string, number> = {
 @Injectable()
 export class VisionService {
   private readonly logger = new Logger(VisionService.name);
-  private readonly apiKey = process.env.GOOGLE_VISION_API_KEY ?? '';
-  private readonly endpoint = 'https://vision.googleapis.com/v1/images:annotate';
 
   constructor(
     @Optional() private readonly demo: DemoSandboxService,
   ) {}
 
-  async extractText(imageBase64: string): Promise<VisionTextResult> {
-    if (!this.apiKey) {
-      this.logger.warn('GOOGLE_VISION_API_KEY not set — skipping text extraction');
-      return { fullText: '', words: [], confidence: 0 };
-    }
-
-    try {
-      const body = {
-        requests: [{
-          image: { content: imageBase64 },
-          features: [
-            { type: 'TEXT_DETECTION', maxResults: 1 },
-            { type: 'DOCUMENT_TEXT_DETECTION', maxResults: 1 },
-          ],
-          imageContext: { languageHints: ['am', 'en'] },
-        }],
-      };
-
-      const response = await fetch(`${this.endpoint}?key=${this.apiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-
-      if (!response.ok) {
-        const text = await response.text();
-        this.logger.error(`Vision API error [${response.status}]: ${text}`);
-        return { fullText: '', words: [], confidence: 0 };
-      }
-
-      const result = await response.json() as {
-        responses?: Array<{
-          fullTextAnnotation?: { text: string; pages?: Array<{ confidence?: number }> };
-          textAnnotations?: Array<{ description: string }>;
-          error?: { message: string };
-        }>;
-      };
-
-      const resp = result.responses?.[0];
-      if (resp?.error) {
-        this.logger.error(`Vision API response error: ${resp.error.message}`);
-        return { fullText: '', words: [], confidence: 0 };
-      }
-
-      const fullText = resp?.fullTextAnnotation?.text ?? resp?.textAnnotations?.[0]?.description ?? '';
-      const confidence = resp?.fullTextAnnotation?.pages?.[0]?.confidence ?? 0.5;
-      const words = fullText.split(/[\n\r\s]+/).map((w) => w.trim()).filter((w) => w.length > 0);
-
-      return { fullText, words, confidence, rawResponse: result };
-    } catch (error) {
-      this.logger.error(`Vision API exception: ${(error as Error).message}`);
-      return { fullText: '', words: [], confidence: 0 };
-    }
+  async extractText(_imageBase64: string): Promise<VisionTextResult> {
+    // No OCR — documents are reviewed by admin
+    return { fullText: '', words: [], confidence: 0 };
   }
 
   async validateIdDocument(imageBase64: string, expectedIdNumber?: string): Promise<IdValidationResult> {
-    if (this.demo?.isActive || !this.apiKey) {
-      return this.demo?.validateIdDocument(imageBase64, expectedIdNumber) ?? {
-        isValid: true,
-        extractedText: 'DEMO: Ethiopian National ID',
-        detectedIdNumber: expectedIdNumber ?? '123456789012',
-        confidence: 0.95,
-        issues: [],
-        isDemo: true,
-      };
-    }
-
     const textResult = await this.extractText(imageBase64);
+    return this.validateIdCardText(textResult, expectedIdNumber);
+  }
+
+  /**
+   * Validate ID card from already-extracted text (avoids duplicate Vision API call).
+   */
+  validateIdCardText(textResult: VisionTextResult, expectedIdNumber?: string): IdValidationResult {
     const issues: string[] = [];
 
     if (!textResult.fullText) {
@@ -147,12 +91,28 @@ export class VisionService {
       };
     }
 
-    const text = textResult.fullText.toUpperCase();
-    const idKeywords = ['FEDERAL', 'ETHIOPIA', 'NATIONAL', 'ID', 'FAYDA', 'FAN', 'ፌደራል', 'ኢትዮጵያ'];
-    const foundKeywords = idKeywords.filter((kw) => text.includes(kw));
+    // Minimum text content — a real ID card has many fields/labels
+    const words = textResult.fullText.split(/[\n\r\s]+/).map((w) => w.trim()).filter((w) => w.length > 0);
+    if (words.length < 10) {
+      issues.push('Document appears to have insufficient text content to be an ID card. Please upload a clear photo of your ID card.');
+    }
 
-    if (foundKeywords.length === 0) {
-      issues.push('Document does not appear to be an Ethiopian National ID. Please upload the correct document.');
+    const text = textResult.fullText.toUpperCase();
+
+    // Strong multi-word phrases that reliably indicate an ID card
+    const strongIdPhrases = [
+      'NATIONAL ID', 'IDENTITY CARD', 'ETHIOPIAN ID', 'FEDERAL DEMOCRATIC',
+      'FAYDA', 'ፌደራል', 'ኢትዮጵያ', 'መታወቂያ', 'ብሔራዊ',
+      'DATE OF BIRTH', 'GENDER', 'ISSUE DATE', 'EXPIRY DATE',
+      'KEBELE ID', 'RESIDENT IDENTIFICATION',
+    ];
+    // Weaker single-word keywords — only count if at least 2 are found together
+    const weakIdKeywords = ['ETHIOPIA', 'NATIONAL', 'FEDERAL', 'REPUBLIC', 'IDENTIFICATION'];
+    const foundStrong = strongIdPhrases.filter((kw) => text.includes(kw));
+    const foundWeak = weakIdKeywords.filter((kw) => text.includes(kw));
+
+    if (foundStrong.length === 0 && foundWeak.length < 2) {
+      issues.push('Document does not appear to be an Ethiopian National ID card. Please upload a clear photo of the front of your ID card.');
     }
 
     const fanMatch = text.match(/\b\d{12}\b/) ?? text.match(/FAN[:\s]*([A-Z0-9]{8,15})/i);
@@ -166,10 +126,11 @@ export class VisionService {
       }
     }
 
+    const allIdKeywords = [...strongIdPhrases, ...weakIdKeywords];
     const lines = textResult.fullText.split('\n').map((l) => l.trim()).filter(Boolean);
     const nameLine = lines.find((line) =>
       line.length > 3 && line.length < 60 && !/\d{4,}/.test(line) &&
-      !idKeywords.some((kw) => line.toUpperCase().includes(kw)),
+      !allIdKeywords.some((kw) => line.toUpperCase().includes(kw)),
     );
 
     return {
@@ -188,20 +149,6 @@ export class VisionService {
    * - Document expiry detection (extracts issue date, checks validity period)
    */
   async validateIndigentDocument(imageBase64: string): Promise<IndigentDocValidationResult> {
-    if (this.demo?.isActive || !this.apiKey) {
-      return this.demo?.validateIndigentDocument(imageBase64) ?? {
-        isValid: true,
-        documentType: IndigentDocumentType.INCOME_CERTIFICATE,
-        extractedText: 'DEMO: Kebele Income Certificate\nDate: 15/01/2024',
-        detectedKeywords: ['INCOME', 'CERTIFICATE', 'KEBELE'],
-        confidence: 0.92,
-        issues: [],
-        detectedDate: new Date().toISOString().split('T')[0],
-        isExpired: false,
-        isDemo: true,
-      };
-    }
-
     const textResult = await this.extractText(imageBase64);
     const issues: string[] = [];
 

@@ -92,8 +92,8 @@ class _FinancialScreenState extends State<FinancialScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(strings.t('financialDashboard'), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: AdminTheme.textDark)),
-                    Text(strings.t('financialDashboardSubtitle'), style: const TextStyle(color: AdminTheme.textSecondary, fontSize: 13)),
+                    Text(strings.t('financialDashboard'), style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Theme.of(context).brightness == Brightness.dark ? AdminTheme.darkTextPrimary : AdminTheme.textDark)),
+                    Text(strings.t('financialDashboardSubtitle'), style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? AdminTheme.darkTextSecondary : AdminTheme.textSecondary, fontSize: 13)),
                   ],
                 ),
                 const Spacer(),
@@ -260,7 +260,7 @@ class _MetricRow extends StatelessWidget {
             child: Icon(icon, size: 14, color: color),
           ),
           const SizedBox(width: 10),
-          Expanded(child: Text(label, style: const TextStyle(color: AdminTheme.textSecondary, fontSize: 13))),
+          Expanded(child: Text(label, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? AdminTheme.darkTextSecondary : AdminTheme.textSecondary, fontSize: 13))),
           Text(value, style: TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: 14)),
         ],
       ),

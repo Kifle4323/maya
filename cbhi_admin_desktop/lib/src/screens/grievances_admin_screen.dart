@@ -50,7 +50,7 @@ class _GrievancesAdminScreenState extends State<GrievancesAdminScreen> {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setS) => AlertDialog(
           title: Row(children: [
-            const Icon(Icons.gavel_outlined, color: AdminTheme.primary),
+            Icon(Icons.gavel_outlined, color: AdminTheme.primary),
             const SizedBox(width: 8),
             Text(strings.t('resolveGrievance')),
           ]),
@@ -66,9 +66,9 @@ class _GrievancesAdminScreenState extends State<GrievancesAdminScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(grievance['subject']?.toString() ?? '', style: const TextStyle(fontWeight: FontWeight.w600)),
+                      Text(grievance['subject']?.toString() ?? '', style: TextStyle(fontWeight: FontWeight.w600)),
                       const SizedBox(height: 4),
-                      Text(grievance['description']?.toString() ?? '', style: const TextStyle(color: AdminTheme.textSecondary, fontSize: 12), maxLines: 3, overflow: TextOverflow.ellipsis),
+                      Text(grievance['description']?.toString() ?? '', style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 12), maxLines: 3, overflow: TextOverflow.ellipsis),
                     ],
                   ),
                 ),
@@ -135,24 +135,24 @@ class _GrievancesAdminScreenState extends State<GrievancesAdminScreen> {
     return Column(
       children: [
         Container(
-          color: Colors.white,
+          color: AdminTheme.cardBgFor(Theme.of(context).brightness),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           child: Row(
             children: [
-              Text(strings.t('memberGrievances'), style: const TextStyle(fontWeight: FontWeight.w600, color: AdminTheme.textDark)),
+              Text(strings.t('memberGrievances'), style: TextStyle(fontWeight: FontWeight.w600, color: AdminTheme.textPrimaryFor(Theme.of(context).brightness))),
               if (openCount > 0) ...[
                 const SizedBox(width: 10),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(color: AdminTheme.error.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)),
-                  child: Text('$openCount open', style: const TextStyle(color: AdminTheme.error, fontWeight: FontWeight.w700, fontSize: 12)),
+                  child: Text('$openCount open', style: TextStyle(color: AdminTheme.error, fontWeight: FontWeight.w700, fontSize: 12)),
                 ),
               ],
               const SizedBox(width: 16),
               Wrap(
                 spacing: 6,
                 children: statuses.map((s) => FilterChip(
-                  label: Text(s == 'ALL' ? strings.t('statusAll') : s.replaceAll('_', ' '), style: const TextStyle(fontSize: 11)),
+                  label: Text(s == 'ALL' ? strings.t('statusAll') : s.replaceAll('_', ' '), style: TextStyle(fontSize: 11)),
                   selected: _statusFilter == s,
                   onSelected: (_) { setState(() => _statusFilter = s); _load(); },
                   selectedColor: AdminTheme.primary.withValues(alpha: 0.15),
@@ -161,7 +161,7 @@ class _GrievancesAdminScreenState extends State<GrievancesAdminScreen> {
                 )).toList(),
               ),
               const Spacer(),
-              IconButton(onPressed: _load, icon: const Icon(Icons.refresh), tooltip: strings.t('refresh')),
+              IconButton(onPressed: _load, icon: Icon(Icons.refresh), tooltip: strings.t('refresh')),
             ],
           ),
         ),
@@ -177,10 +177,10 @@ class _GrievancesAdminScreenState extends State<GrievancesAdminScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.sentiment_satisfied_outlined, size: 64, color: AdminTheme.success),
+                      Icon(Icons.sentiment_satisfied_outlined, size: 64, color: AdminTheme.success),
                       const SizedBox(height: 16),
-                      Text(strings.t('noGrievancesAdmin'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-                      Text(strings.t('noGrievancesAdminSubtitle'), style: const TextStyle(color: AdminTheme.textSecondary)),
+                      Text(strings.t('noGrievancesAdmin'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                      Text(strings.t('noGrievancesAdminSubtitle'), style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness))),
                     ],
                   ),
                 )
@@ -197,7 +197,7 @@ class _GrievancesAdminScreenState extends State<GrievancesAdminScreen> {
                         margin: const EdgeInsets.only(bottom: 12),
                         padding: const EdgeInsets.all(18),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AdminTheme.cardBgFor(Theme.of(context).brightness),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(color: isOpen ? AdminTheme.warning.withValues(alpha: 0.3) : Colors.grey.shade100),
                           boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 8, offset: const Offset(0, 2))],
@@ -213,13 +213,13 @@ class _GrievancesAdminScreenState extends State<GrievancesAdminScreen> {
                                   child: Text(type.replaceAll('_', ' '), style: TextStyle(color: typeColor, fontWeight: FontWeight.w700, fontSize: 11)),
                                 ),
                                 const SizedBox(width: 8),
-                                Expanded(child: Text(g['subject']?.toString() ?? '', style: const TextStyle(fontWeight: FontWeight.w700, color: AdminTheme.textDark))),
+                                Expanded(child: Text(g['subject']?.toString() ?? '', style: TextStyle(fontWeight: FontWeight.w700, color: AdminTheme.textPrimaryFor(Theme.of(context).brightness)))),
                                 StatusChip(status: status),
                                 if (isOpen) ...[
                                   const SizedBox(width: 8),
                                   FilledButton.icon(
                                     onPressed: () => _resolve(g),
-                                    icon: const Icon(Icons.gavel_outlined, size: 14),
+                                    icon: Icon(Icons.gavel_outlined, size: 14),
                                     label: Text(strings.t('resolve')),
                                     style: FilledButton.styleFrom(backgroundColor: AdminTheme.primary, padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
                                   ),
@@ -227,28 +227,28 @@ class _GrievancesAdminScreenState extends State<GrievancesAdminScreen> {
                               ],
                             ),
                             const SizedBox(height: 8),
-                            Text(g['description']?.toString() ?? '', style: const TextStyle(color: AdminTheme.textSecondary, fontSize: 13), maxLines: 2, overflow: TextOverflow.ellipsis),
+                            Text(g['description']?.toString() ?? '', style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 13), maxLines: 2, overflow: TextOverflow.ellipsis),
                             const SizedBox(height: 8),
                             Row(
                               children: [
-                                const Icon(Icons.person_outline, size: 14, color: AdminTheme.textSecondary),
+                                Icon(Icons.person_outline, size: 14, color: AdminTheme.textSecondaryFor(Theme.of(context).brightness)),
                                 const SizedBox(width: 4),
                                 Text(
                                   (g['submittedBy'] as Map?)?['name']?.toString() ?? '—',
-                                  style: const TextStyle(color: AdminTheme.textSecondary, fontSize: 12),
+                                  style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 12),
                                 ),
                                 const SizedBox(width: 16),
-                                const Icon(Icons.schedule_outlined, size: 14, color: AdminTheme.textSecondary),
+                                Icon(Icons.schedule_outlined, size: 14, color: AdminTheme.textSecondaryFor(Theme.of(context).brightness)),
                                 const SizedBox(width: 4),
                                 Text(
                                   g['createdAt']?.toString().split('T').first ?? '—',
-                                  style: const TextStyle(color: AdminTheme.textSecondary, fontSize: 12),
+                                  style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 12),
                                 ),
                                 if ((g['referenceId']?.toString() ?? '').isNotEmpty) ...[
                                   const SizedBox(width: 16),
-                                  const Icon(Icons.tag_outlined, size: 14, color: AdminTheme.textSecondary),
+                                  Icon(Icons.tag_outlined, size: 14, color: AdminTheme.textSecondaryFor(Theme.of(context).brightness)),
                                   const SizedBox(width: 4),
-                                  Text(g['referenceId'].toString(), style: const TextStyle(color: AdminTheme.textSecondary, fontSize: 12, fontFamily: 'monospace')),
+                                  Text(g['referenceId'].toString(), style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 12, fontFamily: 'monospace')),
                                 ],
                               ],
                             ),
@@ -259,9 +259,9 @@ class _GrievancesAdminScreenState extends State<GrievancesAdminScreen> {
                                 decoration: BoxDecoration(color: AdminTheme.success.withValues(alpha: 0.06), borderRadius: BorderRadius.circular(8)),
                                 child: Row(
                                   children: [
-                                    const Icon(Icons.check_circle_outline, color: AdminTheme.success, size: 14),
+                                    Icon(Icons.check_circle_outline, color: AdminTheme.success, size: 14),
                                     const SizedBox(width: 6),
-                                    Expanded(child: Text(g['resolution'].toString(), style: const TextStyle(color: AdminTheme.success, fontSize: 12))),
+                                    Expanded(child: Text(g['resolution'].toString(), style: TextStyle(color: AdminTheme.success, fontSize: 12))),
                                   ],
                                 ),
                               ),

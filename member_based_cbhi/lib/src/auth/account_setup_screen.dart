@@ -125,15 +125,6 @@ class _AccountSetupScreenState extends State<AccountSetupScreen> {
                           color: Colors.white, size: 48),
                       const SizedBox(height: 16),
                       Text(
-                        strings.t('setupAccountTitle'),
-                        style: textTheme.titleLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
                         strings.t('createPasswordSubtitle'),
                         style: textTheme.bodyMedium?.copyWith(
                           color: Colors.white.withValues(alpha: 0.9),

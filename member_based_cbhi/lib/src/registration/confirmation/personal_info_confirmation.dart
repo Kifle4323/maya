@@ -44,7 +44,7 @@ class PersonalInfoConfirmation extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   strings.t('reviewBeforeContinuing'),
-                  style: textTheme.bodyMedium?.copyWith(color: AppTheme.textSecondary),
+                  style: textTheme.bodyMedium?.copyWith(color: AppTheme.textSecondaryFor(Theme.of(context).brightness)),
                 ),
                 const SizedBox(height: 24),
 
@@ -136,7 +136,7 @@ class PersonalInfoConfirmation extends StatelessWidget {
                         child: Text(
                           row.label,
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: AppTheme.textSecondary,
+                                color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                                 fontWeight: FontWeight.w500,
                               ),
                         ),

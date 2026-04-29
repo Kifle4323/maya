@@ -82,7 +82,7 @@ class _IndigentScreenState extends State<IndigentScreen> {
               const Divider(height: 24),
               Text(
                 strings.t('visionValidationResults'),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
               ),
               const SizedBox(height: 8),
               if (app['documentMeta'] != null && (app['documentMeta'] as List).isNotEmpty)
@@ -110,15 +110,15 @@ class _IndigentScreenState extends State<IndigentScreen> {
                           ],
                         ),
                         if (meta['detectedDate'] != null)
-                          Text('Issued: ${meta['detectedDate']}', style: const TextStyle(fontSize: 11)),
+                          Text('Issued: ${meta['detectedDate']}', style: TextStyle(fontSize: 11)),
                         if (meta['validationSummary'] != null)
-                          Text(meta['validationSummary']!, style: const TextStyle(fontSize: 11, fontStyle: FontStyle.italic)),
+                          Text(meta['validationSummary']!, style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic)),
                       ],
                     ),
                   );
                 }))
               else
-                Text(strings.t('noVisionDataAvailable'), style: const TextStyle(color: AdminTheme.textSecondary, fontSize: 12)),
+                Text(strings.t('noVisionDataAvailable'), style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 12)),
               const SizedBox(height: 16),
               TextField(
                 controller: reasonCtrl,
@@ -175,15 +175,15 @@ class _IndigentScreenState extends State<IndigentScreen> {
     return Column(
       children: [
         Container(
-          color: Colors.white,
+          color: AdminTheme.cardBgFor(Theme.of(context).brightness),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           child: Row(
             children: [
               Text(
                 strings.t('pendingIndigentApplications'),
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  color: AdminTheme.textDark,
+                  color: AdminTheme.textPrimaryFor(Theme.of(context).brightness),
                 ),
               ),
               const SizedBox(width: 12),
@@ -201,7 +201,7 @@ class _IndigentScreenState extends State<IndigentScreen> {
                     strings.t('pendingCount', {
                       'count': _applications.length.toString(),
                     }),
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AdminTheme.warning,
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
@@ -238,14 +238,14 @@ class _IndigentScreenState extends State<IndigentScreen> {
                       const SizedBox(height: 16),
                       Text(
                         strings.t('noPendingApplications'),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       Text(
                         strings.t('allIndigentProcessed'),
-                        style: const TextStyle(color: AdminTheme.textSecondary),
+                        style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness)),
                       ),
                     ],
                   ),
@@ -273,7 +273,7 @@ class _IndigentScreenState extends State<IndigentScreen> {
                                     Text(
                                       app['userId']?.toString() ??
                                           strings.t('notAvailable'),
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontFamily: 'monospace',
                                         fontSize: 12,
                                       ),

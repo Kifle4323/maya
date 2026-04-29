@@ -275,7 +275,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           ),
                           const SizedBox(height: 12),
                           DropdownButtonFormField<String>(
-                            initialValue: _gender,
+                            value: _gender,
                             decoration: InputDecoration(
                               labelText: strings.t('gender'),
                             ),
@@ -298,7 +298,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           ),
                           const SizedBox(height: 12),
                           DropdownButtonFormField<String>(
-                            initialValue: _relationship,
+                            value: _relationship,
                             decoration: InputDecoration(
                               labelText: strings.t(
                                 'relationshipToHouseholdHead',
@@ -369,27 +369,27 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           const SizedBox(height: 8),
                           Text(strings.t('nationalIdOrLocalIdOptional')),
                           const SizedBox(height: 12),
-                          DropdownButtonFormField<String?>(
-                            initialValue: _identityType,
+                          DropdownButtonFormField<String>(
+                            value: _identityType ?? 'NONE',
                             decoration: InputDecoration(
                               labelText: strings.t('idTypeOptional'),
                             ),
                             items: [
-                              DropdownMenuItem<String?>(
-                                value: null,
+                              DropdownMenuItem<String>(
+                                value: 'NONE',
                                 child: Text(strings.t('none')),
                               ),
-                              DropdownMenuItem<String?>(
+                              DropdownMenuItem<String>(
                                 value: 'NATIONAL_ID',
                                 child: Text(strings.t('nationalId')),
                               ),
-                              DropdownMenuItem<String?>(
+                              DropdownMenuItem<String>(
                                 value: 'LOCAL_ID',
                                 child: Text(strings.t('localId')),
                               ),
                             ],
                             onChanged: (value) =>
-                                setState(() => _identityType = value),
+                                setState(() => _identityType = value == 'NONE' ? null : value),
                           ),
                           const SizedBox(height: 12),
                           TextFormField(

@@ -57,6 +57,31 @@ class AppTheme {
   static const Color darkSurface1 = Color(0xFF1A2E28);
   static const Color darkSurface2 = Color(0xFF243D35);
 
+  // ───── Dark-mode-aware helpers ─────
+  static Color cardBgFor(Brightness brightness) =>
+      brightness == Brightness.dark ? const Color(0xFF1C1F26) : m3SurfaceContainerLowest;
+
+  static Color surfaceBgFor(Brightness brightness) =>
+      brightness == Brightness.dark ? const Color(0xFF111318) : m3SurfaceContainerLow;
+
+  static Color textPrimaryFor(Brightness brightness) =>
+      brightness == Brightness.dark ? const Color(0xFFE3E2E6) : m3OnSurface;
+
+  static Color textSecondaryFor(Brightness brightness) =>
+      brightness == Brightness.dark ? const Color(0xFF8D9199) : m3OnSurfaceVariant;
+
+  static Color borderFor(Brightness brightness) =>
+      brightness == Brightness.dark ? const Color(0xFF414752) : m3OutlineVariant;
+
+  static Color inputBgFor(Brightness brightness) =>
+      brightness == Brightness.dark ? const Color(0xFF262930) : m3SurfaceContainerHigh;
+
+  static Color surfaceHighFor(Brightness brightness) =>
+      brightness == Brightness.dark ? const Color(0xFF262930) : m3SurfaceContainerHigh;
+
+  static Color surfaceHighestFor(Brightness brightness) =>
+      brightness == Brightness.dark ? const Color(0xFF31343B) : m3SurfaceContainerHighest;
+
   // Gradient presets — M3 blue family
   static const LinearGradient heroGradient = LinearGradient(
     colors: [m3Primary, m3PrimaryContainer],

@@ -126,7 +126,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
       children: [
         // Filter bar
         Container(
-          color: Colors.white,
+          color: AdminTheme.cardBgFor(Theme.of(context).brightness),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           child: Row(
             children: [
@@ -134,7 +134,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               Wrap(
                 spacing: 6,
                 children: _roles.map((role) => FilterChip(
-                  label: Text(role == 'ALL' ? strings.t('statusAll') : role.replaceAll('_', ' '), style: const TextStyle(fontSize: 11)),
+                  label: Text(role == 'ALL' ? strings.t('statusAll') : role.replaceAll('_', ' '), style: TextStyle(fontSize: 11)),
                   selected: _roleFilter == role,
                   onSelected: (_) { setState(() => _roleFilter = role); _load(); },
                   selectedColor: AdminTheme.primary.withValues(alpha: 0.15),
@@ -159,7 +159,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                 ),
               ),
               const Spacer(),
-              if (!_loading) Text('${_filtered.length} ${strings.t('records')}', style: const TextStyle(color: AdminTheme.textSecondary, fontSize: 13)),
+              if (!_loading) Text('${_filtered.length} ${strings.t('records')}', style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 13)),
               const SizedBox(width: 8),
               IconButton(onPressed: _load, icon: const Icon(Icons.refresh), tooltip: strings.t('refresh')),
             ],
@@ -171,7 +171,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
           child: _loading
               ? const Center(child: CircularProgressIndicator(color: AdminTheme.primary))
               : _error != null
-              ? Center(child: Text(_error!, style: const TextStyle(color: AdminTheme.error)))
+              ? Center(child: Text(_error!, style: TextStyle(color: AdminTheme.error)))
               : _filtered.isEmpty
               ? Center(child: Text(strings.t('noUsersFound')))
               : SingleChildScrollView(
@@ -204,7 +204,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                                 ),
                               ),
                               const SizedBox(width: 10),
-                              Text(user['displayName']?.toString() ?? '—', style: const TextStyle(fontWeight: FontWeight.w600)),
+                              Text(user['displayName']?.toString() ?? '—', style: TextStyle(fontWeight: FontWeight.w600)),
                             ])),
                             DataCell(Text(user['phoneNumber']?.toString() ?? user['email']?.toString() ?? '—')),
                             DataCell(Container(
@@ -224,7 +224,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                               user['lastLoginAt'] != null
                                   ? user['lastLoginAt'].toString().split('T').first
                                   : strings.t('never'),
-                              style: const TextStyle(fontSize: 12, color: AdminTheme.textSecondary),
+                              style: TextStyle(fontSize: 12, color: AdminTheme.textSecondaryFor(Theme.of(context).brightness)),
                             )),
                             DataCell(Row(
                               mainAxisSize: MainAxisSize.min,

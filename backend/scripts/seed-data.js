@@ -17,7 +17,7 @@ async function seed() {
     host: process.env.DB_HOST || 'localhost',
     port: Number(process.env.DB_PORT || 5432),
     user: process.env.DB_USERNAME || 'postgres',
-    password: process.env.DB_PASSWORD || '0904',
+    password: process.env.DB_PASSWORD || '8123',
     database: process.env.DB_NAME || 'cbhi_db',
   });
 
@@ -25,14 +25,40 @@ async function seed() {
     await client.connect();
     console.log('Connected to database.');
 
-    // 1. Create a Location (City)
-    const locationRes = await client.query(`
-      INSERT INTO locations (name, code, level) 
-      VALUES ('Maya City', 'MAYA-001', 'CITY') 
-      ON CONFLICT DO NOTHING 
+    // 1. Create Location hierarchy (Region → Zone → Woreda → Kebele)
+    const regionRes = await client.query(`
+      INSERT INTO locations (name, code, level, "isActive") 
+      VALUES ('Maya Region', 'REG-001', 'REGION', true) 
+      ON CONFLICT (code) DO NOTHING 
       RETURNING id
     `);
-    const locationId = locationRes.rows[0]?.id || (await client.query("SELECT id FROM locations WHERE code = 'MAYA-001'")).rows[0].id;
+    const regionId = regionRes.rows[0]?.id || (await client.query("SELECT id FROM locations WHERE code = 'REG-001'")).rows[0].id;
+
+    const zoneRes = await client.query(`
+      INSERT INTO locations (name, code, level, "parentId", "isActive") 
+      VALUES ('Maya Zone', 'ZON-001', 'ZONE', $1, true) 
+      ON CONFLICT (code) DO NOTHING 
+      RETURNING id
+    `, [regionId]);
+    const zoneId = zoneRes.rows[0]?.id || (await client.query("SELECT id FROM locations WHERE code = 'ZON-001'")).rows[0].id;
+
+    const woredaRes = await client.query(`
+      INSERT INTO locations (name, code, level, "parentId", "isActive") 
+      VALUES ('Maya Woreda', 'WOR-001', 'WOREDA', $1, true) 
+      ON CONFLICT (code) DO NOTHING 
+      RETURNING id
+    `, [zoneId]);
+    const woredaId = woredaRes.rows[0]?.id || (await client.query("SELECT id FROM locations WHERE code = 'WOR-001'")).rows[0].id;
+
+    const kebeleRes = await client.query(`
+      INSERT INTO locations (name, code, level, "parentId", "isActive") 
+      VALUES ('Maya Kebele 01', 'KEB-001', 'KEBELE', $1, true) 
+      ON CONFLICT (code) DO NOTHING 
+      RETURNING id
+    `, [woredaId]);
+    const kebeleId = kebeleRes.rows[0]?.id || (await client.query("SELECT id FROM locations WHERE code = 'KEB-001'")).rows[0].id;
+
+    const locationId = kebeleId;
 
     // 2. Create a Health Facility
     const facilityRes = await client.query(`

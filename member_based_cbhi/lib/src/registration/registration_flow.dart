@@ -371,7 +371,7 @@ class _TempPasswordCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   strings.t('tempPasswordCardTitle'),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w700,
                     color: AppTheme.warning,
                   ),
@@ -382,13 +382,13 @@ class _TempPasswordCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             strings.t('tempPasswordCardBody'),
-            style: const TextStyle(fontSize: 13),
+            style: TextStyle(fontSize: 13),
           ),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppTheme.cardBgFor(Theme.of(context).brightness),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: AppTheme.warning),
             ),
@@ -397,7 +397,7 @@ class _TempPasswordCard extends StatelessWidget {
               children: [
                 Text(
                   tempPassword,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 8,
@@ -433,7 +433,7 @@ class _TempPasswordCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             strings.t('tempPasswordWarning'),
-            style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary),
+            style: TextStyle(fontSize: 11, color: AppTheme.textSecondaryFor(Theme.of(context).brightness)),
             textAlign: TextAlign.center,
           ),
         ],

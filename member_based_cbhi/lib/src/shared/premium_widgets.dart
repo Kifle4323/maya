@@ -194,7 +194,7 @@ class StatusPill extends StatelessWidget {
     if (l.contains('SUBMITTED') || l.contains('SYNCED')) {
       return AppTheme.primary;
     }
-    return AppTheme.textSecondary;
+    return AppTheme.m3OnSurfaceVariant;
   }
 
   IconData _resolveIcon() {
@@ -305,6 +305,7 @@ class SectionTitle extends StatelessWidget {
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 minimumSize: const Size(48, 36),
+                textStyle: Theme.of(context).textTheme.labelLarge,
               ),
               child: Text(
                 actionLabel!,
@@ -375,7 +376,7 @@ class MetricTile extends StatelessWidget {
             value,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : AppTheme.textDark,
+                  color: isDark ? Colors.white : AppTheme.textPrimaryFor(Theme.of(context).brightness),
                 ),
             overflow: TextOverflow.ellipsis,
           ),
@@ -383,7 +384,7 @@ class MetricTile extends StatelessWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppTheme.textSecondary,
+                  color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                 ),
             overflow: TextOverflow.ellipsis,
             maxLines: 2,
@@ -491,13 +492,13 @@ class TimelineStep extends StatelessWidget {
               ),
               child: Center(
                 child: isDone
-                    ? Icon(Icons.check, size: compact ? 12 : 14, color: Colors.white)
+                    ? Icon(Icons.check, size: compact ? 12 : 14, color: AppTheme.cardBgFor(Theme.of(context).brightness))
                     : Text(
                         '${stepIndex + 1}',
                         style: TextStyle(
                           fontSize: compact ? 10 : 11,
                           fontWeight: FontWeight.w700,
-                          color: isActive ? Colors.white : AppTheme.textSecondary,
+                          color: isActive ? Colors.white : AppTheme.textSecondaryFor(Theme.of(context).brightness),
                         ),
                       ),
               ),
@@ -510,7 +511,7 @@ class TimelineStep extends StatelessWidget {
                   steps[stepIndex],
                   style: TextStyle(
                     fontSize: 10,
-                    color: isActive ? AppTheme.primary : AppTheme.textSecondary,
+                    color: isActive ? AppTheme.primary : AppTheme.textSecondaryFor(Theme.of(context).brightness),
                     fontWeight: isActive ? FontWeight.w700 : FontWeight.normal,
                   ),
                   textAlign: TextAlign.center,
@@ -574,7 +575,7 @@ class EmptyView extends StatelessWidget {
           Text(
             subtitle,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppTheme.textSecondary,
+                  color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                 ),
             textAlign: TextAlign.center,
             maxLines: 3,
@@ -971,7 +972,7 @@ class DetailRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 16, color: AppTheme.textSecondary),
+            Icon(icon, size: 16, color: AppTheme.textSecondaryFor(Theme.of(context).brightness)),
             const SizedBox(width: 10),
           ],
           Expanded(
@@ -979,7 +980,7 @@ class DetailRow extends StatelessWidget {
             child: Text(
               label,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppTheme.textSecondary,
+                    color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                   ),
             ),
           ),
@@ -990,7 +991,7 @@ class DetailRow extends StatelessWidget {
               value,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: valueColor ?? AppTheme.textDark,
+                    color: valueColor ?? AppTheme.textPrimaryFor(Theme.of(context).brightness),
                   ),
               textAlign: TextAlign.end,
               overflow: TextOverflow.ellipsis,
@@ -1060,14 +1061,14 @@ class ProgressDonut extends StatelessWidget {
                 '${(progress * 100).toStringAsFixed(0)}%',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : AppTheme.textDark,
+                      color: isDark ? Colors.white : AppTheme.textPrimaryFor(Theme.of(context).brightness),
                     ),
               ),
               if (sublabel != null)
                 Text(
                   sublabel!,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppTheme.textSecondary,
+                        color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                         fontSize: 9,
                       ),
                   textAlign: TextAlign.center,

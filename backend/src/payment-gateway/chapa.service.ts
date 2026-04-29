@@ -72,22 +72,31 @@ export class ChapaService {
     }
 
     try {
+      // Ensure required fields are non-null — Chapa rejects null/empty values
+      const email = input.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.email)
+        ? input.email
+        : `${input.txRef}@cbhi.et`;
+      const firstName = input.firstName || 'Member';
+      const lastName = input.lastName || 'User';
+
       const payload = {
         amount: input.amount.toFixed(2),
         currency: input.currency ?? 'ETB',
-        email: input.email ?? `${input.txRef}@cbhi.et`,
-        phone_number: input.phoneNumber,
-        first_name: input.firstName,
-        last_name: input.lastName,
+        email,
+        phone_number: input.phoneNumber || undefined,
+        first_name: firstName,
+        last_name: lastName,
         tx_ref: input.txRef,
-        callback_url: input.callbackUrl ?? process.env.CHAPA_CALLBACK_URL,
-        return_url: input.returnUrl ?? process.env.CHAPA_RETURN_URL,
+        callback_url: input.callbackUrl ?? this._resolveUrl(process.env.CHAPA_CALLBACK_URL, '/api/v1/payments/webhook/chapa'),
+        return_url: input.returnUrl ?? this._resolveUrl(process.env.CHAPA_RETURN_URL, '/api/v1/payments/callback'),
         customization: {
           title: 'Maya City CBHI Premium',
           description: input.description ?? 'CBHI membership premium payment',
         },
         meta: input.metadata ?? {},
       };
+
+      this.logger.log(`Chapa initiate: amount=${payload.amount}, email=${payload.email}, first_name=${payload.first_name}, tx_ref=${payload.tx_ref}`);
 
       const response = await fetch(`${this.baseUrl}/transaction/initialize`, {
         method: 'POST',
@@ -105,8 +114,14 @@ export class ChapaService {
       };
 
       if (!response.ok || result.status !== 'success') {
-        this.logger.error(`Chapa initiate failed: ${result.message}`);
-        return { success: false, txRef: input.txRef, message: result.message ?? 'Payment initiation failed' };
+        const chapaMsg = typeof result.message === 'string' ? result.message
+          : JSON.stringify(result, null, 2);
+        this.logger.error(`Chapa initiate failed: ${chapaMsg}`);
+        return {
+          success: false,
+          txRef: input.txRef,
+          message: `Chapa payment failed: ${chapaMsg}`,
+        };
       }
 
       this.logger.log(`Chapa payment initiated: ${input.txRef} — ${input.amount} ETB`);
@@ -119,7 +134,11 @@ export class ChapaService {
       };
     } catch (error) {
       this.logger.error(`Chapa initiate exception: ${(error as Error).message}`);
-      return { success: false, txRef: input.txRef, message: 'Payment service temporarily unavailable' };
+      return {
+        success: false,
+        txRef: input.txRef,
+        message: `Payment service unavailable: ${(error as Error).message}`,
+      };
     }
   }
 
@@ -130,7 +149,7 @@ export class ChapaService {
         success: true,
         status: 'success',
         txRef,
-        amount: 120,
+        amount: 0, // Amount validation is skipped for demo/test payments
         currency: 'ETB',
         message: 'Demo payment verified',
         isDemo: true,
@@ -170,6 +189,15 @@ export class ChapaService {
       this.logger.error(`Chapa verify exception: ${(error as Error).message}`);
       return { success: false, status: 'failed', txRef, message: 'Verification service temporarily unavailable' };
     }
+  }
+
+  /** Resolve a URL from env — falls back to localhost if missing or placeholder */
+  private _resolveUrl(envValue: string | undefined, fallbackPath: string): string {
+    const base = envValue && !envValue.includes('your-domain')
+      ? envValue
+      : (process.env.APP_BASE_URL ?? 'http://localhost:3000');
+    const url = base.replace(/\/+$/, '');
+    return `${url}${fallbackPath}`;
   }
 
   verifyWebhookSignature(payload: string, signature: string): boolean {

@@ -80,7 +80,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
       setState(() => _isOnline = !result.contains(ConnectivityResult.none));
     }
   }
-  double get _premiumAmount => widget.snapshot.premiumAmount;
+  double get _premiumAmount {
+    final fromSnapshot = widget.snapshot.premiumAmount;
+    if (fromSnapshot > 0) return fromSnapshot;
+    // Fallback: calculate from memberCount × 120 ETB (same as dashboard)
+    final memberCount =
+        double.tryParse(widget.snapshot.household['memberCount']?.toString() ?? '1')?.toInt() ?? 1;
+    return memberCount * 120.0;
+  }
 
   // ── Auto-polling ──────────────────────────────────────────────────────────
 
@@ -224,12 +231,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _PaymentStepIndicator(currentStep: _currentStep),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
 
             // Connectivity warning
             if (!_isOnline) ...[
               _OfflineBanner(onRetry: _checkConnectivity),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
             ],
 
             // Amount card
@@ -249,7 +256,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       color: Colors.white.withValues(alpha: 0.8),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Text(
                     '${_premiumAmount.toStringAsFixed(2)} ETB',
                     style: Theme.of(context).textTheme.displaySmall?.copyWith(
@@ -257,7 +264,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       fontWeight: FontWeight.w800,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Text(
                     '${strings.t('householdLabel')}: ${widget.snapshot.householdCode}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -268,7 +275,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
             ).animate().fadeIn(duration: 400.ms),
 
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
 
             // Payment methods info
             Container(
@@ -289,9 +296,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           color: const Color(0xFF7DC242).withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: const Icon(Icons.payment, color: Color(0xFF7DC242), size: 20),
+                        child: Icon(Icons.payment, color: Color(0xFF7DC242), size: 20),
                       ),
-                      const SizedBox(width: 10),
+                      SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,7 +313,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             Text(
                               'Powered by Chapa',
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: AppTheme.textSecondary,
+                                color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                                 fontSize: 11,
                               ),
                             ),
@@ -315,7 +322,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
@@ -331,7 +338,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
             ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
 
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
 
             // Error display
             if (_error != null)
@@ -344,8 +351,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.error_outline, color: AppTheme.error, size: 18),
-                    const SizedBox(width: 8),
+                    Icon(Icons.error_outline, color: AppTheme.error, size: 18),
+                    SizedBox(width: 8),
                     Expanded(child: Text(_error!, style: const TextStyle(color: AppTheme.error))),
                   ],
                 ),
@@ -353,15 +360,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
             // Step 1: Initiate button
             if (!_paymentInitiated) ...[
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               FilledButton.icon(
                 onPressed: (_isLoading || !_isOnline) ? null : _initiatePayment,
                 icon: _isLoading
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 18, height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.cardBgFor(Theme.of(context).brightness)),
                       )
-                    : const Icon(Icons.open_in_new),
+                    : Icon(Icons.open_in_new),
                 label: Text(strings.f('payViaChapa', {'amount': _premiumAmount.toStringAsFixed(2)})),
                 style: FilledButton.styleFrom(backgroundColor: const Color(0xFF7DC242)),
               ).animate().fadeIn(duration: 400.ms, delay: 200.ms),
@@ -378,17 +385,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 onOpenCheckout: _openCheckoutAndPoll,
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
 
               // Manual verify button
               FilledButton.icon(
                 onPressed: _verifying ? null : _verifyPayment,
                 icon: _verifying
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 18, height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.cardBgFor(Theme.of(context).brightness)),
                       )
-                    : const Icon(Icons.verified_outlined),
+                    : Icon(Icons.verified_outlined),
                 label: Text(strings.t('verifyPayment')),
                 style: FilledButton.styleFrom(backgroundColor: AppTheme.success),
               ),
@@ -396,35 +403,35 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
             // Verify result (non-success)
             if (_verifyResult != null && _verifyResult!['status'] != 'success') ...[
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               _VerifyResultCard(result: _verifyResult!, strings: strings),
             ],
 
-            const SizedBox(height: 32),
+            SizedBox(height: 32),
             const Divider(),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             
             // Manual proof section
             Text(
               strings.t('offlinePaymentTitle'),
               style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text(
               strings.t('offlinePaymentSubtitle'),
               style: Theme.of(context).textTheme.bodySmall,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             
             OutlinedButton.icon(
               onPressed: () => _showManualProofDialog(context),
-              icon: const Icon(Icons.upload_file_outlined),
+              icon: Icon(Icons.upload_file_outlined),
               label: Text(strings.t('submitBankReceipt')),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
               ),
             ),
-            const SizedBox(height: 40),
+            SizedBox(height: 40),
           ],
         ),
       ),
@@ -478,7 +485,7 @@ class _ManualProofDialogState extends State<_ManualProofDialog> {
               hintText: 'e.g. CBE, Dashen, Awash',
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           TextField(
             controller: _receiptController,
             decoration: InputDecoration(
@@ -496,7 +503,7 @@ class _ManualProofDialogState extends State<_ManualProofDialog> {
         FilledButton(
           onPressed: _submitting ? null : _submit,
           child: _submitting
-              ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+              ? SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.cardBgFor(Theme.of(context).brightness)))
               : Text(strings.t('submit')),
         ),
       ],
@@ -545,8 +552,8 @@ class _OfflineBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.wifi_off, color: AppTheme.warning, size: 20),
-          const SizedBox(width: 10),
+          Icon(Icons.wifi_off, color: AppTheme.warning, size: 20),
+          SizedBox(width: 10),
           Expanded(
             child: Text(
               strings.t('noInternetConnection'),
@@ -596,34 +603,34 @@ class _CheckoutSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.check_circle_outline, color: AppTheme.success),
-              const SizedBox(width: 8),
+              Icon(Icons.check_circle_outline, color: AppTheme.success),
+              SizedBox(width: 8),
               Text(
                 strings.t('paymentInitiated'),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppTheme.success),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '${strings.t('transactionLabel')}: $txRef',
             style: Theme.of(context).textTheme.bodySmall,
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Text(strings.t('completePaymentOnChapa')),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
 
           // Open Chapa checkout
           FilledButton.icon(
             onPressed: onOpenCheckout,
-            icon: const Icon(Icons.open_in_new),
+            icon: Icon(Icons.open_in_new),
             label: Text(strings.t('openChapaCheckout')),
             style: FilledButton.styleFrom(backgroundColor: const Color(0xFF7DC242)),
           ).animate().fadeIn(duration: 300.ms),
 
           // Auto-polling indicator
           if (waitingForCallback) ...[
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -632,11 +639,11 @@ class _CheckoutSection extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const SizedBox(
+                  SizedBox(
                     width: 16, height: 16,
                     child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.primary),
                   ),
-                  const SizedBox(width: 10),
+                  SizedBox(width: 10),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -648,11 +655,11 @@ class _CheckoutSection extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const SizedBox(height: 2),
+                        SizedBox(height: 2),
                         Text(
                           strings.t('autoCheckingPayment'),
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppTheme.textSecondary,
+                            color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                             fontSize: 11,
                           ),
                         ),
@@ -703,7 +710,7 @@ class _VerifyResultCard extends StatelessWidget {
           Row(
             children: [
               Icon(isPending ? Icons.schedule : Icons.cancel_outlined, color: color, size: 20),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 '${strings.t('statusLabel')}: ${result['status']?.toString().toUpperCase()}',
                 style: TextStyle(fontWeight: FontWeight.w700, color: color),
@@ -721,10 +728,10 @@ class _VerifyResultCard extends StatelessWidget {
               child: Text(result['message'].toString(), style: Theme.of(context).textTheme.bodySmall),
             ),
           if (isPending) ...[
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text(
               strings.t('paymentStillProcessing'),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppTheme.textSecondary),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppTheme.textSecondaryFor(Theme.of(context).brightness)),
             ),
           ],
         ],
@@ -753,7 +760,7 @@ class _PaymentChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 14, color: const Color(0xFF7DC242)),
-          const SizedBox(width: 6),
+          SizedBox(width: 6),
           Text(label, style: const TextStyle(fontSize: 12, color: Color(0xFF7DC242), fontWeight: FontWeight.w600)),
         ],
       ),
@@ -799,23 +806,23 @@ class _PaymentStepIndicator extends StatelessWidget {
               ),
               child: Center(
                 child: isDone
-                    ? const Icon(Icons.check, size: 14, color: Colors.white)
+                    ? Icon(Icons.check, size: 14, color: AppTheme.cardBgFor(Theme.of(context).brightness))
                     : Text(
                         '${stepIndex + 1}',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
-                          color: isActive ? Colors.white : AppTheme.textSecondary,
+                          color: isActive ? Colors.white : AppTheme.textSecondaryFor(Theme.of(context).brightness),
                         ),
                       ),
               ),
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             Text(
               steps[stepIndex],
               style: TextStyle(
                 fontSize: 11,
-                color: isActive ? AppTheme.primary : AppTheme.textSecondary,
+                color: isActive ? AppTheme.primary : AppTheme.textSecondaryFor(Theme.of(context).brightness),
                 fontWeight: isActive ? FontWeight.w700 : FontWeight.normal,
               ),
             ),
@@ -853,9 +860,9 @@ class _ReceiptDialog extends StatelessWidget {
               color: AppTheme.success.withValues(alpha: 0.10),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.check_circle, color: AppTheme.success, size: 48),
+            child: Icon(Icons.check_circle, color: AppTheme.success, size: 48),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Text(
             strings.t('paymentSuccessTitle'),
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -863,14 +870,14 @@ class _ReceiptDialog extends StatelessWidget {
               color: AppTheme.success,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             strings.t('paymentSuccessBody'),
             style: Theme.of(context).textTheme.bodySmall,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           const Divider(),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           _ReceiptRow(label: strings.t('receiptAmount'), value: '${result['amount'] ?? ''} ETB'),
           _ReceiptRow(label: strings.t('receiptReference'), value: txRef),
           if (result['paymentMethod'] != null)
@@ -879,9 +886,9 @@ class _ReceiptDialog extends StatelessWidget {
             _ReceiptRow(label: strings.t('receiptPaidAt'), value: _formatDate(result['paidAt'].toString())),
           if (endDate != null)
             _ReceiptRow(label: strings.t('receiptCoverageUntil'), value: _formatDate(endDate)),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           const Divider(),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -890,8 +897,8 @@ class _ReceiptDialog extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.info_outline, size: 16, color: AppTheme.success),
-                const SizedBox(width: 8),
+                Icon(Icons.info_outline, size: 16, color: AppTheme.success),
+                SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     strings.t('receiptConfirmationNote'),

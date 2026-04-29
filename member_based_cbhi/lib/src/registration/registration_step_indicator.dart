@@ -116,7 +116,7 @@ class RegistrationStepIndicator extends StatelessWidget {
                 ),
                 child: Center(
                   child: isDone
-                      ? const Icon(Icons.check, size: 12, color: Colors.white)
+                      ? Icon(Icons.check, size: 12, color: AppTheme.cardBgFor(Theme.of(context).brightness))
                       : Text(
                           '$stepIdx',
                           style: TextStyle(
@@ -162,7 +162,7 @@ class RegistrationStepIndicator extends StatelessWidget {
                         ? AppTheme.primary
                         : isActive
                             ? AppTheme.primary
-                            : AppTheme.textSecondary.withValues(alpha: 0.6),
+                            : AppTheme.textSecondaryFor(Theme.of(context).brightness).withValues(alpha: 0.6),
                   ),
                 ),
               );

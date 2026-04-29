@@ -11,14 +11,13 @@ import {
   IndigentDecisionDto,
   OverrideIndigentApplicationDto,
 } from './indigent.dto';
-import { VisionService } from '../vision/vision.service';
+import { User } from '../users/user.entity';
 
 @Injectable()
 export class IndigentService {
   constructor(
     @InjectRepository(IndigentApplication)
     private readonly indigentRepository: Repository<IndigentApplication>,
-    private readonly visionService: VisionService,
   ) {}
 
   private readonly logger = new Logger(IndigentService.name);
@@ -69,52 +68,22 @@ export class IndigentService {
     }
 
     const approvalThreshold = Number(process.env.INDIGENT_APPROVAL_THRESHOLD ?? 70);
-    const status =
+    const recommendation =
       score >= approvalThreshold
         ? IndigentApplicationStatus.APPROVED
         : IndigentApplicationStatus.REJECTED;
 
     const reason =
-      status === IndigentApplicationStatus.APPROVED
-        ? `Approved: ${matchedReasons.join(', ')}`
+      score >= approvalThreshold
+        ? `Recommended approval: ${matchedReasons.join(', ')}`
         : 'Does not meet indigent criteria';
 
-    return { score, status, reason };
+    return { score, status: IndigentApplicationStatus.PENDING, reason };
   }
 
   async applyApplication(data: CreateIndigentApplicationDto) {
-    const visionResults: any[] = [];
-    if (data.documents?.length) {
-      // If documents are passed as base64, validate them.
-      // Note: Currently documents are expected to be URLs or Base64 depending on the source.
-      // We only validate if they look like base64.
-      for (const doc of data.documents) {
-        if (doc.length > 500) { // likely base64
-          try {
-            const res = await this.visionService.validateIndigentDocument(doc);
-            visionResults.push(res);
-          } catch (e) {
-            this.logger.error(`Vision validation failed: ${(e as Error).message}`);
-          }
-        }
-      }
-    }
-
     const decision = this.evaluateIndigentApplication(data);
 
-    // Two-way proof gating
-    if (visionResults.length > 0) {
-      const validResults = visionResults.filter(r => r.isValid && r.confidence >= 0.85);
-      if (validResults.length > 0) {
-        decision.status = IndigentApplicationStatus.APPROVED;
-        decision.reason += ` | Vision verified: ${validResults[0].documentType}`;
-      } else {
-        decision.status = IndigentApplicationStatus.PENDING;
-        decision.reason += ` | Vision validation pending: ${visionResults[0]?.issues?.[0] ?? 'low confidence'}`;
-      }
-    }
-
-    const hasExpiredDocuments = visionResults.some(r => r.isExpired === true);
     const application = this.indigentRepository.create({
       income: data.income,
       employmentStatus: data.employmentStatus,
@@ -123,7 +92,8 @@ export class IndigentService {
       disabilityStatus: data.disabilityStatus,
       documents: data.documents,
       documentMeta: data.documentMeta ?? null,
-      hasExpiredDocuments,
+      hasExpiredDocuments: false,
+      user: data.userId ? { id: data.userId } as User : undefined,
       ...decision,
     });
 

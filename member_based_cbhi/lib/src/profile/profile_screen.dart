@@ -79,7 +79,7 @@ class ProfileScreen extends StatelessWidget {
                   final uid = session.user.id;
                   final memberCount = snapshot.familyMembers.isNotEmpty
                       ? snapshot.familyMembers.length
-                      : ((snapshot.household['memberCount'] as num?)?.toInt() ?? 1);
+                      : (double.tryParse(snapshot.household['memberCount']?.toString() ?? '1')?.toInt() ?? 1);
                   final employment =
                       snapshot.household['headEmploymentStatus']?.toString() ??
                           snapshot.household['employmentStatus']?.toString() ??
@@ -123,7 +123,7 @@ class ProfileScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
-                  const Icon(Icons.language_outlined, size: 20, color: AppTheme.m3OnSurfaceVariant),
+                  Icon(Icons.language_outlined, size: 20, color: AppTheme.textSecondaryFor(Theme.of(context).brightness)),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -146,6 +146,9 @@ class ProfileScreen extends StatelessWidget {
                       foregroundColor: AppTheme.m3Primary,
                       padding: EdgeInsets.zero,
                       minimumSize: const Size(0, 32),
+                      textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: AppTheme.m3Primary,
+                      ),
                     ),
                     child: Text(strings.t('change')),
                   ),
@@ -161,7 +164,7 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.palette_outlined, size: 20, color: AppTheme.m3OnSurfaceVariant),
+                      Icon(Icons.palette_outlined, size: 20, color: AppTheme.textSecondaryFor(Theme.of(context).brightness)),
                       const SizedBox(width: 12),
                       Text(strings.t('appearance'), style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 15)),
                     ],
@@ -169,7 +172,7 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(height: 12),
                   Container(
                     decoration: BoxDecoration(
-                      color: AppTheme.m3SurfaceContainerHighest,
+                      color: AppTheme.surfaceHighestFor(Theme.of(context).brightness),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     padding: const EdgeInsets.all(4),
@@ -237,14 +240,14 @@ class ProfileScreen extends StatelessWidget {
           width: double.infinity,
           child: OutlinedButton.icon(
             onPressed: () async => context.read<AuthCubit>().logout(),
-            icon: const Icon(Icons.logout),
+            icon: Icon(Icons.logout),
             label: Text(strings.t('signOut')),
             style: OutlinedButton.styleFrom(
-              foregroundColor: AppTheme.m3OnSurface,
+              foregroundColor: AppTheme.textPrimaryFor(Theme.of(context).brightness),
               side: BorderSide(color: AppTheme.m3OutlineVariant),
               shape: const StadiumBorder(),
               minimumSize: const Size(double.infinity, 52),
-              backgroundColor: AppTheme.m3SurfaceContainer,
+              backgroundColor: AppTheme.surfaceBgFor(Theme.of(context).brightness),
             ),
           ),
         ),
@@ -276,7 +279,7 @@ class ProfileScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(strings.t('language'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            Text(strings.t('language'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
             const SizedBox(height: 16),
             ...CbhiLocalizations.supportedLocales.map((locale) {
               final isSelected = context.read<AppCubit>().state.locale.languageCode == locale.languageCode;
@@ -288,7 +291,7 @@ class ProfileScreen extends StatelessWidget {
               };
               return ListTile(
                 title: Text(label),
-                trailing: isSelected ? const Icon(Icons.check, color: AppTheme.m3Primary) : null,
+                trailing: isSelected ? Icon(Icons.check, color: AppTheme.m3Primary) : null,
                 onTap: () {
                   context.read<AppCubit>().setLocale(locale);
                   Navigator.pop(ctx);
@@ -354,7 +357,7 @@ Future<void> _showChangePasswordDialog(BuildContext context) async {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(error!,
-                      style: const TextStyle(color: AppTheme.error, fontSize: 13)),
+                      style: TextStyle(color: AppTheme.error, fontSize: 13)),
                 ),
               // Toggle for temp code users
               if (hasTempPassword && tempCode != null) ...[
@@ -376,7 +379,7 @@ Future<void> _showChangePasswordDialog(BuildContext context) async {
                     Expanded(
                       child: Text(
                         strings.t('usingTempCode'),
-                        style: const TextStyle(fontSize: 13),
+                        style: TextStyle(fontSize: 13),
                       ),
                     ),
                   ],
@@ -392,7 +395,7 @@ Future<void> _showChangePasswordDialog(BuildContext context) async {
                   labelText: usingTempCode
                       ? strings.t('tempCodePreFilled')
                       : strings.t('currentPassword'),
-                  prefixIcon: const Icon(Icons.lock_outline),
+                  prefixIcon: Icon(Icons.lock_outline),
                 ),
               ),
               const SizedBox(height: 12),
@@ -400,7 +403,7 @@ Future<void> _showChangePasswordDialog(BuildContext context) async {
                 controller: newCtrl,
                 obscureText: true,
                 decoration: InputDecoration(labelText: strings.t('newPassword'),
-                    prefixIcon: const Icon(Icons.lock_reset_outlined)),
+                    prefixIcon: Icon(Icons.lock_reset_outlined)),
               ),
               const SizedBox(height: 12),
               TextField(
@@ -408,7 +411,7 @@ Future<void> _showChangePasswordDialog(BuildContext context) async {
                 obscureText: true,
                 decoration: InputDecoration(
                     labelText: strings.t('confirmPassword'),
-                    prefixIcon: const Icon(Icons.lock_outline)),
+                    prefixIcon: Icon(Icons.lock_outline)),
               ),
             ],
           ),
@@ -514,7 +517,7 @@ class _BiometricToggleState extends State<_BiometricToggle> {
               color: AppTheme.accent.withValues(alpha: 0.10),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(Icons.fingerprint, color: AppTheme.accent, size: 20),
+            child: Icon(Icons.fingerprint, color: AppTheme.accent, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -705,7 +708,7 @@ class _PasskeysSectionState extends State<_PasskeysSection> {
                   color: AppTheme.primary.withValues(alpha: 0.10),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.key_outlined, color: AppTheme.primary, size: 20),
+                child: Icon(Icons.key_outlined, color: AppTheme.primary, size: 20),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -719,7 +722,7 @@ class _PasskeysSectionState extends State<_PasskeysSection> {
                     Text(
                       strings.t('passkeysSubtitle'),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppTheme.textSecondary,
+                            color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                           ),
                     ),
                   ],
@@ -740,7 +743,7 @@ class _PasskeysSectionState extends State<_PasskeysSection> {
               ),
               child: Text(
                 _error!,
-                style: const TextStyle(color: AppTheme.error, fontSize: 13),
+                style: TextStyle(color: AppTheme.error, fontSize: 13),
               ),
             ),
             const SizedBox(height: 12),
@@ -762,13 +765,13 @@ class _PasskeysSectionState extends State<_PasskeysSection> {
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline, size: 16, color: AppTheme.textSecondary),
+                  Icon(Icons.info_outline, size: 16, color: AppTheme.textSecondaryFor(Theme.of(context).brightness)),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       strings.t('noPasskeysRegistered'),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppTheme.textSecondary,
+                            color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                           ),
                     ),
                   ),
@@ -803,7 +806,7 @@ class _PasskeysSectionState extends State<_PasskeysSection> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.security_outlined,
                         size: 18,
                         color: AppTheme.primary,
@@ -823,14 +826,14 @@ class _PasskeysSectionState extends State<_PasskeysSection> {
                               Text(
                                 lastUsed,
                                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: AppTheme.textSecondary,
+                                      color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                                     ),
                               ),
                           ],
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.delete_outline,
                           color: AppTheme.error,
                           size: 20,
@@ -862,7 +865,7 @@ class _PasskeysSectionState extends State<_PasskeysSection> {
                         color: AppTheme.primary,
                       ),
                     )
-                  : const Icon(Icons.add, size: 18),
+                  : Icon(Icons.add, size: 18),
               label: Text(strings.t('addPasskey')),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppTheme.primary,
@@ -902,7 +905,7 @@ class _M3ProfileHeaderCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.m3SurfaceContainerLow,
+        color: AppTheme.surfaceBgFor(Theme.of(context).brightness),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
@@ -934,7 +937,7 @@ class _M3ProfileHeaderCard extends StatelessWidget {
             child: Center(
               child: Text(
                 _initials(displayName),
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppTheme.m3Primary,
                   fontSize: 28,
                   fontWeight: FontWeight.w700,
@@ -959,8 +962,8 @@ class _M3ProfileHeaderCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     '${strings.t('memberIdLabel')}: $memberId',
-                    style: const TextStyle(
-                      color: AppTheme.m3OnSurfaceVariant,
+                    style: TextStyle(
+                      color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                       fontSize: 13,
                     ),
                   ),
@@ -982,7 +985,7 @@ class _M3ProfileHeaderCard extends StatelessWidget {
                         ),
                         child: Text(
                           strings.t('headOfHousehold'),
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppTheme.m3TertiaryContainer,
                             fontSize: 11,
                             fontWeight: FontWeight.w500,
@@ -1000,7 +1003,7 @@ class _M3ProfileHeaderCard extends StatelessWidget {
                       ),
                       child: Text(
                         coverageStatus,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppTheme.m3Primary,
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
@@ -1042,7 +1045,7 @@ class _M3SettingsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.m3SurfaceContainerLow,
+        color: AppTheme.surfaceBgFor(Theme.of(context).brightness),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
@@ -1063,7 +1066,7 @@ class _M3SettingsSection extends StatelessWidget {
           Container(
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
             decoration: BoxDecoration(
-              color: AppTheme.m3SurfaceContainerLowest.withValues(alpha: 0.5),
+              color: AppTheme.cardBgFor(Theme.of(context).brightness).withValues(alpha: 0.5),
               border: Border(
                 bottom: BorderSide(
                   color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
@@ -1115,7 +1118,7 @@ class _M3SettingsTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
-            Icon(icon, size: 20, color: AppTheme.m3OnSurfaceVariant),
+            Icon(icon, size: 20, color: AppTheme.textSecondaryFor(Theme.of(context).brightness)),
             const SizedBox(width: 14),
             Expanded(
               child: Text(
@@ -1126,10 +1129,10 @@ class _M3SettingsTile extends StatelessWidget {
                 ),
               ),
             ),
-            const Icon(
+            Icon(
               Icons.chevron_right,
               size: 20,
-              color: AppTheme.m3OnSurfaceVariant,
+              color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
             ),
           ],
         ),
@@ -1160,7 +1163,7 @@ class _AppearanceBtn extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            color: selected ? AppTheme.m3SurfaceContainerLowest : Colors.transparent,
+            color: selected ? AppTheme.cardBgFor(Theme.of(context).brightness) : Colors.transparent,
             borderRadius: BorderRadius.circular(6),
             boxShadow: selected
                 ? [
@@ -1200,7 +1203,7 @@ class GlassCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.m3SurfaceContainerLow,
+        color: AppTheme.surfaceBgFor(Theme.of(context).brightness),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),

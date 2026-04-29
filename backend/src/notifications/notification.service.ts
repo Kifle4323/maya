@@ -64,8 +64,8 @@ export class NotificationService {
       message: n.message,
       payload: n.payload,
       isRead: n.isRead,
-      readAt: n.readAt?.toISOString() ?? null,
-      createdAt: n.createdAt.toISOString(),
+      readAt: n.readAt instanceof Date ? n.readAt.toISOString() : (n.readAt as unknown as string)?.toString() ?? null,
+      createdAt: n.createdAt instanceof Date ? n.createdAt.toISOString() : (n.createdAt as unknown as string)?.toString() ?? new Date().toISOString(),
     }));
   }
 

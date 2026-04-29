@@ -45,6 +45,9 @@ function isOriginAllowed(origin: string | undefined, allowedOrigins: string[]): 
   // Always allow any Vercel deployment (preview + production)
   if (/^https:\/\/[^.]+\.vercel\.app$/.test(origin)) return true;
 
+  // Always allow any localhost port during development
+  if (/^http:\/\/localhost:\d+$/.test(origin)) return true;
+
   // Wildcard '*' → allow everything
   if (allowedOrigins.includes('*')) return true;
 
@@ -86,10 +89,11 @@ async function bootstrap() {
       if (isOriginAllowed(origin, allowedOrigins)) {
         return callback(null, true);
       }
+      console.warn(`[CORS] Rejected origin: ${origin}`);
       return callback(new Error(`CORS: origin ${origin} not allowed`), false);
     },
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
     credentials: true,
     preflightContinue: false,
     optionsSuccessStatus: 204,

@@ -174,17 +174,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               Text(
                 strings.t('systemConfiguration'),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: AdminTheme.textDark,
+                  color: AdminTheme.textPrimaryFor(Theme.of(context).brightness),
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 strings.t('manageSystemSettings'),
-                style: const TextStyle(
-                    color: AdminTheme.textSecondary, fontSize: 13),
+                style: TextStyle(
+                    color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 13),
               ),
               const SizedBox(height: 28),
 
@@ -231,8 +231,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           const SizedBox(width: 8),
                           Text(
                             _darkMode ? 'Dark mode' : 'Light mode',
-                            style: const TextStyle(
-                                color: AdminTheme.textSecondary, fontSize: 13),
+                            style: TextStyle(
+                                color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 13),
                           ),
                           const SizedBox(width: 8),
                           Container(
@@ -480,7 +480,7 @@ class _SettingsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AdminTheme.cardBgFor(Theme.of(context).brightness),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -510,10 +510,10 @@ class _SettingsCard extends StatelessWidget {
                 const SizedBox(width: 10),
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 14,
-                    color: AdminTheme.textDark,
+                    color: AdminTheme.textPrimaryFor(Theme.of(context).brightness),
                   ),
                 ),
               ],
@@ -605,7 +605,7 @@ class _SecurityCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AdminTheme.cardBgFor(Theme.of(context).brightness),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -628,7 +628,7 @@ class _SecurityCard extends StatelessWidget {
                 bottom: BorderSide(color: Colors.grey.shade100),
               ),
             ),
-            child: const Row(
+            child: Row(
               children: [
                 Icon(Icons.security_outlined,
                     color: AdminTheme.primary, size: 18),
@@ -638,7 +638,7 @@ class _SecurityCard extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 14,
-                    color: AdminTheme.textDark,
+                    color: AdminTheme.textPrimaryFor(Theme.of(context).brightness),
                   ),
                 ),
               ],
@@ -780,16 +780,16 @@ class _SecurityAction extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
-                  color: AdminTheme.textDark,
+                  color: AdminTheme.textPrimaryFor(Theme.of(context).brightness),
                 ),
               ),
               Text(
                 subtitle,
-                style: const TextStyle(
-                  color: AdminTheme.textSecondary,
+                style: TextStyle(
+                  color: AdminTheme.textSecondaryFor(Theme.of(context).brightness),
                   fontSize: 12,
                 ),
               ),
@@ -804,7 +804,7 @@ class _SecurityAction extends StatelessWidget {
             side: const BorderSide(color: AdminTheme.primary),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           ),
-          child: Text(buttonLabel, style: const TextStyle(fontSize: 13)),
+          child: Text(buttonLabel, style: TextStyle(fontSize: 13)),
         ),
       ],
     );
@@ -827,8 +827,8 @@ class _SettingsRow extends StatelessWidget {
           width: 200,
           child: Text(
             label,
-            style: const TextStyle(
-              color: AdminTheme.textSecondary,
+            style: TextStyle(
+              color: AdminTheme.textSecondaryFor(Theme.of(context).brightness),
               fontSize: 13,
             ),
           ),
@@ -859,9 +859,9 @@ class _LabeledField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
-            color: AdminTheme.textSecondary,
+            color: AdminTheme.textSecondaryFor(Theme.of(context).brightness),
             fontWeight: FontWeight.w500,
           ),
         ),

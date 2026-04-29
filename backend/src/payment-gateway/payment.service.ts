@@ -59,6 +59,37 @@ export class PaymentService {
       throw new BadRequestException('No coverage record found for this household.');
     }
 
+    // ── Already-paid check: prevent duplicate payments ────────────────────
+    const completedPayment = await this.paymentRepository.findOne({
+      where: {
+        coverage: { id: coverage.id },
+        status: PaymentStatus.SUCCESS,
+      },
+    });
+    if (completedPayment) {
+      throw new BadRequestException('You have already paid for this coverage period.');
+    }
+
+    // ── Pending payment check: reuse existing checkout URL ─────────────────
+    const pendingPayment = await this.paymentRepository.findOne({
+      where: {
+        coverage: { id: coverage.id },
+        status: PaymentStatus.PENDING,
+      },
+    });
+    if (pendingPayment) {
+      const checkoutUrl = (pendingPayment as any).checkoutUrl ?? null;
+      this.logger.log(`Reusing pending payment ${pendingPayment.transactionReference}`);
+      return {
+        txRef: pendingPayment.transactionReference,
+        checkoutUrl,
+        amount: parseFloat(pendingPayment.amount),
+        currency: pendingPayment.currency,
+        message: 'You have a pending payment',
+        isTestMode: (process.env.CHAPA_SECRET_KEY ?? '').includes('TEST') || !process.env.CHAPA_SECRET_KEY,
+      };
+    }
+
     const txRef = `CBHI-${household.householdCode}-${randomBytes(6).toString('hex').toUpperCase()}`;
 
     // Build a return URL that routes through backend callback → app deep link
@@ -83,23 +114,26 @@ export class PaymentService {
     });
 
     if (!result.success) {
-      throw new BadRequestException(result.message);
+      // Extract the actual Chapa error message for better UX
+      const chapaMsg = result.message || 'Payment initiation failed — check Chapa configuration';
+      throw new BadRequestException(chapaMsg);
     }
 
     this.logger.log(`Initiating payment for user ${user.id}: ${amount} ${result.data?.['currency'] || 'ETB'}`);
 
-    await this.paymentRepository.save(
-      this.paymentRepository.create({
-        transactionReference: txRef,
-        amount: amount.toFixed(2),
-        currency: 'ETB',
-        method: PaymentMethod.MOBILE_MONEY,
-        status: PaymentStatus.PENDING,
-        providerName: 'Chapa',
-        coverage,
-        processedBy: user,
-      }),
-    );
+    const payment = this.paymentRepository.create({
+      transactionReference: txRef,
+      amount: amount.toFixed(2),
+      currency: 'ETB',
+      method: PaymentMethod.MOBILE_MONEY,
+      status: PaymentStatus.PENDING,
+      providerName: 'Chapa',
+      coverage,
+      processedBy: user,
+    });
+    // Store checkout URL on payment entity for pending-payment reuse
+    (payment as any).checkoutUrl = result.checkoutUrl ?? null;
+    await this.paymentRepository.save(payment);
 
     const isTestMode =
       (process.env.CHAPA_SECRET_KEY ?? '').includes('TEST') ||
@@ -125,12 +159,32 @@ export class PaymentService {
       throw new BadRequestException(`Payment ${txRef} not found.`);
     }
 
+    // If already completed, return cached result without re-verifying
+    if (payment.status === PaymentStatus.SUCCESS) {
+      return {
+        txRef,
+        status: 'success',
+        amount: parseFloat(payment.amount),
+        currency: payment.currency,
+        paidAt: payment.paidAt?.toISOString?.() ?? null,
+        message: 'Payment already verified',
+        coverageActivated: true,
+        coverageEndDate: payment.coverage?.endDate instanceof Date
+          ? payment.coverage.endDate.toISOString()
+          : ((payment.coverage?.endDate as unknown as string)?.toString() ?? null),
+        company_name: 'Maya City CBHI',
+        customer_email: payment.coverage?.household?.headUser?.email ?? 'member@cbhi.et',
+      };
+    }
+
+    // If still pending, verify with Chapa
     const result = await this.chapaService.verifyPayment(txRef);
     this.logger.log(`Verification result for ${txRef}: ${result.status} - ${result.amount} ${result.currency}`);
 
-    if (result.status === 'success' && payment.status !== PaymentStatus.SUCCESS) {
-      // Security check: validate amount and currency
-      if (result.amount && Math.abs(result.amount - parseFloat(payment.amount)) > 0.01) {
+    if (result.status === 'success') {
+      // Security check: validate amount and currency (skip for demo/test payments)
+      const isDemo = result.isDemo || (process.env.CHAPA_SECRET_KEY ?? '').includes('TEST');
+      if (!isDemo && result.amount && Math.abs(result.amount - parseFloat(payment.amount)) > 0.01) {
         this.logger.error(`Amount mismatch for ${txRef}: expected ${payment.amount}, got ${result.amount}`);
         throw new BadRequestException('Payment amount mismatch.');
       }
@@ -151,7 +205,9 @@ export class PaymentService {
       paidAt: result.paidAt,
       message: result.message,
       coverageActivated: result.status === 'success',
-      coverageEndDate: payment.coverage?.endDate?.toISOString(),
+      coverageEndDate: payment.coverage?.endDate instanceof Date
+        ? payment.coverage.endDate.toISOString()
+        : ((payment.coverage?.endDate as unknown as string)?.toString() ?? null),
       company_name: 'Maya City CBHI',
       customer_email: payment.coverage?.household?.headUser?.email ?? 'member@cbhi.et',
     };
@@ -166,7 +222,21 @@ export class PaymentService {
     if (!payment) return;
 
     if (status === 'success' && payment.status !== PaymentStatus.SUCCESS) {
-      await this.activateCoverageAfterPayment(payment, txRef);
+      // Verify with Chapa before marking complete (security)
+      try {
+        const verifyResult = await this.chapaService.verifyPayment(txRef);
+        if (verifyResult.status === 'success') {
+          await this.activateCoverageAfterPayment(payment, txRef);
+          this.logger.log(`Webhook payment completed: ${txRef}`);
+        } else {
+          this.logger.warn(`Webhook said success but Chapa verify returned: ${verifyResult.status} for ${txRef}`);
+        }
+      } catch (err) {
+        this.logger.error(`Webhook verify error for ${txRef}: ${(err as Error).message}`);
+      }
+    } else if (status === 'failed') {
+      payment.status = PaymentStatus.FAILED;
+      await this.paymentRepository.save(payment);
     }
   }
 
@@ -211,7 +281,9 @@ export class PaymentService {
         this.wsGateway?.pushCoverageSync(headUserId, {
           coverageNumber: coverage.coverageNumber,
           status: coverage.status,
-          endDate: coverage.endDate.toISOString(),
+          endDate: coverage.endDate instanceof Date
+          ? coverage.endDate.toISOString()
+          : ((coverage.endDate as unknown as string)?.toString() ?? null),
           paidAmount: payment.amount,
         });
 
@@ -222,8 +294,8 @@ export class PaymentService {
             headUser,
             NotificationType.PAYMENT_CONFIRMATION,
             'Payment confirmed',
-            `Your CBHI premium was received. Coverage active until ${coverage.endDate.toISOString().split('T')[0]}. Ref: ${txRef}`,
-            { txRef, coverageNumber: coverage.coverageNumber, endDate: coverage.endDate.toISOString() },
+            `Your CBHI premium was received. Coverage active until ${(coverage.endDate instanceof Date ? coverage.endDate.toISOString() : (coverage.endDate as unknown as string)?.toString() ?? 'N/A').split('T')[0]}. Ref: ${txRef}`,
+            { txRef, coverageNumber: coverage.coverageNumber, endDate: coverage.endDate instanceof Date ? coverage.endDate.toISOString() : ((coverage.endDate as unknown as string)?.toString() ?? null) },
           );
         } catch (_) { /* non-blocking */ }
 

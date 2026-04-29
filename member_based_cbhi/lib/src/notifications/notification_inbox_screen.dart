@@ -16,18 +16,18 @@ class NotificationInboxScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final strings = CbhiLocalizations.of(context);
     return Scaffold(
-      backgroundColor: AppTheme.m3SurfaceContainerLow,
+      backgroundColor: AppTheme.surfaceBgFor(Theme.of(context).brightness),
       appBar: AppBar(
-        backgroundColor: AppTheme.m3SurfaceContainerLowest,
+        backgroundColor: AppTheme.cardBgFor(Theme.of(context).brightness),
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(
           strings.t('allNotifications'),
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: 'Outfit',
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: AppTheme.m3OnSurface,
+            color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
           ),
         ),
         actions: [
@@ -43,7 +43,7 @@ class NotificationInboxScreen extends StatelessWidget {
                     color: AppTheme.m3Primary),
                 label: Text(
                   strings.t('markAllRead'),
-                  style: const TextStyle(color: AppTheme.m3Primary),
+                  style: TextStyle(color: AppTheme.m3Primary),
                 ),
               );
             },
@@ -99,20 +99,20 @@ class NotificationInboxScreen extends StatelessWidget {
                   children: [
                     Text(
                       strings.t('allNotifications'),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'Outfit',
                         fontSize: 28,
                         fontWeight: FontWeight.w600,
-                        color: AppTheme.m3OnSurface,
+                        color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                         height: 1.2,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       strings.t('coverageAlertsHere'),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
-                        color: AppTheme.m3OnSurfaceVariant,
+                        color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                       ),
                     ),
                   ],
@@ -229,7 +229,7 @@ class _CategoryTag extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w500,
           color: AppTheme.m3OnSecondaryContainer,
@@ -265,8 +265,8 @@ class _M3NotificationTile extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: isUnread
-              ? AppTheme.m3SurfaceContainerLow
-              : AppTheme.m3SurfaceContainerLowest,
+              ? AppTheme.surfaceBgFor(Theme.of(context).brightness)
+              : AppTheme.cardBgFor(Theme.of(context).brightness),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isUnread
@@ -306,7 +306,7 @@ class _M3NotificationTile extends StatelessWidget {
                         color: AppTheme.m3Primary,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: AppTheme.m3SurfaceContainerLow,
+                          color: AppTheme.surfaceBgFor(Theme.of(context).brightness),
                           width: 2,
                         ),
                       ),
@@ -331,7 +331,7 @@ class _M3NotificationTile extends StatelessWidget {
                             fontWeight: isUnread
                                 ? FontWeight.w600
                                 : FontWeight.w500,
-                            color: AppTheme.m3OnSurface,
+                            color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -340,9 +340,9 @@ class _M3NotificationTile extends StatelessWidget {
                       const SizedBox(width: 8),
                       Text(
                         _formatDate(createdAt),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: AppTheme.m3OnSurfaceVariant,
+                          color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                         ),
                       ),
                     ],
@@ -353,8 +353,8 @@ class _M3NotificationTile extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       color: isUnread
-                          ? AppTheme.m3OnSurface
-                          : AppTheme.m3OnSurfaceVariant,
+                          ? AppTheme.textPrimaryFor(Theme.of(context).brightness)
+                          : AppTheme.textSecondaryFor(Theme.of(context).brightness),
                       height: 1.4,
                     ),
                     maxLines: 2,
@@ -450,7 +450,7 @@ class _HealthInsightCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Your quarterly wellness checkup is due',
                   style: TextStyle(
                     fontFamily: 'Outfit',
@@ -468,7 +468,7 @@ class _HealthInsightCard extends StatelessWidget {
                     color: Theme.of(context).colorScheme.surfaceContainerLowest,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Schedule Now',
                     style: TextStyle(
                       fontSize: 13,
@@ -487,7 +487,7 @@ class _HealthInsightCard extends StatelessWidget {
           child: Container(
             height: 200,
             decoration: BoxDecoration(
-              color: AppTheme.m3SurfaceContainerHighest,
+              color: AppTheme.surfaceHighestFor(Theme.of(context).brightness),
               borderRadius: BorderRadius.circular(16),
             ),
             padding: const EdgeInsets.all(16),
@@ -508,21 +508,21 @@ class _HealthInsightCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                const Text(
+                Text(
                   'Stable Vitals',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.m3OnSurface,
+                    color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                   ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 6),
-                const Text(
+                Text(
                   'Sync your device to get real-time health alerts.',
                   style: TextStyle(
                     fontSize: 11,
-                    color: AppTheme.m3OnSurfaceVariant,
+                    color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -563,18 +563,18 @@ class _EmptyInbox extends StatelessWidget {
           const SizedBox(height: 20),
           Text(
             strings.t('noNotificationsYet'),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: AppTheme.m3OnSurface,
+              color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             strings.t('coverageAlertsHere'),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
-              color: AppTheme.m3OnSurfaceVariant,
+              color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
             ),
             textAlign: TextAlign.center,
           ),

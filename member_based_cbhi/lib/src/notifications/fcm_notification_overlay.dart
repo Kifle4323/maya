@@ -74,6 +74,8 @@ class _FcmNotificationOverlayState extends State<FcmNotificationOverlay>
   @override
   Widget build(BuildContext context) {
     return Stack(
+      alignment: Alignment.topCenter,
+      textDirection: TextDirection.ltr,
       children: [
         widget.child,
         if (_current != null)

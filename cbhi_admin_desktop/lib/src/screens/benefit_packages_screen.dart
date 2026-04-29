@@ -50,7 +50,7 @@ class _BenefitPackagesScreenState extends State<BenefitPackagesScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Row(children: [
-          const Icon(Icons.add_circle_outline, color: AdminTheme.primary),
+          Icon(Icons.add_circle_outline, color: AdminTheme.primary),
           const SizedBox(width: 8),
           Text(strings.t('createBenefitPackage')),
         ]),
@@ -58,7 +58,7 @@ class _BenefitPackagesScreenState extends State<BenefitPackagesScreen> {
           width: 520,
           child: SingleChildScrollView(
             child: Column(mainAxisSize: MainAxisSize.min, children: [
-              TextField(controller: nameCtrl, decoration: InputDecoration(labelText: strings.t('packageName'), prefixIcon: const Icon(Icons.inventory_2_outlined))),
+              TextField(controller: nameCtrl, decoration: InputDecoration(labelText: strings.t('packageName'), prefixIcon: Icon(Icons.inventory_2_outlined))),
               const SizedBox(height: 12),
               TextField(controller: descCtrl, decoration: InputDecoration(labelText: strings.t('description')), maxLines: 2),
               const SizedBox(height: 12),
@@ -107,7 +107,7 @@ class _BenefitPackagesScreenState extends State<BenefitPackagesScreen> {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setS) => AlertDialog(
           title: Row(children: [
-            const Icon(Icons.medical_services_outlined, color: AdminTheme.primary),
+            Icon(Icons.medical_services_outlined, color: AdminTheme.primary),
             const SizedBox(width: 8),
             Text(strings.t('addServiceItem')),
           ]),
@@ -115,7 +115,7 @@ class _BenefitPackagesScreenState extends State<BenefitPackagesScreen> {
             width: 520,
             child: SingleChildScrollView(
               child: Column(mainAxisSize: MainAxisSize.min, children: [
-                TextField(controller: nameCtrl, decoration: InputDecoration(labelText: strings.t('serviceName'), prefixIcon: const Icon(Icons.local_hospital_outlined))),
+                TextField(controller: nameCtrl, decoration: InputDecoration(labelText: strings.t('serviceName'), prefixIcon: Icon(Icons.local_hospital_outlined))),
                 const SizedBox(height: 12),
                 Row(children: [
                   Expanded(child: TextField(controller: codeCtrl, decoration: InputDecoration(labelText: strings.t('serviceCode'), hintText: 'e.g. OPD-001'))),
@@ -178,7 +178,7 @@ class _BenefitPackagesScreenState extends State<BenefitPackagesScreen> {
         SizedBox(
           width: 280,
           child: Container(
-            color: Colors.white,
+            color: AdminTheme.cardBgFor(Theme.of(context).brightness),
             child: Column(
               children: [
                 Container(
@@ -186,10 +186,10 @@ class _BenefitPackagesScreenState extends State<BenefitPackagesScreen> {
                   color: AdminTheme.primary.withValues(alpha: 0.04),
                   child: Row(
                     children: [
-                      Text(strings.t('benefitPackages'), style: const TextStyle(fontWeight: FontWeight.w700, color: AdminTheme.textDark)),
+                      Text(strings.t('benefitPackages'), style: TextStyle(fontWeight: FontWeight.w700, color: AdminTheme.textPrimaryFor(Theme.of(context).brightness))),
                       const Spacer(),
                       IconButton(
-                        icon: const Icon(Icons.add, color: AdminTheme.primary),
+                        icon: Icon(Icons.add, color: AdminTheme.primary),
                         tooltip: strings.t('createBenefitPackage'),
                         onPressed: _showCreatePackageDialog,
                       ),
@@ -203,13 +203,13 @@ class _BenefitPackagesScreenState extends State<BenefitPackagesScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.inventory_2_outlined, size: 48, color: AdminTheme.textSecondary),
+                              Icon(Icons.inventory_2_outlined, size: 48, color: AdminTheme.textSecondaryFor(Theme.of(context).brightness)),
                               const SizedBox(height: 12),
-                              Text(strings.t('noPackagesYet'), style: const TextStyle(color: AdminTheme.textSecondary)),
+                              Text(strings.t('noPackagesYet'), style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness))),
                               const SizedBox(height: 12),
                               FilledButton.icon(
                                 onPressed: _showCreatePackageDialog,
-                                icon: const Icon(Icons.add, size: 16),
+                                icon: Icon(Icons.add, size: 16),
                                 label: Text(strings.t('createFirst')),
                                 style: FilledButton.styleFrom(backgroundColor: AdminTheme.primary),
                               ),
@@ -233,7 +233,7 @@ class _BenefitPackagesScreenState extends State<BenefitPackagesScreen> {
                                 child: Icon(Icons.inventory_2_outlined, size: 18, color: isSelected ? AdminTheme.primary : AdminTheme.textSecondary),
                               ),
                               title: Text(pkg['name']?.toString() ?? '', style: TextStyle(fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500, color: isSelected ? AdminTheme.primary : AdminTheme.textDark, fontSize: 13)),
-                              subtitle: Text('${pkg['premiumPerMember'] ?? 0} ETB/member', style: const TextStyle(fontSize: 11, color: AdminTheme.textSecondary)),
+                              subtitle: Text('${pkg['premiumPerMember'] ?? 0} ETB/member', style: TextStyle(fontSize: 11, color: AdminTheme.textSecondaryFor(Theme.of(context).brightness))),
                               trailing: pkg['isActive'] == true
                                   ? Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -260,9 +260,9 @@ class _BenefitPackagesScreenState extends State<BenefitPackagesScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.inventory_2_outlined, size: 64, color: Color(0xFFCCDDD9)),
+                      Icon(Icons.inventory_2_outlined, size: 64, color: Color(0xFFCCDDD9)),
                       const SizedBox(height: 16),
-                      Text(strings.t('selectPackagePrompt'), style: const TextStyle(color: AdminTheme.textSecondary, fontSize: 16)),
+                      Text(strings.t('selectPackagePrompt'), style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 16)),
                     ],
                   ),
                 )
@@ -324,14 +324,14 @@ class _PackageDetail extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(12)),
-                  child: const Icon(Icons.inventory_2_outlined, color: Colors.white, size: 28),
+                  child: Icon(Icons.inventory_2_outlined, color: Colors.white, size: 28),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(package['name']?.toString() ?? '', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18)),
+                      Text(package['name']?.toString() ?? '', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18)),
                       if ((package['description']?.toString() ?? '').isNotEmpty)
                         Text(package['description'].toString(), style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 13)),
                     ],
@@ -340,7 +340,7 @@ class _PackageDetail extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text('${package['premiumPerMember'] ?? 0} ETB', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 20)),
+                    Text('${package['premiumPerMember'] ?? 0} ETB', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 20)),
                     Text(strings.t('perMemberPerYear'), style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 11)),
                   ],
                 ),
@@ -366,11 +366,11 @@ class _PackageDetail extends StatelessWidget {
           // Items header
           Row(
             children: [
-              Text(strings.t('coveredServices'), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: AdminTheme.textDark)),
+              Text(strings.t('coveredServices'), style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: AdminTheme.textPrimaryFor(Theme.of(context).brightness))),
               const Spacer(),
               FilledButton.icon(
                 onPressed: onAddItem,
-                icon: const Icon(Icons.add, size: 16),
+                icon: Icon(Icons.add, size: 16),
                 label: Text(strings.t('addService')),
                 style: FilledButton.styleFrom(backgroundColor: AdminTheme.primary, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10)),
               ),
@@ -382,15 +382,15 @@ class _PackageDetail extends StatelessWidget {
           if (items.isEmpty)
             Container(
               padding: const EdgeInsets.all(32),
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey.shade200)),
+              decoration: BoxDecoration(color: AdminTheme.cardBgFor(Theme.of(context).brightness), borderRadius: BorderRadius.circular(12), border: Border.all(color: Theme.of(context).brightness == Brightness.dark ? AdminTheme.darkBorder : Colors.grey.shade200)),
               child: Center(
                 child: Column(
                   children: [
-                    const Icon(Icons.medical_services_outlined, size: 48, color: AdminTheme.textSecondary),
+                    Icon(Icons.medical_services_outlined, size: 48, color: AdminTheme.textSecondaryFor(Theme.of(context).brightness)),
                     const SizedBox(height: 12),
-                    Text(strings.t('noServicesYet'), style: const TextStyle(color: AdminTheme.textSecondary)),
+                    Text(strings.t('noServicesYet'), style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness))),
                     const SizedBox(height: 8),
-                    Text(strings.t('addServicesHint'), style: const TextStyle(color: AdminTheme.textSecondary, fontSize: 12)),
+                    Text(strings.t('addServicesHint'), style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 12)),
                   ],
                 ),
               ),
@@ -407,7 +407,7 @@ class _PackageDetail extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 10),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AdminTheme.cardBgFor(Theme.of(context).brightness),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: Colors.grey.shade100),
                   boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 8, offset: const Offset(0, 2))],
@@ -426,13 +426,13 @@ class _PackageDetail extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Text(item['serviceName']?.toString() ?? '', style: const TextStyle(fontWeight: FontWeight.w600, color: AdminTheme.textDark, fontSize: 14)),
+                              Text(item['serviceName']?.toString() ?? '', style: TextStyle(fontWeight: FontWeight.w600, color: AdminTheme.textPrimaryFor(Theme.of(context).brightness), fontSize: 14)),
                               const SizedBox(width: 8),
                               if ((item['serviceCode']?.toString() ?? '').isNotEmpty)
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(4)),
-                                  child: Text(item['serviceCode'].toString(), style: const TextStyle(fontFamily: 'monospace', fontSize: 10, color: AdminTheme.textSecondary)),
+                                  child: Text(item['serviceCode'].toString(), style: TextStyle(fontFamily: 'monospace', fontSize: 10, color: AdminTheme.textSecondaryFor(Theme.of(context).brightness))),
                                 ),
                             ],
                           ),
@@ -443,7 +443,7 @@ class _PackageDetail extends StatelessWidget {
                               _InfoTag(label: category.toUpperCase(), color: color),
                               if (maxAmount > 0) _InfoTag(label: 'Max: $maxAmount ETB', color: AdminTheme.warning),
                               if (coPay > 0) _InfoTag(label: 'Co-pay: $coPay%', color: AdminTheme.primary),
-                              if (maxPerYear > 0) _InfoTag(label: 'Max $maxPerYear/yr', color: AdminTheme.textSecondary),
+                              if (maxPerYear > 0) _InfoTag(label: 'Max $maxPerYear/yr', color: AdminTheme.textSecondaryFor(Theme.of(context).brightness)),
                               if (maxAmount == 0 && coPay == 0) _InfoTag(label: strings.t('fullyCovered'), color: AdminTheme.success),
                             ],
                           ),
@@ -489,7 +489,7 @@ class _StatChip extends StatelessWidget {
         children: [
           Text(value, style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: color)),
           const SizedBox(height: 2),
-          Text(label, style: const TextStyle(fontSize: 11, color: AdminTheme.textSecondary)),
+          Text(label, style: TextStyle(fontSize: 11, color: AdminTheme.textSecondaryFor(Theme.of(context).brightness))),
         ],
       ),
     );

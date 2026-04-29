@@ -87,9 +87,15 @@ export class FacilityService {
           ? {
               coverageNumber: coverage.coverageNumber,
               status: coverage.status,
-              startDate: coverage.startDate.toISOString(),
-              endDate: coverage.endDate.toISOString(),
-              nextRenewalDate: coverage.nextRenewalDate?.toISOString() ?? null,
+              startDate: coverage.startDate instanceof Date
+                ? coverage.startDate.toISOString()
+                : ((coverage.startDate as unknown as string)?.toString() ?? null),
+              endDate: coverage.endDate instanceof Date
+                ? coverage.endDate.toISOString()
+                : ((coverage.endDate as unknown as string)?.toString() ?? null),
+              nextRenewalDate: coverage.nextRenewalDate instanceof Date
+                ? coverage.nextRenewalDate.toISOString()
+                : ((coverage.nextRenewalDate as unknown as string)?.toString() ?? null),
             }
           : null,
       eligibility: {
@@ -455,9 +461,15 @@ export class FacilityService {
       id: claim.id,
       claimNumber: claim.claimNumber,
       status: claim.status,
-      serviceDate: claim.serviceDate.toISOString(),
-      submittedAt: claim.submittedAt?.toISOString() ?? null,
-      reviewedAt: claim.reviewedAt?.toISOString() ?? null,
+      serviceDate: claim.serviceDate instanceof Date
+        ? claim.serviceDate.toISOString()
+        : ((claim.serviceDate as unknown as string)?.toString() ?? null),
+      submittedAt: claim.submittedAt instanceof Date
+        ? claim.submittedAt.toISOString()
+        : ((claim.submittedAt as unknown as string)?.toString() ?? null),
+      reviewedAt: claim.reviewedAt instanceof Date
+        ? claim.reviewedAt.toISOString()
+        : ((claim.reviewedAt as unknown as string)?.toString() ?? null),
       claimedAmount: Number(claim.claimedAmount),
       approvedAmount: Number(claim.approvedAmount),
       memberCoPayment: Number(claim.memberCoPayment ?? 0),

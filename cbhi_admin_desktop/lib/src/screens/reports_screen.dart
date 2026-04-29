@@ -233,7 +233,7 @@ class _ReportsScreenState extends State<ReportsScreen>
       children: [
         // ── Date range filter bar ─────────────────────────────────────────
         Container(
-          color: Colors.white,
+          color: AdminTheme.cardBgFor(Theme.of(context).brightness),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           child: Row(
             children: [
@@ -245,7 +245,7 @@ class _ReportsScreenState extends State<ReportsScreen>
                   hasRange
                       ? '${fmt.format(_from!)} — ${fmt.format(_to!)}'
                       : strings.t('selectDateRange'),
-                  style: const TextStyle(color: AdminTheme.primary, fontSize: 13),
+                  style: TextStyle(color: AdminTheme.primary, fontSize: 13),
                 ),
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: AdminTheme.primary),
@@ -256,8 +256,8 @@ class _ReportsScreenState extends State<ReportsScreen>
                 const SizedBox(width: 8),
                 IconButton(
                   onPressed: _clearDateRange,
-                  icon: const Icon(Icons.close, size: 16,
-                      color: AdminTheme.textSecondary),
+                  icon: Icon(Icons.close, size: 16,
+                      color: AdminTheme.textSecondaryFor(Theme.of(context).brightness)),
                   tooltip: strings.t('clearDateRange'),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
@@ -270,7 +270,7 @@ class _ReportsScreenState extends State<ReportsScreen>
                   ),
                   child: Text(
                     strings.t('dateRangeActive'),
-                    style: const TextStyle(
+                    style: TextStyle(
                         color: AdminTheme.primary,
                         fontSize: 11,
                         fontWeight: FontWeight.w600),
@@ -289,18 +289,18 @@ class _ReportsScreenState extends State<ReportsScreen>
 
         // ── Tab bar ───────────────────────────────────────────────────────
         Container(
-          color: Colors.white,
+          color: AdminTheme.cardBgFor(Theme.of(context).brightness),
           child: TabBar(
             controller: _tabController,
             isScrollable: true,
             tabAlignment: TabAlignment.start,
             labelColor: AdminTheme.primary,
-            unselectedLabelColor: AdminTheme.textSecondary,
+            unselectedLabelColor: AdminTheme.textSecondaryFor(Theme.of(context).brightness),
             indicatorColor: AdminTheme.primary,
             indicatorWeight: 2,
-            labelStyle: const TextStyle(
+            labelStyle: TextStyle(
                 fontWeight: FontWeight.w600, fontSize: 13),
-            unselectedLabelStyle: const TextStyle(fontSize: 13),
+            unselectedLabelStyle: TextStyle(fontSize: 13),
             tabs: const [
               Tab(text: 'Summary'),
               Tab(text: 'Claims Analysis'),
@@ -491,7 +491,7 @@ class _KpiCard extends StatelessWidget {
       width: 220,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AdminTheme.cardBgFor(Theme.of(context).brightness),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -559,9 +559,9 @@ class _KpiCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
-              color: AdminTheme.textSecondary,
+              color: AdminTheme.textSecondaryFor(Theme.of(context).brightness),
             ),
           ),
         ],
@@ -578,10 +578,10 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 15,
         fontWeight: FontWeight.w700,
-        color: AdminTheme.textDark,
+        color: AdminTheme.textPrimaryFor(Theme.of(context).brightness),
       ),
     );
   }
@@ -602,7 +602,7 @@ class _ClaimsBreakdownTable extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AdminTheme.cardBgFor(Theme.of(context).brightness),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -632,8 +632,8 @@ class _ClaimsBreakdownTable extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(label,
-                    style: const TextStyle(
-                        color: AdminTheme.textDark, fontSize: 13)),
+                    style: TextStyle(
+                        color: AdminTheme.textPrimaryFor(Theme.of(context).brightness), fontSize: 13)),
                 const Spacer(),
                 Text(
                   '$value',
@@ -666,7 +666,7 @@ class _FinancialSummaryTable extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AdminTheme.cardBgFor(Theme.of(context).brightness),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -690,14 +690,14 @@ class _FinancialSummaryTable extends StatelessWidget {
             child: Row(
               children: [
                 Text(label,
-                    style: const TextStyle(
-                        color: AdminTheme.textSecondary, fontSize: 13)),
+                    style: TextStyle(
+                        color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 13)),
                 const Spacer(),
                 Text(value,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
-                        color: AdminTheme.textDark)),
+                        color: AdminTheme.textPrimaryFor(Theme.of(context).brightness))),
               ],
             ),
           );
@@ -766,7 +766,7 @@ class _ClaimsTab extends StatelessWidget {
       children: [
         // Search + export bar
         Container(
-          color: Colors.white,
+          color: AdminTheme.cardBgFor(Theme.of(context).brightness),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           child: Row(
             children: [
@@ -835,7 +835,7 @@ class _ClaimsTab extends StatelessWidget {
               ? Center(
                   child: Text(
                     'No claims found',
-                    style: const TextStyle(color: AdminTheme.textSecondary),
+                    style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness)),
                   ),
                 )
               : SingleChildScrollView(
@@ -859,27 +859,27 @@ class _ClaimsTab extends StatelessWidget {
                           return DataRow(cells: [
                             DataCell(Text(
                               c['claimNumber']?.toString() ?? '—',
-                              style: const TextStyle(
+                              style: TextStyle(
                                   fontWeight: FontWeight.w600, fontSize: 12),
                             )),
                             DataCell(Text(
                               (c['beneficiary'] as Map?)?['name']
                                       ?.toString() ??
                                   '—',
-                              style: const TextStyle(fontSize: 13),
+                              style: TextStyle(fontSize: 13),
                             )),
                             DataCell(Text(
                               (c['facility'] as Map?)?['name']?.toString() ??
                                   '—',
-                              style: const TextStyle(fontSize: 13),
+                              style: TextStyle(fontSize: 13),
                             )),
                             DataCell(Text(
                               '${c['claimedAmount'] ?? 0}',
-                              style: const TextStyle(fontSize: 13),
+                              style: TextStyle(fontSize: 13),
                             )),
                             DataCell(Text(
                               '${c['approvedAmount'] ?? '—'}',
-                              style: const TextStyle(fontSize: 13),
+                              style: TextStyle(fontSize: 13),
                             )),
                             DataCell(Container(
                               padding: const EdgeInsets.symmetric(
@@ -900,9 +900,9 @@ class _ClaimsTab extends StatelessWidget {
                             DataCell(Text(
                               c['serviceDate']?.toString().split('T').first ??
                                   '—',
-                              style: const TextStyle(
+                              style: TextStyle(
                                   fontSize: 12,
-                                  color: AdminTheme.textSecondary),
+                                  color: AdminTheme.textSecondaryFor(Theme.of(context).brightness)),
                             )),
                           ]);
                         }).toList(),
@@ -988,7 +988,7 @@ class _FinancialTab extends StatelessWidget {
                       ),
                       Text(
                         '${netPosition.toStringAsFixed(0)} ETB',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white,
                           fontSize: 28,
                           fontWeight: FontWeight.w800,
@@ -998,7 +998,7 @@ class _FinancialTab extends StatelessWidget {
                         isHealthy
                             ? 'Scheme is financially healthy'
                             : 'Scheme is in deficit — action required',
-                        style: const TextStyle(
+                        style: TextStyle(
                             color: Colors.white70, fontSize: 12),
                       ),
                     ],
@@ -1059,7 +1059,7 @@ class _FinancialTab extends StatelessWidget {
             height: 200,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AdminTheme.cardBgFor(Theme.of(context).brightness),
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
@@ -1116,8 +1116,8 @@ class _RevenueClaimsBar extends StatelessWidget {
               SizedBox(
                 width: 120,
                 child: Text(label,
-                    style: const TextStyle(
-                        fontSize: 12, color: AdminTheme.textSecondary)),
+                    style: TextStyle(
+                        fontSize: 12, color: AdminTheme.textSecondaryFor(Theme.of(context).brightness))),
               ),
               Expanded(
                 child: LayoutBuilder(
@@ -1198,9 +1198,9 @@ class _FacilityTab extends StatelessWidget {
       return ErrorStateWidget(message: error!, onRetry: onRetry);
     }
     if (facilities.isEmpty) {
-      return const Center(
+      return Center(
         child: Text('No facility data available.',
-            style: TextStyle(color: AdminTheme.textSecondary)),
+            style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness))),
       );
     }
 
@@ -1235,7 +1235,7 @@ class _FacilityTab extends StatelessWidget {
                   f['facilityName']?.toString() ??
                       f['name']?.toString() ??
                       '—',
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  style: TextStyle(fontWeight: FontWeight.w600),
                 )),
                 DataCell(Text('$total')),
                 DataCell(Text('$approved')),
@@ -1342,7 +1342,7 @@ class _MemberTrendsTab extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AdminTheme.cardBgFor(Theme.of(context).brightness),
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
@@ -1399,7 +1399,7 @@ class _MemberTrendsTab extends StatelessWidget {
                         (a['userId']?.toString() ?? '—').length > 12
                             ? '${a['userId'].toString().substring(0, 12)}…'
                             : a['userId']?.toString() ?? '—',
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontFamily: 'monospace', fontSize: 11),
                       )),
                       DataCell(Text('${a['score'] ?? 0}')),
@@ -1469,8 +1469,8 @@ class _BreakdownRow extends StatelessWidget {
         Row(
           children: [
             Text(label,
-                style: const TextStyle(
-                    fontSize: 13, color: AdminTheme.textDark)),
+                style: TextStyle(
+                    fontSize: 13, color: AdminTheme.textPrimaryFor(Theme.of(context).brightness))),
             const Spacer(),
             Text(
               '$count ($pct%)',
@@ -1522,7 +1522,7 @@ void _showCsvDialog(BuildContext context, String csv, String filename) {
         child: SingleChildScrollView(
           child: SelectableText(
             csv,
-            style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
+            style: TextStyle(fontFamily: 'monospace', fontSize: 11),
           ),
         ),
       ),

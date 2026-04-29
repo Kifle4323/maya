@@ -297,9 +297,15 @@ export class CoverageService {
     return {
       coverageNumber: coverage.coverageNumber,
       status: coverage.status,
-      startDate: coverage.startDate?.toISOString() ?? null,
-      endDate: coverage.endDate?.toISOString() ?? null,
-      nextRenewalDate: coverage.nextRenewalDate?.toISOString() ?? null,
+      startDate: coverage.startDate instanceof Date
+        ? coverage.startDate.toISOString()
+        : ((coverage.startDate as unknown as string)?.toString() ?? null),
+      endDate: coverage.endDate instanceof Date
+        ? coverage.endDate.toISOString()
+        : ((coverage.endDate as unknown as string)?.toString() ?? null),
+      nextRenewalDate: coverage.nextRenewalDate instanceof Date
+        ? coverage.nextRenewalDate.toISOString()
+        : ((coverage.nextRenewalDate as unknown as string)?.toString() ?? null),
       premiumAmount: Number(coverage.premiumAmount ?? 0),
       paidAmount: Number(coverage.paidAmount ?? 0),
       annualCeiling: Number(coverage.benefitPackage?.annualCeiling ?? 0),

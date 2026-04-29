@@ -163,13 +163,13 @@ class _FacilitiesScreenState extends State<FacilitiesScreen> {
     return Column(
       children: [
         Container(
-          color: Colors.white,
+          color: AdminTheme.cardBgFor(Theme.of(context).brightness),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           child: Row(
             children: [
               Text(strings.t('healthFacilities'),
-                  style: const TextStyle(fontWeight: FontWeight.w600,
-                      color: AdminTheme.textDark)),
+                  style: TextStyle(fontWeight: FontWeight.w600,
+                      color: AdminTheme.textPrimaryFor(Theme.of(context).brightness))),
               if (!_loading)
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
@@ -180,7 +180,7 @@ class _FacilitiesScreenState extends State<FacilitiesScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text('${_facilities.length}',
-                        style: const TextStyle(color: AdminTheme.primary,
+                        style: TextStyle(color: AdminTheme.primary,
                             fontWeight: FontWeight.w600, fontSize: 12)),
                   ),
                 ),
@@ -237,7 +237,7 @@ class _FacilitiesScreenState extends State<FacilitiesScreen> {
                           final isAccredited = f['isAccredited'] == true;
                           return DataRow(cells: [
                             DataCell(Text(f['name']?.toString() ?? '',
-                                style: const TextStyle(fontWeight: FontWeight.w600))),
+                                style: TextStyle(fontWeight: FontWeight.w600))),
                             DataCell(Text(f['facilityCode']?.toString() ?? '—')),
                             DataCell(Text(f['serviceLevel']?.toString() ?? '—')),
                             DataCell(Text(f['phoneNumber']?.toString() ?? '—')),
@@ -302,7 +302,7 @@ class _FacilityCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     facility['name']?.toString() ?? '',
-                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
                   ),
                 ),
                 Container(
@@ -325,11 +325,11 @@ class _FacilityCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text('${strings.t('facilityCode')}: ${facility['facilityCode'] ?? '—'}',
-                style: const TextStyle(color: AdminTheme.textSecondary, fontSize: 13)),
+                style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 13)),
             Text('${strings.t('serviceLevel')}: ${facility['serviceLevel'] ?? '—'}',
-                style: const TextStyle(color: AdminTheme.textSecondary, fontSize: 13)),
+                style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 13)),
             Text('${strings.t('staffCount')}: ${facility['staffCount'] ?? 0}',
-                style: const TextStyle(color: AdminTheme.textSecondary, fontSize: 13)),
+                style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 13)),
             const SizedBox(height: 12),
             TextButton.icon(
               onPressed: onAddStaff,

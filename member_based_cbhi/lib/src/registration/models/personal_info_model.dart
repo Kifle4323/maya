@@ -75,7 +75,7 @@ class PersonalInfoModel {
       firstName: json['firstName']?.toString() ?? '',
       middleName: json['middleName']?.toString(),
       lastName: json['lastName']?.toString() ?? '',
-      age: (json['age'] as num?)?.toInt() ?? 0,
+      age: int.tryParse(json['age']?.toString() ?? '0') ?? 0,
       phone: json['phone']?.toString(),
       email: json['email']?.toString(),
       gender: json['gender']?.toString() ?? 'OTHER',
@@ -87,7 +87,7 @@ class PersonalInfoModel {
       zone: address['zone']?.toString() ?? '',
       woreda: address['woreda']?.toString(),
       kebele: address['kebele']?.toString(),
-      householdSize: (json['householdSize'] as num?)?.toInt() ?? 1,
+      householdSize: int.tryParse(json['householdSize']?.toString() ?? '1') ?? 1,
       preferredLanguage: json['preferredLanguage']?.toString() ?? 'en',
     );
   }

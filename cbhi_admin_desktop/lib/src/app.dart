@@ -18,6 +18,7 @@ class CbhiAdminApp extends StatefulWidget {
 class _CbhiAdminAppState extends State<CbhiAdminApp> {
   bool _isLoading = true;
   bool _isAuthenticated = false;
+  ThemeMode _themeMode = ThemeMode.system;
   Locale _locale = AppLocalizations.resolveAppLocale(
     WidgetsBinding.instance.platformDispatcher.locale,
   );
@@ -25,30 +26,39 @@ class _CbhiAdminAppState extends State<CbhiAdminApp> {
   @override
   void initState() {
     super.initState();
-    _init();
+    // If no stored token, skip network calls and show login immediately
+    if (!widget.repository.isAuthenticated) {
+      _isLoading = false;
+      _isAuthenticated = false;
+    } else {
+      // Has a token — validate it in the background while showing splash
+      _validateToken();
+    }
   }
 
-  Future<void> _init() async {
-    await widget.repository.init();
-    // Validate the stored token against the backend — don't trust it blindly
-    if (widget.repository.isAuthenticated) {
-      final valid = await widget.repository.ping();
+  Future<void> _validateToken() async {
+    try {
+      final valid = await widget.repository.ping().timeout(const Duration(seconds: 5));
+      debugPrint('[AdminApp] Ping result: $valid');
       if (!valid) {
         // Backend unreachable — still show main shell (offline mode)
-        setState(() { _isAuthenticated = true; _isLoading = false; });
+        if (mounted) setState(() { _isAuthenticated = true; _isLoading = false; });
         return;
       }
       // Try a lightweight auth check
       try {
-        await widget.repository.getSummaryReport();
-        setState(() { _isAuthenticated = true; _isLoading = false; });
+        await widget.repository.getSummaryReport().timeout(const Duration(seconds: 8));
+        debugPrint('[AdminApp] Auth check passed');
+        if (mounted) setState(() { _isAuthenticated = true; _isLoading = false; });
       } catch (e) {
+        debugPrint('[AdminApp] Auth check failed: $e');
         // Token invalid/expired — force re-login
         await widget.repository.logout();
-        setState(() { _isAuthenticated = false; _isLoading = false; });
+        if (mounted) setState(() { _isAuthenticated = false; _isLoading = false; });
       }
-    } else {
-      setState(() { _isAuthenticated = false; _isLoading = false; });
+    } catch (e) {
+      debugPrint('[AdminApp] Token validation error: $e');
+      if (mounted) setState(() { _isAuthenticated = true; _isLoading = false; });
     }
   }
 
@@ -71,6 +81,8 @@ class _CbhiAdminAppState extends State<CbhiAdminApp> {
         GlobalCupertinoLocalizations.delegate,
       ],
       theme: AdminTheme.theme,
+      darkTheme: AdminTheme.darkTheme,
+      themeMode: _themeMode,
       home: _isLoading
           ? const _SplashScreen()
           : !_isAuthenticated
@@ -85,6 +97,8 @@ class _CbhiAdminAppState extends State<CbhiAdminApp> {
               onLogout: () => setState(() => _isAuthenticated = false),
               locale: _locale,
               onLocaleChanged: (locale) => setState(() => _locale = locale),
+              themeMode: _themeMode,
+              onThemeChanged: (mode) => setState(() => _themeMode = mode),
             ),
     );
   }

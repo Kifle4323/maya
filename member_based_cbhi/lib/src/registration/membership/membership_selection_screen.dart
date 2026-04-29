@@ -214,7 +214,7 @@ class MembershipSelectionScreen extends StatelessWidget {
               cubit.submitPayingMembership(
                 const MembershipSelection(
                   type: MembershipType.paying,
-                  premiumAmount: 0,
+                  premiumAmount: null,
                 ),
               );
             },
@@ -263,7 +263,7 @@ class _MembershipCard extends StatelessWidget {
     final strings = CbhiLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.cardBgFor(Theme.of(context).brightness),
         borderRadius: BorderRadius.circular(AppTheme.radiusM),
         border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
         boxShadow: AppTheme.subtleShadow,

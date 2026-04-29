@@ -6,9 +6,10 @@ import { ReferralController } from './referral.controller';
 import { HealthFacility } from '../health-facilities/health-facility.entity';
 import { Beneficiary } from '../beneficiaries/beneficiary.entity';
 import { FacilityUser } from '../facility-users/facility-user.entity';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Referral, HealthFacility, Beneficiary, FacilityUser])],
+  imports: [TypeOrmModule.forFeature([Referral, HealthFacility, Beneficiary, FacilityUser]), AuthModule],
   providers: [ReferralService],
   controllers: [ReferralController],
   exports: [ReferralService],

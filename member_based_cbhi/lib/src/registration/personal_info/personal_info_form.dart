@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart'
     if (dart.library.html) '../../shared/permission_handler_stub.dart';
@@ -340,11 +341,11 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
 
   Future<void> _checkPhone(String value) async {
     final phone = value.trim();
-    if (phone.length < 10) {
+    if (phone.length < 13) {
       if (_phoneError != null) setState(() => _phoneError = null);
       return;
     }
-    // Debounce — wait 600ms after last keystroke
+    // Debounce  wait 600ms after last keystroke
     final now = DateTime.now();
     _lastPhoneCheck = now;
     await Future<void>.delayed(const Duration(milliseconds: 600));
@@ -436,6 +437,14 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
                                   _firstName,
                                   strings.t('firstName'),
                                   required: true,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s'-]")),
+                                  ],
+                                  validator: (v) {
+                                    if (v == null || v.trim().isEmpty) return strings.t('required');
+                                    if (!RegExp(r"^[a-zA-Z\s'-]+$").hasMatch(v.trim())) return strings.t('invalidName');
+                                    return null;
+                                  },
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -445,7 +454,16 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
                             ],
                           ),
                           const SizedBox(height: 12),
-                          _buildTextField(_lastName, strings.t('lastName'), required: true),
+                          _buildTextField(_lastName, strings.t('lastName'), required: true,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s'-]")),
+                            ],
+                            validator: (v) {
+                              if (v == null || v.trim().isEmpty) return strings.t('required');
+                              if (!RegExp(r"^[a-zA-Z\s'-]+$").hasMatch(v.trim())) return strings.t('invalidName');
+                              return null;
+                            },
+                          ),
                           const SizedBox(height: 12),
 
                           // Phone + Email
@@ -455,6 +473,9 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
                                 child: TextFormField(
                                   controller: _phone,
                                   keyboardType: TextInputType.phone,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(RegExp(r'[+0-9]')),
+                                  ],
                                   decoration: InputDecoration(
                                     labelText: strings.t('phoneNumber'),
                                     hintText: '+2519XXXXXXXX',
@@ -476,6 +497,7 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
                                   onChanged: _checkPhone,
                                   validator: (v) {
                                     if (v == null || v.trim().isEmpty) return strings.t('required');
+                                    if (!RegExp(r'^\+?251\d{9}$|^0?9\d{8}$').hasMatch(v.trim())) return strings.t('invalidPhone');
                                     if (_phoneError != null) return _phoneError;
                                     return null;
                                   },
@@ -486,7 +508,14 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
                                 child: _buildTextField(
                                   _email,
                                   strings.t('emailAddress'),
+                                  required: true,
                                   keyboardType: TextInputType.emailAddress,
+                                  validator: (v) {
+                                    if (v == null || v.trim().isEmpty) return strings.t('required');
+                                    final emailRegex = RegExp(r'^[\w\-.]+@([\w-]+\.)+[\w-]{2,}$');
+                                    if (!emailRegex.hasMatch(v.trim())) return strings.t('invalidEmail');
+                                    return null;
+                                  },
                                 ),
                               ),
                             ],
@@ -498,7 +527,7 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
                             children: [
                               Expanded(
                                 child: DropdownButtonFormField<String>(
-                                  initialValue: _gender,
+                                  value: _gender,
                                   decoration: InputDecoration(labelText: strings.t('gender')),
                                   items: [
                                     DropdownMenuItem(value: 'FEMALE', child: Text(strings.t('female'))),
@@ -561,7 +590,7 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
                                       children: [
                                         Expanded(
                                           child: DropdownButtonFormField<LocationItem>(
-                                            initialValue: _selectedRegion,
+                                            value: _selectedRegion,
                                             decoration: InputDecoration(labelText: strings.t('region')),
                                             items: _regions
                                                 .map((r) => DropdownMenuItem(
@@ -576,7 +605,7 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
                                         const SizedBox(width: 12),
                                         Expanded(
                                           child: DropdownButtonFormField<LocationItem>(
-                                            initialValue: _selectedZone,
+                                            value: _selectedZone,
                                             decoration: InputDecoration(labelText: strings.t('zone')),
                                             items: _zones
                                                 .map((z) => DropdownMenuItem(
@@ -596,7 +625,7 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
                                       children: [
                                         Expanded(
                                           child: DropdownButtonFormField<LocationItem>(
-                                            initialValue: _selectedWoreda,
+                                            value: _selectedWoreda,
                                             decoration: InputDecoration(labelText: strings.t('woreda')),
                                             items: _woredas
                                                 .map((w) => DropdownMenuItem(
@@ -611,7 +640,7 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
                                         const SizedBox(width: 12),
                                         Expanded(
                                           child: DropdownButtonFormField<LocationItem>(
-                                            initialValue: _selectedKebele,
+                                            value: _selectedKebele,
                                             decoration: InputDecoration(labelText: strings.t('kebele')),
                                             items: _kebeles
                                                 .map((k) => DropdownMenuItem(
@@ -642,15 +671,16 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Birth certificate (optional)
+                  // Birth certificate (required)
                   _DocumentPickerCard(
                     title: strings.t('birthCertificate'),
-                    subtitle: strings.t('optionalImageOrPdf'),
+                    subtitle: strings.t('requiredImageOrPdf'),
                     path: _birthCertificatePath,
                     onPick: _pickBirthCertificate,
                     isImage: _birthCertificatePath != null && _isImage(_birthCertificatePath!),
                     uploadLabel: strings.t('uploadDocument'),
                     replaceLabel: strings.t('replaceDocument'),
+                    isRequired: true,
                   ),
                   const SizedBox(height: 32),
 
@@ -705,7 +735,15 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
     if (_checkingPhone) return; // Block if check in progress
     final strings = CbhiLocalizations.of(context);
 
-    // Validate location — either dropdown or fallback text
+    // Validate birth certificate is uploaded
+    if (_birthCertificatePath == null || _birthCertificatePath!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(strings.t('birthCertificateRequired'))),
+      );
+      return;
+    }
+
+    // Validate location  either dropdown or fallback text
     final regionName = _selectedRegion?.name ?? _regionCtrl.text.trim();
     final zoneName = _selectedZone?.name ?? _zoneCtrl.text.trim();
     final woredaName = _selectedWoreda?.name ?? _woredaCtrl.text.trim();
@@ -758,19 +796,22 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
     bool required = false,
     TextInputType? keyboardType,
     String? hintText,
+    String? Function(String?)? validator,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     final strings = CbhiLocalizations.of(context);
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
       decoration: InputDecoration(
         labelText: label,
         hintText: hintText,
         alignLabelWithHint: true,
       ),
-      validator: required
+      validator: validator ?? (required
           ? (v) => (v == null || v.trim().isEmpty) ? strings.t('required') : null
-          : null,
+          : null),
     );
   }
 }
@@ -784,6 +825,7 @@ class _DocumentPickerCard extends StatelessWidget {
     required this.isImage,
     required this.uploadLabel,
     required this.replaceLabel,
+    this.isRequired = false,
   });
 
   final String title;
@@ -793,6 +835,7 @@ class _DocumentPickerCard extends StatelessWidget {
   final bool isImage;
   final String uploadLabel;
   final String replaceLabel;
+  final bool isRequired;
 
   @override
   Widget build(BuildContext context) {
@@ -802,9 +845,23 @@ class _DocumentPickerCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: Theme.of(context).textTheme.titleMedium),
+            Row(
+              children: [
+                Text(title, style: Theme.of(context).textTheme.titleMedium),
+                if (isRequired)
+                  Text(' *', style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 16, fontWeight: FontWeight.w700)),
+              ],
+            ),
             const SizedBox(height: 4),
             Text(subtitle),
+            if (isRequired && path == null)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  CbhiLocalizations.of(context).t('birthCertificateRequired'),
+                  style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 12),
+                ),
+              ),
             const SizedBox(height: 12),
             if (path != null)
               Container(

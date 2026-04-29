@@ -17,23 +17,23 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static const _projectId = String.fromEnvironment(
     'FIREBASE_PROJECT_ID',
-    defaultValue: 'maya-city-cbhi',
+    defaultValue: 'maya-71797',
   );
   static const _apiKey = String.fromEnvironment(
     'FIREBASE_API_KEY',
-    defaultValue: 'AIzaSyPlaceholderKeyReplaceWithReal',
+    defaultValue: 'AIzaSyCUYIBBQnaR0EzfrPvP7n2qxZZz0rz8ubs',
   );
   static const _messagingSenderId = String.fromEnvironment(
     'FIREBASE_MESSAGING_SENDER_ID',
-    defaultValue: '000000000000',
+    defaultValue: '29920872141',
   );
   static const _storageBucket = String.fromEnvironment(
     'FIREBASE_STORAGE_BUCKET',
-    defaultValue: 'maya-city-cbhi.appspot.com',
+    defaultValue: 'maya-71797.firebasestorage.app',
   );
   static const _appIdWeb = String.fromEnvironment(
     'FIREBASE_APP_ID_WEB',
-    defaultValue: '1:000000000000:web:0000000000000000000000',
+    defaultValue: '1:29920872141:web:994fea511f203782ea8b84',
   );
 
   static FirebaseOptions get currentPlatform {

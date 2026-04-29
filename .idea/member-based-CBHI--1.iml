@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/cbhi_admin_desktop/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/cbhi_admin_desktop/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/cbhi_admin_desktop/build" />
+      <excludeFolder url="file://$MODULE_DIR$/cbhi_facility_desktop/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/cbhi_facility_desktop/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/cbhi_facility_desktop/build" />
+      <excludeFolder url="file://$MODULE_DIR$/member_based_cbhi/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/member_based_cbhi/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/member_based_cbhi/build" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

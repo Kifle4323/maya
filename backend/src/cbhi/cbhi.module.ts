@@ -11,6 +11,7 @@ import { ClaimAppealService } from '../claims/claim-appeal.service';
 import { Coverage } from '../coverages/coverage.entity';
 import { Document } from '../documents/document.entity';
 import { HealthFacility } from '../health-facilities/health-facility.entity';
+import { IndigentApplication } from '../indigent/indigent.entity';
 import { Household } from '../households/household.entity';
 import { IntegrationsModule } from '../integrations/integrations.module';
 import { Notification } from '../notifications/notification.entity';
@@ -44,6 +45,7 @@ import { RegistrationService } from './registration.service';
       ClaimItem,
       Notification,
       HealthFacility,
+      IndigentApplication,
     ]),
   ],
   controllers: [CbhiController],

@@ -93,16 +93,16 @@ class _TotpSetupScreenState extends State<TotpSetupScreen> {
               const SizedBox(height: 20),
               Text(
                 strings.t('totpActivated'),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
-                  color: AdminTheme.textDark,
+                  color: AdminTheme.textPrimaryFor(Theme.of(context).brightness),
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 strings.t('totpActivatedSubtitle'),
-                style: const TextStyle(color: AdminTheme.textSecondary),
+                style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness)),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 28),
@@ -151,17 +151,17 @@ class _TotpSetupScreenState extends State<TotpSetupScreen> {
                           children: [
                             Text(
                               strings.t('twoFactorRequired'),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 16,
-                                color: AdminTheme.textDark,
+                                color: AdminTheme.textPrimaryFor(Theme.of(context).brightness),
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               strings.t('twoFactorRequiredSubtitle'),
-                              style: const TextStyle(
-                                color: AdminTheme.textSecondary,
+                              style: TextStyle(
+                                color: AdminTheme.textSecondaryFor(Theme.of(context).brightness),
                                 fontSize: 13,
                               ),
                             ),
@@ -196,7 +196,7 @@ class _TotpSetupScreenState extends State<TotpSetupScreen> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AdminTheme.cardBgFor(Theme.of(context).brightness),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: Colors.grey.shade200),
                         ),
@@ -210,8 +210,8 @@ class _TotpSetupScreenState extends State<TotpSetupScreen> {
                             const SizedBox(height: 8),
                             Text(
                               strings.t('totpQrHint'),
-                              style: const TextStyle(
-                                color: AdminTheme.textSecondary,
+                              style: TextStyle(
+                                color: AdminTheme.textSecondaryFor(Theme.of(context).brightness),
                                 fontSize: 12,
                               ),
                               textAlign: TextAlign.center,
@@ -223,8 +223,8 @@ class _TotpSetupScreenState extends State<TotpSetupScreen> {
                       // Manual entry secret
                       Text(
                         strings.t('totpManualEntry'),
-                        style: const TextStyle(
-                          color: AdminTheme.textSecondary,
+                        style: TextStyle(
+                          color: AdminTheme.textSecondaryFor(Theme.of(context).brightness),
                           fontSize: 12,
                         ),
                       ),
@@ -244,7 +244,7 @@ class _TotpSetupScreenState extends State<TotpSetupScreen> {
                               ),
                               child: Text(
                                 _secret ?? '',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontFamily: 'monospace',
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
@@ -306,7 +306,7 @@ class _TotpSetupScreenState extends State<TotpSetupScreen> {
                               Expanded(
                                 child: Text(
                                   _error!,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: AdminTheme.error,
                                     fontSize: 13,
                                   ),
@@ -393,7 +393,7 @@ class _StepCard extends StatelessWidget {
                   child: Center(
                     child: Text(
                       step,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
                         fontSize: 13,
@@ -404,10 +404,10 @@ class _StepCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
-                    color: AdminTheme.textDark,
+                    color: AdminTheme.textPrimaryFor(Theme.of(context).brightness),
                   ),
                 ),
               ],
@@ -415,8 +415,8 @@ class _StepCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               body,
-              style: const TextStyle(
-                color: AdminTheme.textSecondary,
+              style: TextStyle(
+                color: AdminTheme.textSecondaryFor(Theme.of(context).brightness),
                 fontSize: 13,
                 height: 1.5,
               ),

@@ -61,7 +61,7 @@ class _MemberClaimsScreenState extends State<MemberClaimsScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Row(children: [
-          const Icon(Icons.gavel_outlined, color: AppTheme.m3Primary),
+          Icon(Icons.gavel_outlined, color: AppTheme.m3Primary),
           const SizedBox(width: 8),
           Text(strings.t('submitAppeal')),
         ]),
@@ -73,7 +73,7 @@ class _MemberClaimsScreenState extends State<MemberClaimsScreen> {
             children: [
               Text(
                 strings.f('appealForClaim', {'claimNumber': claim['claimNumber']?.toString() ?? ''}),
-                style: const TextStyle(fontWeight: FontWeight.w600),
+                style: TextStyle(fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 12),
               TextField(
@@ -160,8 +160,8 @@ class _MemberClaimsScreenState extends State<MemberClaimsScreen> {
             children: [
               Text(
                 strings.t('claimsHistory'),
-                style: const TextStyle(
-                  color: AppTheme.m3OnSurface,
+                style: TextStyle(
+                  color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                   fontSize: 28,
                   fontWeight: FontWeight.w600,
                   height: 1.2,
@@ -170,8 +170,8 @@ class _MemberClaimsScreenState extends State<MemberClaimsScreen> {
               const SizedBox(height: 4),
               Text(
                 strings.t('trackClaimsSubtitle'),
-                style: const TextStyle(
-                  color: AppTheme.m3OnSurfaceVariant,
+                style: TextStyle(
+                  color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                 ),
@@ -194,7 +194,7 @@ class _MemberClaimsScreenState extends State<MemberClaimsScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.auto_awesome_outlined, color: AppTheme.m3OnTertiaryContainer, size: 20),
+                Icon(Icons.auto_awesome_outlined, color: AppTheme.m3OnTertiaryContainer, size: 20),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -202,7 +202,7 @@ class _MemberClaimsScreenState extends State<MemberClaimsScreen> {
                     children: [
                       Text(
                         strings.t('automatedBillingActive'),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppTheme.m3OnTertiaryContainer,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -293,7 +293,7 @@ class _EmptyClaimsState extends StatelessWidget {
             flex: 2,
             child: Container(
               decoration: BoxDecoration(
-                color: AppTheme.m3SurfaceContainerLow,
+                color: AppTheme.surfaceBgFor(Theme.of(context).brightness),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
@@ -309,10 +309,10 @@ class _EmptyClaimsState extends StatelessWidget {
                       color: AppTheme.m3SurfaceVariant,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.receipt_long_outlined,
                       size: 40,
-                      color: AppTheme.m3OnSurfaceVariant,
+                      color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -320,8 +320,8 @@ class _EmptyClaimsState extends StatelessWidget {
                     statusFilter == 'ALL'
                         ? strings.t('noClaimsYet')
                         : strings.t('noClaimsForFilter'),
-                    style: const TextStyle(
-                      color: AppTheme.m3OnSurface,
+                    style: TextStyle(
+                      color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
@@ -334,8 +334,8 @@ class _EmptyClaimsState extends StatelessWidget {
                       statusFilter == 'ALL'
                           ? strings.t('claimsWillAppearHere')
                           : strings.t('tryDifferentFilter'),
-                      style: const TextStyle(
-                        color: AppTheme.m3OnSurfaceVariant,
+                      style: TextStyle(
+                        color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                         fontSize: 13,
                       ),
                       textAlign: TextAlign.center,
@@ -394,7 +394,7 @@ class _InfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.m3SurfaceContainerLow,
+        color: AppTheme.surfaceBgFor(Theme.of(context).brightness),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
@@ -402,6 +402,7 @@ class _InfoCard extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -411,8 +412,8 @@ class _InfoCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
-                    color: AppTheme.m3OnSurface,
+                  style: TextStyle(
+                    color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
@@ -427,15 +428,15 @@ class _InfoCard extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(item.label, style: const TextStyle(color: AppTheme.m3OnSurfaceVariant, fontSize: 12)),
-                  Text(item.value, style: const TextStyle(color: AppTheme.m3OnSurface, fontSize: 12, fontWeight: FontWeight.w500)),
+                  Text(item.label, style: TextStyle(color: AppTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 12)),
+                  Text(item.value, style: TextStyle(color: AppTheme.textPrimaryFor(Theme.of(context).brightness), fontSize: 12, fontWeight: FontWeight.w500)),
                 ],
               ),
             )),
           if (description != null)
             Text(
               description!,
-              style: const TextStyle(color: AppTheme.m3OnSurfaceVariant, fontSize: 12),
+              style: TextStyle(color: AppTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 12),
             ),
         ],
       ),
@@ -480,7 +481,7 @@ class _M3ClaimCard extends StatelessWidget {
     return switch (status.toUpperCase()) {
       'APPROVED' || 'PAID' => AppTheme.m3Tertiary,
       'REJECTED' => AppTheme.m3OnErrorContainer,
-      'UNDER_REVIEW' => AppTheme.m3OnSurfaceVariant,
+      'UNDER_REVIEW' => AppTheme.warning,
       'SUBMITTED' => AppTheme.m3Primary,
       _ => AppTheme.m3OnSurfaceVariant,
     };
@@ -509,7 +510,7 @@ class _M3ClaimCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.m3SurfaceContainerLow,
+        color: AppTheme.surfaceBgFor(Theme.of(context).brightness),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
@@ -537,7 +538,7 @@ class _M3ClaimCard extends StatelessWidget {
                   color: AppTheme.m3SurfaceVariant,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.receipt_outlined, color: AppTheme.m3OnSurfaceVariant, size: 20),
+                child: Icon(Icons.receipt_outlined, color: AppTheme.textSecondaryFor(Theme.of(context).brightness), size: 20),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -546,8 +547,8 @@ class _M3ClaimCard extends StatelessWidget {
                   children: [
                     Text(
                       facilityName,
-                      style: const TextStyle(
-                        color: AppTheme.m3OnSurface,
+                      style: TextStyle(
+                        color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -555,8 +556,8 @@ class _M3ClaimCard extends StatelessWidget {
                     ),
                     Text(
                       claimNumber,
-                      style: const TextStyle(
-                        color: AppTheme.m3OnSurfaceVariant,
+                      style: TextStyle(
+                        color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                         fontSize: 12,
                       ),
                     ),
@@ -622,19 +623,19 @@ class _M3ClaimCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppTheme.m3SurfaceContainerHigh,
+                color: AppTheme.surfaceHighFor(Theme.of(context).brightness),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.notes_outlined, size: 14, color: AppTheme.m3OnSurfaceVariant),
+                  Icon(Icons.notes_outlined, size: 14, color: AppTheme.textSecondaryFor(Theme.of(context).brightness)),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       decisionNote,
-                      style: const TextStyle(
-                        color: AppTheme.m3OnSurfaceVariant,
+                      style: TextStyle(
+                        color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                         fontSize: 12,
                       ),
                       maxLines: 3,
@@ -658,11 +659,11 @@ class _M3ClaimCard extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.hourglass_empty, size: 14, color: AppTheme.warning),
+                  Icon(Icons.hourglass_empty, size: 14, color: AppTheme.warning),
                   const SizedBox(width: 6),
                   Text(
                     strings.t('appealPending'),
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppTheme.warning,
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
@@ -675,7 +676,7 @@ class _M3ClaimCard extends StatelessWidget {
             const SizedBox(height: 10),
             OutlinedButton.icon(
               onPressed: onAppeal,
-              icon: const Icon(Icons.gavel_outlined, size: 16),
+              icon: Icon(Icons.gavel_outlined, size: 16),
               label: Text(strings.t('submitAppeal')),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppTheme.m3Primary,
@@ -710,8 +711,8 @@ class _DetailItem extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            color: AppTheme.m3OnSurfaceVariant,
+          style: TextStyle(
+            color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
             fontSize: 11,
             fontWeight: FontWeight.w500,
           ),
@@ -720,7 +721,7 @@ class _DetailItem extends StatelessWidget {
         Text(
           value,
           style: TextStyle(
-            color: valueColor ?? AppTheme.m3OnSurface,
+            color: valueColor ?? AppTheme.textPrimaryFor(Theme.of(context).brightness),
             fontSize: 13,
             fontWeight: FontWeight.w600,
           ),

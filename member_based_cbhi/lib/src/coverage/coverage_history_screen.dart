@@ -62,8 +62,8 @@ class _CoverageHistoryScreenState extends State<CoverageHistoryScreen> {
                   final isActive = status == 'ACTIVE';
                   final startDate = coverage['startDate']?.toString().split('T').first ?? '—';
                   final endDate = coverage['endDate']?.toString().split('T').first ?? '—';
-                  final premium = (coverage['premiumAmount'] as num? ?? 0).toDouble();
-                  final paid = (coverage['paidAmount'] as num? ?? 0).toDouble();
+                  final premium = double.tryParse(coverage['premiumAmount']?.toString() ?? '0') ?? 0;
+                  final paid = double.tryParse(coverage['paidAmount']?.toString() ?? '0') ?? 0;
 
                   return Container(
                     margin: const EdgeInsets.only(bottom: 12),
@@ -77,12 +77,12 @@ class _CoverageHistoryScreenState extends State<CoverageHistoryScreen> {
                               Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: (isActive ? AppTheme.success : AppTheme.textSecondary).withValues(alpha: 0.1),
+                                  color: (isActive ? AppTheme.success : AppTheme.textSecondaryFor(Theme.of(context).brightness)).withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Icon(
                                   isActive ? Icons.verified_outlined : Icons.history_outlined,
-                                  color: isActive ? AppTheme.success : AppTheme.textSecondary,
+                                  color: isActive ? AppTheme.success : AppTheme.textSecondaryFor(Theme.of(context).brightness),
                                   size: 20,
                                 ),
                               ),

@@ -74,8 +74,8 @@ class DashboardScreen extends StatelessWidget {
                               children: [
                                 Text(
                                   '${strings.t('hello')}, ${snapshot.viewerName.split(' ').first}',
-                                  style: const TextStyle(
-                                    color: AppTheme.m3OnSurface,
+                                  style: TextStyle(
+                                    color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                                     fontSize: 28,
                                     fontWeight: FontWeight.w600,
                                     height: 1.2,
@@ -84,8 +84,8 @@ class DashboardScreen extends StatelessWidget {
                                 const SizedBox(height: 4),
                                 Text(
                                   strings.t('coverageSummarySubtitle'),
-                                  style: const TextStyle(
-                                    color: AppTheme.m3OnSurfaceVariant,
+                                  style: TextStyle(
+                                    color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                                     fontSize: 15,
                                     fontWeight: FontWeight.w400,
                                   ),
@@ -96,7 +96,6 @@ class DashboardScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    _SetupBanner(),
                     // Bento Top Section
                     _CoverageHeroCard(
                       snapshot: snapshot,
@@ -157,7 +156,7 @@ class DashboardScreen extends StatelessWidget {
                         ),
                       ),
 
-                    if (!isIndigent && (snapshot.coverageStatus == 'PENDING_PAYMENT' || snapshot.coverageStatus == 'UNPAID'))
+                    if (!isIndigent && (snapshot.coverageStatus == 'PENDING_PAYMENT' || snapshot.coverageStatus == 'UNPAID' || snapshot.coverageStatus == 'PENDING_RENEWAL'))
                       Padding(
                         padding: const EdgeInsets.only(top: AppTheme.spacingL),
                         child: _PaymentPendingBanner(
@@ -284,8 +283,8 @@ class _CoverageHeroCard extends StatelessWidget {
         statusIcon = Icons.warning_amber_outlined;
         break;
       default:
-        statusBg = AppTheme.m3SurfaceContainerHigh;
-        statusFg = AppTheme.m3OnSurfaceVariant;
+        statusBg = AppTheme.surfaceHighFor(Theme.of(context).brightness);
+        statusFg = AppTheme.textSecondaryFor(Theme.of(context).brightness);
         statusIcon = Icons.info_outline;
     }
 
@@ -409,7 +408,7 @@ class _CoverageHeroCard extends StatelessWidget {
                   snapshot.householdCode.isEmpty
                       ? strings.t('guestSession')
                       : snapshot.viewerName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppTheme.m3OnPrimaryContainer,
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
@@ -438,7 +437,7 @@ class _CoverageHeroCard extends StatelessWidget {
                             snapshot.viewerMembershipId.isEmpty
                                 ? '—'
                                 : snapshot.viewerMembershipId,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppTheme.m3OnPrimaryContainer,
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -465,7 +464,7 @@ class _CoverageHeroCard extends StatelessWidget {
                             const SizedBox(height: 2),
                             Text(
                               expiryLabel,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: AppTheme.m3OnPrimaryContainer,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -507,7 +506,7 @@ class _QuickStatTile extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.m3SurfaceContainerLow,
+        color: AppTheme.surfaceBgFor(Theme.of(context).brightness),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
@@ -533,7 +532,7 @@ class _QuickStatTile extends StatelessWidget {
                   color: AppTheme.m3SurfaceVariant,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, size: 16, color: AppTheme.m3OnSurfaceVariant),
+                child: Icon(icon, size: 16, color: AppTheme.textSecondaryFor(Theme.of(context).brightness)),
               ),
               const Spacer(),
             ],
@@ -571,7 +570,7 @@ class _QuickStatTile extends StatelessWidget {
           Text(
             label,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: AppTheme.m3OnSurfaceVariant,
+              color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
               fontSize: 13,
             ),
             maxLines: 2,
@@ -654,7 +653,7 @@ class _QuickNavTile extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppTheme.m3OnSecondaryContainer,
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
@@ -674,7 +673,7 @@ Color _coverageColor(String status) => switch (status.toUpperCase()) {
       'ACTIVE' => AppTheme.success,
       'EXPIRED' => AppTheme.error,
       'PENDING_RENEWAL' || 'WAITING_PERIOD' => AppTheme.warning,
-      _ => AppTheme.textSecondary,
+      _ => AppTheme.m3OnSurfaceVariant,
     };
 
 // ─── _RenewalSection ─────────────────────────────────────────────────────────
@@ -703,8 +702,10 @@ class _RenewalSection extends StatelessWidget {
     final isExpiringSoon = daysLeft != null && daysLeft <= 30 && daysLeft >= 0;
     final isExpired = status == 'EXPIRED' || (daysLeft != null && daysLeft < 0);
 
-    // Show renew button when not active, expired, or expiring soon
+    // Show renew/pay button when not active, expired, or expiring soon
+    // Also show for PENDING_RENEWAL (new member who chose Pay Later)
     final showRenewButton = !isActive || isExpiringSoon || isExpired;
+    final isFirstPayment = status == 'PENDING_RENEWAL' || status == 'PENDING_PAYMENT' || status == 'UNPAID';
 
     return Card(
       elevation: 0,
@@ -724,7 +725,7 @@ class _RenewalSection extends StatelessWidget {
                 CircleAvatar(
                   backgroundColor: AppTheme.warning.withValues(alpha: 0.15),
                   foregroundColor: AppTheme.warning,
-                  child: const Icon(Icons.payments_outlined, size: 20),
+                  child: Icon(Icons.payments_outlined, size: 20),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -744,7 +745,7 @@ class _RenewalSection extends StatelessWidget {
                     ),
                     child: Text(
                       strings.t('active'),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppTheme.success,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -787,11 +788,11 @@ class _RenewalSection extends StatelessWidget {
                 width: double.infinity,
                 child: FilledButton.icon(
                   onPressed: isSyncing ? null : onRenew,
-                  icon: const Icon(Icons.autorenew, size: 18),
+                  icon: Icon(isFirstPayment ? Icons.payment : Icons.autorenew, size: 18),
                   label: Text(
-                    snapshot.premiumAmount > 0
-                        ? strings.t('renewCoverage')
-                        : strings.t('payPremiumNow'),
+                    isFirstPayment
+                        ? strings.t('payPremiumNow')
+                        : strings.t('renewCoverage'),
                   ),
                 ),
               ),
@@ -803,10 +804,18 @@ class _RenewalSection extends StatelessWidget {
   }
 }
 
+/// Safely convert a value that may be num, String, or null to double.
+double _safeDouble(dynamic v) {
+  if (v == null) return 0;
+  if (v is num) return v.toDouble();
+  if (v is String) return double.tryParse(v) ?? 0;
+  return 0;
+}
+
 /// When premiumAmount is 0 (pay-later case), calculate from member count.
 String _calcDisplayPremium(CbhiSnapshot snapshot) {
   final memberCount =
-      (snapshot.household['memberCount'] as num?)?.toInt() ?? 1;
+      _safeDouble(snapshot.household['memberCount']).toInt().clamp(1, 999);
   final calculated = memberCount * 120;
   return '$calculated ETB';
 }
@@ -935,8 +944,8 @@ class _PaymentHistorySection extends StatelessWidget {
           children: [
             Text(
               strings.t('recentActivity'),
-              style: const TextStyle(
-                color: AppTheme.m3OnSurface,
+              style: TextStyle(
+                color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
               ),
@@ -949,10 +958,11 @@ class _PaymentHistorySection extends StatelessWidget {
                   foregroundColor: AppTheme.m3Primary,
                   padding: EdgeInsets.zero,
                   minimumSize: const Size(0, 32),
+                  textStyle: Theme.of(context).textTheme.labelLarge,
                 ),
                 child: Text(
                   strings.t('viewAll'),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),
@@ -970,7 +980,7 @@ class _PaymentHistorySection extends StatelessWidget {
         else
           Container(
             decoration: BoxDecoration(
-              color: AppTheme.m3SurfaceContainerLowest,
+              color: AppTheme.cardBgFor(Theme.of(context).brightness),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
@@ -1001,9 +1011,9 @@ class _PaymentHistorySection extends StatelessWidget {
                               color: AppTheme.m3SurfaceVariant,
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.receipt_outlined,
-                              color: AppTheme.m3OnSurfaceVariant,
+                              color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                               size: 20,
                             ),
                           ),
@@ -1014,8 +1024,8 @@ class _PaymentHistorySection extends StatelessWidget {
                               children: [
                                 Text(
                                   '${payment['amount']?.toString() ?? '0'} ETB',
-                                  style: const TextStyle(
-                                    color: AppTheme.m3OnSurface,
+                                  style: TextStyle(
+                                    color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -1023,8 +1033,8 @@ class _PaymentHistorySection extends StatelessWidget {
                                 const SizedBox(height: 2),
                                 Text(
                                   '$method • ${_formatDateLabel(payment['paidAt'] ?? payment['createdAt'])}',
-                                  style: const TextStyle(
-                                    color: AppTheme.m3OnSurfaceVariant,
+                                  style: TextStyle(
+                                    color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                                     fontSize: 13,
                                   ),
                                   overflow: TextOverflow.ellipsis,
@@ -1081,7 +1091,7 @@ class _M3StatusChip extends StatelessWidget {
       case 'PENDING':
       case 'PROCESSING':
         bg = AppTheme.m3SurfaceVariant;
-        fg = AppTheme.m3OnSurfaceVariant;
+        fg = AppTheme.textSecondaryFor(Theme.of(context).brightness);
         break;
       default:
         bg = AppTheme.m3PrimaryContainer.withValues(alpha: 0.2);
@@ -1118,17 +1128,19 @@ class _BenefitUtilizationSection extends StatelessWidget {
     final strings = CbhiLocalizations.of(context);
     final totalClaimed = snapshot.claims.fold(
         0.0,
-        (sum, c) => sum + ((c['claimedAmount'] as num?)?.toDouble() ?? 0));
+        (sum, c) => sum + _safeDouble(c['claimedAmount']));
     final annualCeiling =
-        (snapshot.coverage?['annualCeiling'] as num?)?.toDouble() ?? 0;
+        _safeDouble(snapshot.coverage?['annualCeiling']);
     final pct = annualCeiling > 0
         ? (totalClaimed / annualCeiling).clamp(0.0, 1.0)
         : 0.0;
-    final pctLabel = '${(pct * 100).toStringAsFixed(0)}%';
+    // Guard against NaN/Infinity from bad data
+    final safePct = pct.isNaN || pct.isInfinite ? 0.0 : pct;
+    final pctLabel = '${(safePct * 100).toStringAsFixed(0)}%';
 
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.m3SurfaceContainerLow,
+        color: AppTheme.surfaceBgFor(Theme.of(context).brightness),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
@@ -1154,13 +1166,13 @@ class _BenefitUtilizationSection extends StatelessWidget {
                   color: AppTheme.m3SurfaceVariant,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.pie_chart_outline, size: 16, color: AppTheme.m3OnSurfaceVariant),
+                child: Icon(Icons.pie_chart_outline, size: 16, color: AppTheme.textSecondaryFor(Theme.of(context).brightness)),
               ),
               const SizedBox(width: 8),
               Text(
                 strings.t('benefitUtilization'),
-                style: const TextStyle(
-                  color: AppTheme.m3OnSurface,
+                style: TextStyle(
+                  color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.15,
@@ -1174,7 +1186,7 @@ class _BenefitUtilizationSection extends StatelessWidget {
             children: [
               Text(
                 pctLabel,
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppTheme.m3Primary,
                   fontSize: 28,
                   fontWeight: FontWeight.w600,
@@ -1186,8 +1198,8 @@ class _BenefitUtilizationSection extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 2),
                 child: Text(
                   strings.t('usedThisYear'),
-                  style: const TextStyle(
-                    color: AppTheme.m3OnSurfaceVariant,
+                  style: TextStyle(
+                    color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
@@ -1200,7 +1212,7 @@ class _BenefitUtilizationSection extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(999),
             child: LinearProgressIndicator(
-              value: pct,
+              value: safePct,
               minHeight: 10,
               backgroundColor: AppTheme.m3SurfaceVariant,
               valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.m3Primary),
@@ -1211,8 +1223,8 @@ class _BenefitUtilizationSection extends StatelessWidget {
             annualCeiling > 0
                 ? '${totalClaimed.toStringAsFixed(0)} / ${annualCeiling.toStringAsFixed(0)} ETB ${strings.t('used')}'
                 : strings.t('benefitUtilizationNoData'),
-            style: const TextStyle(
-              color: AppTheme.m3OnSurfaceVariant,
+            style: TextStyle(
+              color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
               fontSize: 13,
             ),
           ),
@@ -1391,7 +1403,7 @@ class _RecentNotificationsSection extends StatelessWidget {
                           ? Icons.mark_email_read_outlined
                           : Icons.notifications_active_outlined,
                       color: n['isRead'] == true
-                          ? AppTheme.textSecondary
+                          ? AppTheme.textSecondaryFor(Theme.of(context).brightness)
                           : AppTheme.accent,
                     ),
                     title: Text(
@@ -1460,8 +1472,8 @@ class _InfoChip extends StatelessWidget {
                 ),
                 Text(
                   label,
-                  style: const TextStyle(
-                    color: AppTheme.textSecondary,
+                  style: TextStyle(
+                    color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                     fontSize: 11,
                   ),
                 ),
@@ -1493,7 +1505,15 @@ Future<void> _showRenewCoverageSheet(
   CbhiSnapshot snapshot,
   CbhiRepository repository,
 ) async {
-  if (snapshot.premiumAmount > 0) {
+  // Determine membership type — paying households must use Chapa payment
+  final membershipType =
+      snapshot.coverage?['membershipType']?.toString() ??
+      snapshot.household['membershipType']?.toString() ??
+      'paying';
+  final isIndigent = membershipType.toLowerCase() == 'indigent';
+
+  if (!isIndigent) {
+    // Paying households → Chapa payment flow (coverage auto-activated on success)
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => PaymentScreen(
@@ -1544,7 +1564,7 @@ Future<void> _showRenewCoverageSheet(
                     color: AppTheme.success.withValues(alpha: 0.10),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.autorenew, color: AppTheme.success),
+                  child: Icon(Icons.autorenew, color: AppTheme.success),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -1563,7 +1583,7 @@ Future<void> _showRenewCoverageSheet(
                 await context.read<AppCubit>().renewCoverage();
                 if (context.mounted) Navigator.of(sheetContext).pop();
               },
-              icon: const Icon(Icons.check_circle_outline),
+              icon: Icon(Icons.check_circle_outline),
               label: Text(strings.t('confirmFreeRenewalButton')),
               style: FilledButton.styleFrom(
                   backgroundColor: AppTheme.success),
@@ -1615,6 +1635,7 @@ class _SetupBannerState extends State<_SetupBanner> {
     await prefs.remove(_kTempPasswordKey);
     await prefs.remove('cbhi_setup_code');
     await prefs.remove('cbhi_temp_password');
+    await prefs.remove('cbhi_registered_phone');
     if (mounted) setState(() => _visible = false);
   }
 
@@ -1665,13 +1686,13 @@ class _SetupBannerState extends State<_SetupBanner> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.info_outline,
+                        Icon(Icons.info_outline,
                             color: AppTheme.primary, size: 16),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             strings.t('setupCodeReference'),
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 12, color: AppTheme.primary),
                           ),
                         ),
@@ -1687,7 +1708,7 @@ class _SetupBannerState extends State<_SetupBanner> {
                             ),
                             child: Text(
                               _setupCode!,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontFamily: 'monospace',
                                 fontWeight: FontWeight.w900,
                                 fontSize: 16,
@@ -1711,7 +1732,7 @@ class _SetupBannerState extends State<_SetupBanner> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(error!,
-                        style: const TextStyle(
+                        style: TextStyle(
                             color: AppTheme.error, fontSize: 13)),
                   ),
                 ],
@@ -1720,7 +1741,7 @@ class _SetupBannerState extends State<_SetupBanner> {
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: strings.t('newPassword'),
-                    prefixIcon: const Icon(Icons.lock_reset_outlined),
+                    prefixIcon: Icon(Icons.lock_reset_outlined),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -1729,7 +1750,7 @@ class _SetupBannerState extends State<_SetupBanner> {
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: strings.t('confirmPassword'),
-                    prefixIcon: const Icon(Icons.lock_outline),
+                    prefixIcon: Icon(Icons.lock_outline),
                   ),
                 ),
               ],
@@ -1757,17 +1778,20 @@ class _SetupBannerState extends State<_SetupBanner> {
                       setDialogState(() => loading = true);
                       try {
                         // Use set-initial-password — does NOT invalidate session
+                        final p = await SharedPreferences.getInstance();
+                        final phone = p.getString('cbhi_registered_phone');
                         await ctx
                             .read<AppCubit>()
                             .repository
                             .setInitialPasswordDirect(
                                 password: newCtrl.text,
-                                setupCode: _setupCode);
+                                setupCode: _setupCode,
+                                phone: phone);
                         // Clear all setup code flags
-                        final p = await SharedPreferences.getInstance();
                         await p.remove('cbhi_setup_code');
                         await p.remove('cbhi_temp_password');
                         await p.remove(_kTempPasswordKey);
+                        await p.remove('cbhi_registered_phone');
 
                         if (ctx.mounted) Navigator.pop(ctx);
                         if (context.mounted) {
@@ -1820,13 +1844,13 @@ class _SetupBannerState extends State<_SetupBanner> {
         children: [
           Row(
             children: [
-              const Icon(Icons.lock_open_outlined,
+              Icon(Icons.lock_open_outlined,
                   color: AppTheme.warning, size: 18),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   strings.t('setupAccountTitle'),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w700,
                     color: AppTheme.warning,
                     fontSize: 13,
@@ -1834,18 +1858,18 @@ class _SetupBannerState extends State<_SetupBanner> {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.close, size: 16),
+                icon: Icon(Icons.close, size: 16),
                 onPressed: _dismiss,
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                color: AppTheme.textSecondary,
+                color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
               ),
             ],
           ),
           const SizedBox(height: 6),
           Text(
             strings.t('setupCodeBannerBody'),
-            style: const TextStyle(fontSize: 12, height: 1.4),
+            style: TextStyle(fontSize: 12, height: 1.4),
           ),
           // Setup code display — tap to copy
           if (_setupCode != null) ...[
@@ -1857,7 +1881,7 @@ class _SetupBannerState extends State<_SetupBanner> {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppTheme.cardBgFor(Theme.of(context).brightness),
                   borderRadius: BorderRadius.circular(AppTheme.radiusS),
                   border: Border.all(
                       color: AppTheme.warning.withValues(alpha: 0.5)),
@@ -1867,7 +1891,7 @@ class _SetupBannerState extends State<_SetupBanner> {
                   children: [
                     Text(
                       _setupCode!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 8,
@@ -1892,8 +1916,8 @@ class _SetupBannerState extends State<_SetupBanner> {
             Center(
               child: Text(
                 strings.t('tapToCopyCode'),
-                style: const TextStyle(
-                    fontSize: 11, color: AppTheme.textSecondary),
+                style: TextStyle(
+                    fontSize: 11, color: AppTheme.textSecondaryFor(Theme.of(context).brightness)),
               ),
             ),
           ],
@@ -1907,10 +1931,10 @@ class _SetupBannerState extends State<_SetupBanner> {
                     padding: const EdgeInsets.symmetric(vertical: 10),
                   ),
                   onPressed: () => _showSetPasswordDialog(context),
-                  icon: const Icon(Icons.lock_reset_outlined, size: 16),
+                  icon: Icon(Icons.lock_reset_outlined, size: 16),
                   label: Text(
                     strings.t('setPasswordNow'),
-                    style: const TextStyle(fontSize: 13),
+                    style: TextStyle(fontSize: 13),
                   ),
                 ),
               ),
@@ -1923,7 +1947,7 @@ class _SetupBannerState extends State<_SetupBanner> {
                 onPressed: _dismiss,
                 child: Text(
                   strings.t('remindMeLater'),
-                  style: const TextStyle(fontSize: 12),
+                  style: TextStyle(fontSize: 12),
                 ),
               ),
             ],
@@ -1992,7 +2016,7 @@ class _ReferralCard extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child:
-                const Icon(Icons.assignment_outlined, color: AppTheme.primary),
+                Icon(Icons.assignment_outlined, color: AppTheme.primary),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -2001,7 +2025,7 @@ class _ReferralCard extends StatelessWidget {
               children: [
                 Text(
                   code,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                     letterSpacing: 1.2,
@@ -2009,8 +2033,8 @@ class _ReferralCard extends StatelessWidget {
                 ),
                 Text(
                   'Issued by: $facility',
-                  style: const TextStyle(
-                      color: AppTheme.textSecondary, fontSize: 13),
+                  style: TextStyle(
+                      color: AppTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 13),
                 ),
                 if (expiresAt != null)
                   Text(
@@ -2018,14 +2042,14 @@ class _ReferralCard extends StatelessWidget {
                     style: TextStyle(
                       color: expiresAt.isBefore(DateTime.now())
                           ? AppTheme.error
-                          : AppTheme.textSecondary,
+                          : AppTheme.textSecondaryFor(Theme.of(context).brightness),
                       fontSize: 11,
                     ),
                   ),
               ],
             ),
           ),
-          const Icon(Icons.qr_code, color: AppTheme.primary, size: 32),
+          Icon(Icons.qr_code, color: AppTheme.primary, size: 32),
         ],
         ),
       ),
@@ -2084,7 +2108,7 @@ class _IndigentProofBanner extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.volunteer_activism_outlined, color: Colors.white, size: 28),
+              Icon(Icons.volunteer_activism_outlined, color: Colors.white, size: 28),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -2092,7 +2116,7 @@ class _IndigentProofBanner extends StatelessWidget {
                   children: [
                     Text(
                       strings.t('indigentProofRequired'),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w800,
                         fontSize: 16,
@@ -2115,7 +2139,7 @@ class _IndigentProofBanner extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: onFinalize,
-              icon: const Icon(Icons.file_upload_outlined, size: 18),
+              icon: Icon(Icons.file_upload_outlined, size: 18),
               label: Text(strings.t('uploadProofNow')),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
@@ -2164,7 +2188,7 @@ class _PaymentPendingBanner extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.warning_amber_rounded, color: Colors.white, size: 28),
+              Icon(Icons.warning_amber_rounded, color: Colors.white, size: 28),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -2172,7 +2196,7 @@ class _PaymentPendingBanner extends StatelessWidget {
                   children: [
                     Text(
                       strings.t('paymentRequired'),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w800,
                         fontSize: 16,
@@ -2195,7 +2219,7 @@ class _PaymentPendingBanner extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: onPay,
-              icon: const Icon(Icons.payment, size: 18),
+              icon: Icon(Icons.payment, size: 18),
               label: Text(strings.t('payNow')),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,

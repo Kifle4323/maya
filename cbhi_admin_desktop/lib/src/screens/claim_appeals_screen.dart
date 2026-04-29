@@ -71,13 +71,13 @@ class _ClaimAppealsScreenState extends State<ClaimAppealsScreen> {
                     children: [
                       Text(
                         '${strings.t('claimNumber')}: ${appeal['claimNumber']?.toString() ?? '—'}',
-                        style: const TextStyle(fontWeight: FontWeight.w600),
+                        style: TextStyle(fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         appeal['reason']?.toString() ?? '',
-                        style: const TextStyle(
-                          color: AdminTheme.textSecondary,
+                        style: TextStyle(
+                          color: AdminTheme.textSecondaryFor(Theme.of(context).brightness),
                           fontSize: 13,
                         ),
                         maxLines: 3,
@@ -167,15 +167,15 @@ class _ClaimAppealsScreenState extends State<ClaimAppealsScreen> {
     return Column(
       children: [
         Container(
-          color: Colors.white,
+          color: AdminTheme.cardBgFor(Theme.of(context).brightness),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           child: Row(
             children: [
               Text(
                 strings.t('claimAppeals'),
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  color: AdminTheme.textDark,
+                  color: AdminTheme.textPrimaryFor(Theme.of(context).brightness),
                 ),
               ),
               if (pendingCount > 0) ...[
@@ -189,7 +189,7 @@ class _ClaimAppealsScreenState extends State<ClaimAppealsScreen> {
                   ),
                   child: Text(
                     '$pendingCount pending',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AdminTheme.warning,
                       fontWeight: FontWeight.w700,
                       fontSize: 12,
@@ -223,13 +223,13 @@ class _ClaimAppealsScreenState extends State<ClaimAppealsScreen> {
                               const SizedBox(height: 16),
                               Text(
                                 strings.t('noAppeals'),
-                                style: const TextStyle(
+                                style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.w600),
                               ),
                               Text(
                                 strings.t('noAppealsSubtitle'),
-                                style: const TextStyle(
-                                    color: AdminTheme.textSecondary),
+                                style: TextStyle(
+                                    color: AdminTheme.textSecondaryFor(Theme.of(context).brightness)),
                               ),
                             ],
                           ),
@@ -261,7 +261,7 @@ class _ClaimAppealsScreenState extends State<ClaimAppealsScreen> {
                                   return DataRow(cells: [
                                     DataCell(Text(
                                       appeal['claimNumber']?.toString() ?? '—',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                           fontWeight: FontWeight.w600),
                                     )),
                                     DataCell(Text(
@@ -273,7 +273,7 @@ class _ClaimAppealsScreenState extends State<ClaimAppealsScreen> {
                                         appeal['reason']?.toString() ?? '—',
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(fontSize: 13),
+                                        style: TextStyle(fontSize: 13),
                                       ),
                                     )),
                                     DataCell(StatusChip(status: status)),
@@ -283,7 +283,7 @@ class _ClaimAppealsScreenState extends State<ClaimAppealsScreen> {
                                               .split('T')
                                               .first ??
                                           '—',
-                                      style: const TextStyle(fontSize: 12),
+                                      style: TextStyle(fontSize: 12),
                                     )),
                                     DataCell(
                                       isPending
@@ -308,7 +308,7 @@ class _ClaimAppealsScreenState extends State<ClaimAppealsScreen> {
                                               appeal['reviewNote']
                                                       ?.toString() ??
                                                   '—',
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                   color:
                                                       AdminTheme.textSecondary,
                                                   fontSize: 12),

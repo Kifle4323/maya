@@ -120,8 +120,8 @@ class _MyFamilyBodyState extends State<_MyFamilyBody> {
                       isFamilyMember
                           ? strings.t('householdMembers')
                           : strings.t('familyManagement'),
-                      style: const TextStyle(
-                        color: AppTheme.m3OnSurface,
+                      style: TextStyle(
+                        color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                         fontSize: 28,
                         fontWeight: FontWeight.w600,
                         height: 1.2,
@@ -132,8 +132,8 @@ class _MyFamilyBodyState extends State<_MyFamilyBody> {
                       isFamilyMember
                           ? strings.t('viewHouseholdMembers')
                           : strings.t('manageHouseholdBeneficiaries'),
-                      style: const TextStyle(
-                        color: AppTheme.m3OnSurfaceVariant,
+                      style: TextStyle(
+                        color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                       ),
@@ -151,19 +151,19 @@ class _MyFamilyBodyState extends State<_MyFamilyBody> {
             Container(
               height: 48,
               decoration: BoxDecoration(
-                color: AppTheme.m3SurfaceContainerHigh,
+                color: AppTheme.surfaceHighFor(Theme.of(context).brightness),
                 borderRadius: BorderRadius.circular(999),
               ),
               child: TextField(
                 decoration: InputDecoration(
                   hintText: strings.t('searchByNameOrId'),
-                  prefixIcon: const Icon(Icons.search, color: AppTheme.m3OnSurfaceVariant, size: 20),
+                  prefixIcon: Icon(Icons.search, color: AppTheme.textSecondaryFor(Theme.of(context).brightness), size: 20),
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                  hintStyle: const TextStyle(
-                    color: AppTheme.m3OnSurfaceVariant,
+                  hintStyle: TextStyle(
+                    color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                     fontSize: 14,
                   ),
                   fillColor: Colors.transparent,
@@ -206,8 +206,8 @@ class _MyFamilyBodyState extends State<_MyFamilyBody> {
               children: [
                 Text(
                   strings.t('householdMembers'),
-                  style: const TextStyle(
-                    color: AppTheme.m3OnSurface,
+                  style: TextStyle(
+                    color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.15,
@@ -231,7 +231,7 @@ class _MyFamilyBodyState extends State<_MyFamilyBody> {
                               await familyCubit.load();
                             }
                           },
-                    icon: const Icon(Icons.add, size: 18),
+                    icon: Icon(Icons.add, size: 18),
                     label: Text(strings.t('addMember')),
                     style: FilledButton.styleFrom(
                       backgroundColor: AppTheme.m3Primary,
@@ -239,7 +239,7 @@ class _MyFamilyBodyState extends State<_MyFamilyBody> {
                       shape: const StadiumBorder(),
                       minimumSize: const Size(0, 40),
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                      textStyle: const TextStyle(
+                      textStyle: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                       ),
@@ -272,7 +272,7 @@ class _MyFamilyBodyState extends State<_MyFamilyBody> {
                       'x': '0',
                       'y': state.members.length.toString(),
                     }),
-                    style: const TextStyle(color: AppTheme.m3OnSurfaceVariant),
+                    style: TextStyle(color: AppTheme.textSecondaryFor(Theme.of(context).brightness)),
                   ),
                 ),
               ),
@@ -302,7 +302,7 @@ class _HeadOfHouseholdCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.m3SurfaceContainerLow,
+        color: AppTheme.surfaceBgFor(Theme.of(context).brightness),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
@@ -356,7 +356,7 @@ class _HeadOfHouseholdCard extends StatelessWidget {
                             ),
                             child: Text(
                               strings.t('headOfHousehold'),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: AppTheme.m3OnTertiaryContainer,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w500,
@@ -367,11 +367,11 @@ class _HeadOfHouseholdCard extends StatelessWidget {
                           Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.check_circle, size: 14, color: AppTheme.m3Primary),
+                              Icon(Icons.check_circle, size: 14, color: AppTheme.m3Primary),
                               const SizedBox(width: 4),
                               Text(
                                 member.coverageStatus,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: AppTheme.m3Primary,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
@@ -384,8 +384,8 @@ class _HeadOfHouseholdCard extends StatelessWidget {
                       const SizedBox(height: 8),
                       Text(
                         member.fullName,
-                        style: const TextStyle(
-                          color: AppTheme.m3OnSurface,
+                        style: TextStyle(
+                          color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                         ),
@@ -394,8 +394,8 @@ class _HeadOfHouseholdCard extends StatelessWidget {
                         const SizedBox(height: 2),
                         Text(
                           'ID: ${member.membershipId}',
-                          style: const TextStyle(
-                            color: AppTheme.m3OnSurfaceVariant,
+                          style: TextStyle(
+                            color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                             fontSize: 13,
                           ),
                         ),
@@ -407,7 +407,7 @@ class _HeadOfHouseholdCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppTheme.m3SurfaceContainerLowest,
+                    color: AppTheme.cardBgFor(Theme.of(context).brightness),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: AppTheme.m3OutlineVariant.withValues(alpha: 0.5),
@@ -420,16 +420,16 @@ class _HeadOfHouseholdCard extends StatelessWidget {
                         children: [
                           Text(
                             '$dependentCount',
-                            style: const TextStyle(
-                              color: AppTheme.m3OnSurface,
+                            style: TextStyle(
+                              color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           Text(
                             strings.t('dependents'),
-                            style: const TextStyle(
-                              color: AppTheme.m3OnSurfaceVariant,
+                            style: TextStyle(
+                              color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                               fontSize: 11,
                               fontWeight: FontWeight.w500,
                             ),
@@ -446,16 +446,16 @@ class _HeadOfHouseholdCard extends StatelessWidget {
                         children: [
                           Text(
                             strings.t('valid'),
-                            style: const TextStyle(
-                              color: AppTheme.m3OnSurface,
+                            style: TextStyle(
+                              color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           Text(
                             strings.t('coverage'),
-                            style: const TextStyle(
-                              color: AppTheme.m3OnSurfaceVariant,
+                            style: TextStyle(
+                              color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                               fontSize: 11,
                               fontWeight: FontWeight.w500,
                             ),
@@ -512,7 +512,7 @@ class _M3MemberCard extends StatelessWidget {
         return AppTheme.m3OnErrorContainer;
       case 'PENDING_RENEWAL':
       case 'PENDING':
-        return AppTheme.m3OnSurfaceVariant;
+        return AppTheme.warning;
       default:
         return AppTheme.m3OnSurfaceVariant;
     }
@@ -535,7 +535,7 @@ class _M3MemberCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.m3SurfaceContainerLow,
+        color: AppTheme.surfaceBgFor(Theme.of(context).brightness),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
@@ -568,7 +568,7 @@ class _M3MemberCard extends StatelessWidget {
                           color: Colors.white,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.star, color: Colors.amber, size: 12),
+                        child: Icon(Icons.star, color: Colors.amber, size: 12),
                       ),
                     ),
                 ],
@@ -580,8 +580,8 @@ class _M3MemberCard extends StatelessWidget {
                   children: [
                     Text(
                       member.fullName,
-                      style: const TextStyle(
-                        color: AppTheme.m3OnSurface,
+                      style: TextStyle(
+                        color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.15,
@@ -590,8 +590,8 @@ class _M3MemberCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       '${member.relationshipToHouseholdHead ?? strings.t('member')} • ${member.membershipId.isEmpty ? '—' : member.membershipId}',
-                      style: const TextStyle(
-                        color: AppTheme.m3OnSurfaceVariant,
+                      style: TextStyle(
+                        color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                         fontSize: 13,
                       ),
                     ),
@@ -601,7 +601,7 @@ class _M3MemberCard extends StatelessWidget {
               // More options
               if (!isFamilyMember)
                 PopupMenuButton<String>(
-                  icon: const Icon(Icons.more_vert, color: AppTheme.m3OnSurfaceVariant, size: 20),
+                  icon: Icon(Icons.more_vert, color: AppTheme.textSecondaryFor(Theme.of(context).brightness), size: 20),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   onSelected: (value) async {
                     if (value == 'edit') {
@@ -645,7 +645,7 @@ class _M3MemberCard extends StatelessWidget {
                       value: 'edit',
                       child: Row(
                         children: [
-                          const Icon(Icons.edit_outlined, size: 18),
+                          Icon(Icons.edit_outlined, size: 18),
                           const SizedBox(width: 8),
                           Text(strings.t('edit')),
                         ],
@@ -656,9 +656,9 @@ class _M3MemberCard extends StatelessWidget {
                         value: 'remove',
                         child: Row(
                           children: [
-                            const Icon(Icons.delete_outline, size: 18, color: AppTheme.error),
+                            Icon(Icons.delete_outline, size: 18, color: AppTheme.error),
                             const SizedBox(width: 8),
-                            Text(strings.t('remove'), style: const TextStyle(color: AppTheme.error)),
+                            Text(strings.t('remove'), style: TextStyle(color: AppTheme.error)),
                           ],
                         ),
                       ),
@@ -713,14 +713,14 @@ class _M3MemberCard extends StatelessWidget {
                     children: [
                       Text(
                         strings.t('viewDetails'),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppTheme.m3Primary,
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       const SizedBox(width: 4),
-                      const Icon(Icons.arrow_forward, size: 14, color: AppTheme.m3Primary),
+                      Icon(Icons.arrow_forward, size: 14, color: AppTheme.m3Primary),
                     ],
                   ),
                 ),
@@ -762,17 +762,17 @@ class _EmptyFamilyState extends StatelessWidget {
                 color: AppTheme.m3SurfaceVariant,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.group_outlined,
                 size: 40,
-                color: AppTheme.m3OnSurfaceVariant,
+                color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
               ),
             ),
             const SizedBox(height: 16),
             Text(
               strings.t('noBeneficiariesAvailable'),
-              style: const TextStyle(
-                color: AppTheme.m3OnSurface,
+              style: TextStyle(
+                color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
@@ -781,8 +781,8 @@ class _EmptyFamilyState extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               strings.t('addFamilyMembersOnceActive'),
-              style: const TextStyle(
-                color: AppTheme.m3OnSurfaceVariant,
+              style: TextStyle(
+                color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                 fontSize: 14,
               ),
               textAlign: TextAlign.center,
@@ -800,7 +800,7 @@ class _EmptyFamilyState extends StatelessWidget {
                     await familyCubit.load();
                   }
                 },
-                icon: const Icon(Icons.add),
+                icon: Icon(Icons.add),
                 label: Text(strings.t('addBeneficiary')),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppTheme.m3Primary,

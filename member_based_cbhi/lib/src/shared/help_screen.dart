@@ -48,7 +48,7 @@ class HelpScreen extends StatelessWidget {
                     children: [
                       Text(
                         strings.t('helpAndFaq'),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
@@ -57,7 +57,7 @@ class HelpScreen extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         strings.t('helpScreenSubtitle'),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white70,
                           fontSize: 13,
                         ),
@@ -95,16 +95,16 @@ class HelpScreen extends StatelessWidget {
                     children: [
                       Text(
                         strings.t('ehiaHelpline'),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.w700,
                           color: AppTheme.primary,
                         ),
                       ),
                       Text(
                         strings.t('ehiaContact'),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: AppTheme.textSecondary,
+                          color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                         ),
                       ),
                     ],

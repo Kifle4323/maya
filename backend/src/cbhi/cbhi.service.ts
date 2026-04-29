@@ -8,6 +8,8 @@ import { createCipheriv, createHash, randomBytes } from 'crypto';
 import { mkdir, writeFile } from 'fs/promises';
 import { basename, extname, join, resolve } from 'path';
 import { Repository } from 'typeorm';
+import { IndigentApplication } from '../indigent/indigent.entity';
+import { IndigentApplicationStatus } from '../common/enums/cbhi.enums';
 import { AuthService } from '../auth/auth.service';
 import { Beneficiary } from '../beneficiaries/beneficiary.entity';
 import { Claim } from '../claims/claim.entity';
@@ -72,6 +74,8 @@ export class CbhiService {
     private readonly claimRepository: Repository<Claim>,
     @InjectRepository(Notification)
     private readonly notificationRepository: Repository<Notification>,
+    @InjectRepository(IndigentApplication)
+    private readonly indigentApplicationRepository: Repository<IndigentApplication>,
     private readonly authService: AuthService,
     private readonly cacheService: CacheService,
   ) {}
@@ -215,7 +219,9 @@ export class CbhiService {
     );
 
     beneficiary.isEligible =
-      dto.membershipType === MembershipType.PAYING || eligibility.approved;
+      dto.membershipType === MembershipType.PAYING ||
+      dto.membershipType === MembershipType.INDIGENT ||
+      eligibility.approved;
     await this.beneficiaryRepository.save(beneficiary);
 
     await this.upsertCoverage(
@@ -232,6 +238,24 @@ export class CbhiService {
       await this.appendIndigentProofDocuments(
         beneficiary,
         dto.indigentProofUploads,
+      );
+    }
+
+    // ── Create IndigentApplication for admin review when INDIGENT ──────────
+    if (dto.membershipType === MembershipType.INDIGENT) {
+      await this.indigentApplicationRepository.save(
+        this.indigentApplicationRepository.create({
+          user: { id: user.id },
+          income: 0,
+          employmentStatus: dto.eligibilitySignals?.employmentStatus ?? IndigentEmploymentStatus.UNEMPLOYED,
+          familySize: household.memberCount,
+          hasProperty: false,
+          disabilityStatus: false,
+          documents: dto.indigentProofUploads?.map(u => u.fileName ?? '') ?? [],
+          status: IndigentApplicationStatus.PENDING,
+          score: 0,
+          reason: 'Indigent application from registration — pending admin review',
+        }),
       );
     }
 
@@ -464,7 +488,7 @@ export class CbhiService {
       access.household.id,
       NotificationType.RENEWAL_REMINDER,
       'Coverage renewed',
-      `Coverage for ${access.household.householdCode} is active until ${coverage.endDate.toISOString().split('T')[0]}.`,
+      `Coverage for ${access.household.householdCode} is active until ${(coverage.endDate instanceof Date ? coverage.endDate.toISOString() : (coverage.endDate as unknown as string)?.toString() ?? 'N/A').split('T')[0]}.`,
       {
         coverageNumber: coverage.coverageNumber,
         householdCode: access.household.householdCode,
@@ -738,18 +762,12 @@ export class CbhiService {
       );
     }
 
-    const proofs = dto.indigentProofUploads ?? [];
-    if (proofs.length < 1) {
-      throw new BadRequestException(
-        'Indigent membership requires at least one supporting document (e.g. kebele letter, income proof, or poverty certificate).',
-      );
-    }
-
+    // Indigent pathway: always pending until admin approves
     return {
-      score: 100,
-      approved: true,
+      score: 0,
+      approved: false,
       reason:
-        'Indigent pathway: supporting documents submitted with registration.',
+        'Indigent application submitted — pending admin review.',
     };
   }
 
@@ -912,9 +930,12 @@ export class CbhiService {
       return CoverageStatus.PENDING_RENEWAL;
     }
 
-    return eligibility.approved
-      ? CoverageStatus.ACTIVE
-      : CoverageStatus.REJECTED;
+    // Indigent: PENDING until admin approves, then ACTIVE
+    if (!eligibility.approved) {
+      return CoverageStatus.PENDING;
+    }
+
+    return CoverageStatus.ACTIVE;
   }
 
   private calculatePremium(memberCount: number) {
@@ -936,7 +957,9 @@ export class CbhiService {
       membershipType: input.household.membershipType,
       coverageStatus: input.coverage.status,
       eligibilityApproved: input.eligibility.approved,
-      validUntil: input.coverage.endDate.toISOString(),
+      validUntil: input.coverage.endDate instanceof Date
+        ? input.coverage.endDate.toISOString()
+        : ((input.coverage.endDate as unknown as string)?.toString() ?? null),
       issuedAt: new Date().toISOString(),
     };
 
@@ -1298,7 +1321,9 @@ export class CbhiService {
       membershipId: beneficiary.memberNumber,
       fullName: beneficiary.fullName,
       gender: beneficiary.gender,
-      dateOfBirth: beneficiary.dateOfBirth?.toISOString() ?? null,
+      dateOfBirth: beneficiary.dateOfBirth instanceof Date
+        ? beneficiary.dateOfBirth.toISOString()
+        : ((beneficiary.dateOfBirth as unknown as string)?.toString() ?? null),
       relationshipToHouseholdHead: beneficiary.relationshipToHouseholdHead,
       identityType:
         beneficiary.identityType ??
@@ -1454,7 +1479,7 @@ export class CbhiService {
 
   private canBeneficiaryLoginIndependently(
     relationship: RelationshipToHouseholdHead,
-    dateOfBirth: Date | null,
+    dateOfBirth: Date | string | null,
   ) {
     if (relationship === RelationshipToHouseholdHead.CHILD || !dateOfBirth) {
       return false;
@@ -1462,13 +1487,14 @@ export class CbhiService {
     return this.calculateAge(dateOfBirth) >= 18;
   }
 
-  private calculateAge(dateOfBirth: Date) {
+  private calculateAge(dateOfBirth: Date | string) {
+    const dob = dateOfBirth instanceof Date ? dateOfBirth : new Date(dateOfBirth);
     const today = new Date();
-    let age = today.getFullYear() - dateOfBirth.getFullYear();
-    const monthDelta = today.getMonth() - dateOfBirth.getMonth();
+    let age = today.getFullYear() - dob.getFullYear();
+    const monthDelta = today.getMonth() - dob.getMonth();
     if (
       monthDelta < 0 ||
-      (monthDelta === 0 && today.getDate() < dateOfBirth.getDate())
+      (monthDelta === 0 && today.getDate() < dob.getDate())
     ) {
       age -= 1;
     }
@@ -1507,9 +1533,13 @@ export class CbhiService {
       serviceDate:
         claim.serviceDate instanceof Date
           ? claim.serviceDate.toISOString()
-          : null,
-      submittedAt: claim.submittedAt?.toISOString() ?? null,
-      reviewedAt: claim.reviewedAt?.toISOString() ?? null,
+          : ((claim.serviceDate as unknown as string)?.toString() ?? null),
+      submittedAt: claim.submittedAt instanceof Date
+        ? claim.submittedAt.toISOString()
+        : ((claim.submittedAt as unknown as string)?.toString() ?? null),
+      reviewedAt: claim.reviewedAt instanceof Date
+        ? claim.reviewedAt.toISOString()
+        : ((claim.reviewedAt as unknown as string)?.toString() ?? null),
       facilityName: claim.facility?.name ?? null,
       decisionNote: claim.decisionNote ?? null,
     }));
@@ -1531,9 +1561,13 @@ export class CbhiService {
       status: payment.status,
       providerName: payment.providerName ?? null,
       receiptNumber: payment.receiptNumber ?? null,
-      paidAt: payment.paidAt?.toISOString() ?? null,
+      paidAt: payment.paidAt instanceof Date
+        ? payment.paidAt.toISOString()
+        : ((payment.paidAt as unknown as string)?.toString() ?? null),
       coverageNumber: payment.coverage?.coverageNumber ?? null,
-      createdAt: payment.createdAt.toISOString(),
+      createdAt: payment.createdAt instanceof Date
+        ? payment.createdAt.toISOString()
+        : ((payment.createdAt as unknown as string)?.toString() ?? new Date().toISOString()),
     }));
   }
 
@@ -1550,8 +1584,12 @@ export class CbhiService {
       message: notification.message,
       type: notification.type,
       isRead: notification.isRead,
-      readAt: notification.readAt?.toISOString() ?? null,
-      createdAt: notification.createdAt.toISOString(),
+      readAt: notification.readAt instanceof Date
+        ? notification.readAt.toISOString()
+        : ((notification.readAt as unknown as string)?.toString() ?? null),
+      createdAt: notification.createdAt instanceof Date
+        ? notification.createdAt.toISOString()
+        : ((notification.createdAt as unknown as string)?.toString() ?? new Date().toISOString()),
       payload: notification.payload ?? null,
     }));
   }
@@ -1639,7 +1677,13 @@ export class CbhiService {
 
   /** Real-time phone availability check — used by Flutter registration form */
   async checkPhoneAvailability(rawPhone: string) {
-    const phoneNumber = this.authService.normalizePhoneNumber(rawPhone);
+    let phoneNumber: string | undefined;
+    try {
+      phoneNumber = this.authService.normalizePhoneNumber(rawPhone);
+    } catch {
+      // Partial/invalid number while user is still typing — not an error
+      return { available: false, message: 'Invalid phone number format.' };
+    }
     if (!phoneNumber) {
       return { available: false, message: 'Invalid phone number format.' };
     }
@@ -1767,13 +1811,21 @@ export class CbhiService {
         id: c.id,
         coverageNumber: c.coverageNumber,
         status: c.status,
-        startDate: c.startDate?.toISOString() ?? null,
-        endDate: c.endDate?.toISOString() ?? null,
-        nextRenewalDate: c.nextRenewalDate?.toISOString() ?? null,
+        startDate: c.startDate instanceof Date
+          ? c.startDate.toISOString()
+          : ((c.startDate as unknown as string)?.toString() ?? null),
+        endDate: c.endDate instanceof Date
+          ? c.endDate.toISOString()
+          : ((c.endDate as unknown as string)?.toString() ?? null),
+        nextRenewalDate: c.nextRenewalDate instanceof Date
+          ? c.nextRenewalDate.toISOString()
+          : ((c.nextRenewalDate as unknown as string)?.toString() ?? null),
         premiumAmount: Number(c.premiumAmount ?? 0),
         paidAmount: Number(c.paidAmount ?? 0),
         membershipType: access.household.membershipType ?? null,
-        createdAt: c.createdAt?.toISOString() ?? null,
+        createdAt: c.createdAt instanceof Date
+          ? c.createdAt.toISOString()
+          : ((c.createdAt as unknown as string)?.toString() ?? null),
       })),
       syncedAt: new Date().toISOString(),
     };

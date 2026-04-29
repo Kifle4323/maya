@@ -195,6 +195,10 @@ class RegistrationCubit extends Cubit<RegistrationState> {
     await prefs.setString('cbhi_setup_code', setupCode);
     await prefs.setString('cbhi_temp_password', setupCode); // keep legacy key for profile screen compat
     await prefs.setBool('cbhi_has_temp_password', true);
+    final phone = state.personalInfo?.phone;
+    if (phone != null && phone.isNotEmpty) {
+      await prefs.setString('cbhi_registered_phone', phone);
+    }
 
     CbhiSnapshot? snapshot;
     bool isOffline = false;

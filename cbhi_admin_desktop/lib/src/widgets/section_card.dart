@@ -14,13 +14,18 @@ class SectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    final isDark = brightness == Brightness.dark;
+    final cardColor = AdminTheme.cardBgFor(brightness);
+    final titleColor = AdminTheme.textPrimaryFor(brightness);
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: isDark ? Colors.black.withValues(alpha: 0.3) : Colors.black.withValues(alpha: 0.03),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -44,16 +49,16 @@ class SectionCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w800,
                     fontSize: 18,
-                    color: AdminTheme.textDark,
+                    color: titleColor,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 20),
-            const Divider(height: 1),
+            Divider(height: 1, color: isDark ? AdminTheme.darkBorder : null),
             const SizedBox(height: 20),
             child,
           ],

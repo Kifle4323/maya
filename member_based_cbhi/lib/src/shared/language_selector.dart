@@ -32,7 +32,7 @@ class LanguageSelector extends StatelessWidget {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
-          key: ValueKey('lang_selector_${currentLocale.languageCode}'),
+          key: const ValueKey('lang_selector'),
           value: currentLocale.languageCode,
           dropdownColor: isLight ? Colors.white : AppTheme.primaryDark,
           icon: Icon(

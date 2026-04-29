@@ -145,7 +145,7 @@ class _GrievanceCard extends StatelessWidget {
   Color _statusColor(String status) => switch (status.toUpperCase()) {
     'RESOLVED' => AppTheme.success,
     'UNDER_REVIEW' => AppTheme.warning,
-    'CLOSED' => AppTheme.textSecondary,
+    'CLOSED' => AppTheme.m3OnSurfaceVariant,
     _ => AppTheme.primary,
   };
 
@@ -338,9 +338,9 @@ class _SubmitGrievanceFormState extends State<_SubmitGrievanceForm> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(t.$2, size: 16, color: isSelected ? Colors.white : AppTheme.textSecondary),
+                      Icon(t.$2, size: 16, color: isSelected ? Colors.white : AppTheme.textSecondaryFor(Theme.of(context).brightness)),
                       const SizedBox(width: 6),
-                      Text(label, style: TextStyle(color: isSelected ? Colors.white : AppTheme.textDark, fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500, fontSize: 13)),
+                      Text(label, style: TextStyle(color: isSelected ? Colors.white : AppTheme.textPrimaryFor(Theme.of(context).brightness), fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500, fontSize: 13)),
                     ],
                   ),
                 ),

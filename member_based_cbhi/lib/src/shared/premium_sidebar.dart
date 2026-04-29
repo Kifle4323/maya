@@ -122,7 +122,7 @@ class PremiumSidebar extends StatelessWidget {
                     Text(
                       strings.t('ehia'),
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: AppTheme.textSecondary,
+                        color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                         fontWeight: FontWeight.w600,
                         letterSpacing: 1.2,
                       ),
@@ -131,7 +131,7 @@ class PremiumSidebar extends StatelessWidget {
                     Text(
                       'v2.4.0-Premium',
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: AppTheme.textSecondary.withValues(alpha: 0.5),
+                        color: AppTheme.textSecondaryFor(Theme.of(context).brightness).withValues(alpha: 0.5),
                         fontSize: 9,
                       ),
                     ),
@@ -236,7 +236,7 @@ class _SidebarItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final activeColor = AppTheme.primary;
-    final inactiveColor = AppTheme.textSecondary;
+    final inactiveColor = AppTheme.textSecondaryFor(Theme.of(context).brightness);
 
     if (isCollapsed) {
       return Padding(

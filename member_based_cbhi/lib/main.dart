@@ -22,11 +22,16 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase (required before any Firebase service)
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  if (!kIsWeb) {
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  // Non-blocking: if Firebase creds are invalid/missing, continue without FCM
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    if (!kIsWeb) {
+      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    }
+  } catch (e) {
+    debugPrint('[Firebase] Initialization skipped: $e');
   }
 
   // Prevent flutter_animate from crashing when a widget is disposed
@@ -75,10 +80,14 @@ Future<void> main() async {
 
   // Register FCM token after repository is ready
   // Token registration happens after login in cbhi_state.dart
-  FcmService.instance.onForegroundMessage((message) {
-    // Foreground messages — the app handles these via in-app banners
-    debugPrint('[FCM] Foreground: ${message.notification?.title}');
-  });
+  try {
+    FcmService.instance.onForegroundMessage((message) {
+      // Foreground messages — the app handles these via in-app banners
+      debugPrint('[FCM] Foreground: ${message.notification?.title}');
+    });
+  } catch (_) {
+    // Firebase not available — skip FCM setup
+  }
 
   const sentryDsn = String.fromEnvironment('SENTRY_DSN');
 

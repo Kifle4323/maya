@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, BadRequestException } from '@nestjs/common';
 import { IsString, IsNotEmpty } from 'class-validator';
 import { Throttle } from '@nestjs/throttler';
 import { Public } from '../common/decorators/public.decorator';
@@ -28,7 +28,7 @@ export class AuthController {
   ) {}
 
   @Public()
-  @Throttle({ default: { ttl: 600_000, limit: 5 } }) // 5 attempts per 10 min per IP
+  @Throttle({ default: { ttl: 600_000, limit: 20 } }) // 20 attempts per 10 min per IP
   @Post('login')
   login(@Body() dto: PasswordLoginDto) {
     return this.authService.loginWithPassword(dto);
@@ -64,13 +64,30 @@ export class AuthController {
    * current session (tokenVersion is not incremented). Use this when the user
    * is setting a password for the first time after registration so they are
    * not logged out immediately after completing setup.
+   *
+   * Supports two auth modes:
+   * 1. JWT session (authenticated) — uses @CurrentUser
+   * 2. No JWT + phone in body — looks up user by phone (for web clients
+   *    that may not persist the session token across navigation)
    */
+  @Public()
+  @Throttle({ default: { ttl: 60_000, limit: 50 } })
   @Post('set-initial-password')
   async setInitialPassword(
-    @CurrentUser() user: User,
+    @CurrentUser() user: User | null,
     @Body() dto: SetPasswordDto,
+    @Req() req: any,
   ) {
-    return this.authService.setInitialPasswordNoInvalidate(user.id, dto.password);
+    // If JWT is present and valid, use the authenticated user
+    if (user) {
+      return this.authService.setInitialPasswordNoInvalidate(user.id, dto.password);
+    }
+
+    // No JWT — resolve user by phone number
+    if (!dto.phone) {
+      throw new BadRequestException('Phone number is required when not authenticated.');
+    }
+    return this.authService.setInitialPasswordByPhone(dto.phone, dto.password);
   }
 
   /**

@@ -484,7 +484,7 @@ class _M3TopAppBar extends StatelessWidget {
     return Container(
       height: 64,
       decoration: BoxDecoration(
-        color: AppTheme.m3SurfaceContainerLowest.withValues(alpha: 0.92),
+        color: AppTheme.cardBgFor(Theme.of(context).brightness).withValues(alpha: 0.92),
         border: Border(
           bottom: BorderSide(
             color: AppTheme.m3OutlineVariant.withValues(alpha: 0.4),
@@ -612,7 +612,7 @@ class _M3BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.m3SurfaceContainerLowest,
+        color: AppTheme.cardBgFor(Theme.of(context).brightness),
         border: Border(
           top: BorderSide(
             color: AppTheme.m3OutlineVariant.withValues(alpha: 0.4),
@@ -683,10 +683,10 @@ class _NavBarItem extends StatelessWidget {
             children: [
               IconTheme(
                 data: IconThemeData(
-                  color: isSelected ? AppTheme.m3Primary : AppTheme.m3OnSurfaceVariant,
+                  color: isSelected ? AppTheme.m3Primary : AppTheme.textSecondaryFor(Theme.of(context).brightness),
                   size: 24,
                 ),
-                child: isSelected ? destination.selectedIcon : destination.icon,
+                child: isSelected ? destination.selectedIcon! : destination.icon,
               ),
               const SizedBox(height: 2),
               Text(
@@ -695,7 +695,7 @@ class _NavBarItem extends StatelessWidget {
                   fontFamily: 'Outfit',
                   fontSize: 11,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                  color: isSelected ? AppTheme.m3Primary : AppTheme.m3OnSurfaceVariant,
+                  color: isSelected ? AppTheme.m3Primary : AppTheme.textSecondaryFor(Theme.of(context).brightness),
                 ),
               ),
             ],

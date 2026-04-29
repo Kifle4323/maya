@@ -81,7 +81,7 @@ class _BenefitPackageBody extends StatelessWidget {
       'surgery': AppTheme.error,
       'maternal': const Color(0xFFE91E63),
       'emergency': const Color(0xFFFF5722),
-      'other': AppTheme.textSecondary,
+      'other': AppTheme.textSecondaryFor(Theme.of(context).brightness),
     };
 
     return ListView(
@@ -125,7 +125,7 @@ class _BenefitPackageBody extends StatelessWidget {
                   const SizedBox(width: 20),
                   _PackageStat(
                     label: strings.t('annualCeiling'),
-                    value: (package['annualCeiling'] as num? ?? 0) == 0 ? strings.t('unlimited') : '${package['annualCeiling']} ETB',
+                    value: double.tryParse(package['annualCeiling']?.toString() ?? '0') == 0 ? strings.t('unlimited') : '${package['annualCeiling']} ETB',
                     icon: Icons.account_balance_wallet_outlined,
                   ),
                   const SizedBox(width: 20),
@@ -146,7 +146,7 @@ class _BenefitPackageBody extends StatelessWidget {
           child: Row(
             children: categories.map((cat) {
               final isSelected = selectedCategory == cat;
-              final color = cat == 'ALL' ? AppTheme.primary : (categoryColors[cat] ?? AppTheme.textSecondary);
+              final color = cat == 'ALL' ? AppTheme.primary : (categoryColors[cat] ?? AppTheme.textSecondaryFor(Theme.of(context).brightness));
               return Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: GestureDetector(
@@ -162,7 +162,7 @@ class _BenefitPackageBody extends StatelessWidget {
                     ),
                     child: Text(
                       cat == 'ALL' ? strings.t('allCategories') : cat.toUpperCase(),
-                      style: TextStyle(color: isSelected ? Colors.white : AppTheme.textSecondary, fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500, fontSize: 12),
+                      style: TextStyle(color: isSelected ? Colors.white : AppTheme.textSecondaryFor(Theme.of(context).brightness), fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500, fontSize: 12),
                     ),
                   ),
                 ),
@@ -190,10 +190,10 @@ class _BenefitPackageBody extends StatelessWidget {
           ...filtered.asMap().entries.map((entry) {
             final item = entry.value;
             final category = item['category']?.toString() ?? 'other';
-            final color = categoryColors[category] ?? AppTheme.textSecondary;
-            final maxAmount = (item['maxClaimAmount'] as num? ?? 0);
-            final coPay = (item['coPaymentPercent'] as num? ?? 0);
-            final maxPerYear = (item['maxClaimsPerYear'] as num? ?? 0);
+            final color = categoryColors[category] ?? AppTheme.textSecondaryFor(Theme.of(context).brightness);
+            final maxAmount = double.tryParse(item['maxClaimAmount']?.toString() ?? '0') ?? 0;
+            final coPay = double.tryParse(item['coPaymentPercent']?.toString() ?? '0') ?? 0;
+            final maxPerYear = double.tryParse(item['maxClaimsPerYear']?.toString() ?? '0') ?? 0;
             final isCovered = item['isCovered'] == true;
 
             return GlassCard(
@@ -203,12 +203,12 @@ class _BenefitPackageBody extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: (isCovered ? color : AppTheme.textSecondary).withValues(alpha: 0.1),
+                      color: (isCovered ? color : AppTheme.textSecondaryFor(Theme.of(context).brightness)).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
                       isCovered ? Icons.check_circle_outline : Icons.cancel_outlined,
-                      color: isCovered ? color : AppTheme.textSecondary,
+                      color: isCovered ? color : AppTheme.textSecondaryFor(Theme.of(context).brightness),
                       size: 20,
                     ),
                   ),
@@ -236,7 +236,7 @@ class _BenefitPackageBody extends StatelessWidget {
                             _ServiceTag(label: category.toUpperCase(), color: color),
                             if (maxAmount > 0) _ServiceTag(label: '${strings.t('maxClaim')}: $maxAmount ETB', color: AppTheme.warning),
                             if (coPay > 0) _ServiceTag(label: '${strings.t('coPay')}: $coPay%', color: AppTheme.primary),
-                            if (maxPerYear > 0) _ServiceTag(label: '${strings.t('maxPerYear')}: $maxPerYear', color: AppTheme.textSecondary),
+                            if (maxPerYear > 0) _ServiceTag(label: '${strings.t('maxPerYear')}: $maxPerYear', color: AppTheme.textSecondaryFor(Theme.of(context).brightness)),
                             if (maxAmount == 0 && coPay == 0 && isCovered) _ServiceTag(label: strings.t('fullyCovered'), color: AppTheme.success),
                           ],
                         ),

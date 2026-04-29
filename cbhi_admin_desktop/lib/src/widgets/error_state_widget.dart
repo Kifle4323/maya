@@ -89,7 +89,7 @@ class ErrorStateWidget extends StatelessWidget {
             Expanded(
               child: Text(
                 _friendlyMessage,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Color(0xFF7A3030),
                   fontSize: 13,
                   height: 1.4,
@@ -135,9 +135,9 @@ class ErrorStateWidget extends StatelessWidget {
             const SizedBox(height: 20),
             Text(
               _friendlyMessage,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
-                color: AdminTheme.textDark,
+                color: AdminTheme.textPrimaryFor(Theme.of(context).brightness),
                 fontWeight: FontWeight.w500,
                 height: 1.5,
               ),

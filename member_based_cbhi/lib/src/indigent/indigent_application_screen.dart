@@ -84,17 +84,17 @@ class _IndigentApplicationScreenState
         child: Wrap(
           children: [
             ListTile(
-              leading: const Icon(Icons.camera_alt_outlined),
+              leading: Icon(Icons.camera_alt_outlined),
               title: Text(strings.t('takePhoto')),
               onTap: () => Navigator.pop(ctx, 'camera'),
             ),
             ListTile(
-              leading: const Icon(Icons.photo_library_outlined),
+              leading: Icon(Icons.photo_library_outlined),
               title: Text(strings.t('chooseFromGallery')),
               onTap: () => Navigator.pop(ctx, 'gallery'),
             ),
             ListTile(
-              leading: const Icon(Icons.picture_as_pdf_outlined),
+              leading: Icon(Icons.picture_as_pdf_outlined),
               title: Text(strings.t('choosePdfOrImage')),
               onTap: () => Navigator.pop(ctx, 'file'),
             ),
@@ -172,7 +172,7 @@ class _IndigentApplicationScreenState
           isExpired: result['isExpired'] == true,
           expiryWarning: result['expiryWarning']?.toString(),
           validationSummary: issues.join('; '),
-          confidence: (result['confidence'] as num?)?.toDouble() ?? 0,
+          confidence: double.tryParse(result['confidence']?.toString() ?? '0') ?? 0,
           detectedKeywords:
               (result['detectedKeywords'] as List?)?.cast<String>() ?? [],
           validationError: issues.isNotEmpty ? issues.first : null,
@@ -291,7 +291,7 @@ class _IndigentApplicationScreenState
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
               labelText: strings.t('monthlyIncomeEtb'),
-              prefixIcon: const Icon(Icons.payments_outlined),
+              prefixIcon: Icon(Icons.payments_outlined),
               hintText: strings.t('incomeAmountHint'),
             ),
             validator: (v) {
@@ -363,7 +363,7 @@ class _IndigentApplicationScreenState
               if (_documents.length < 3)
                 FilledButton.tonalIcon(
                   onPressed: _pickDocument,
-                  icon: const Icon(Icons.add_a_photo_outlined, size: 18),
+                  icon: Icon(Icons.add_a_photo_outlined, size: 18),
                   label: Text(strings.t('addDocument')),
                 ),
             ],
@@ -425,7 +425,7 @@ class _IndigentApplicationScreenState
               child: CircularProgressIndicator(
                   strokeWidth: 2, color: Colors.white),
             )
-          : const Icon(Icons.send_outlined),
+          : Icon(Icons.send_outlined),
       label: Text(
         isValidating
             ? strings.t('validatingDocuments')
@@ -454,12 +454,12 @@ class _InfoBanner extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.volunteer_activism, color: Colors.white, size: 28),
+              Icon(Icons.volunteer_activism, color: Colors.white, size: 28),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   strings.t('indigentApplicationTitle'),
-                  style: const TextStyle(
+                  style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
                       fontSize: 16),
@@ -470,7 +470,7 @@ class _InfoBanner extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             strings.t('indigentApplicationBannerBody'),
-            style: const TextStyle(
+            style: TextStyle(
                 color: Colors.white70, fontSize: 13, height: 1.5),
           ),
         ],
@@ -487,12 +487,12 @@ class _AcceptedTypesExpansion extends StatelessWidget {
       tilePadding: EdgeInsets.zero,
       title: Text(
         strings.t('acceptedDocumentTypesTitle'),
-        style: const TextStyle(
+        style: TextStyle(
             fontSize: 13,
             color: AppTheme.primary,
             fontWeight: FontWeight.w600),
       ),
-      leading: const Icon(Icons.info_outline,
+      leading: Icon(Icons.info_outline,
           color: AppTheme.primary, size: 18),
       children: IndigentDocumentType.values
           .map(
@@ -500,13 +500,13 @@ class _AcceptedTypesExpansion extends StatelessWidget {
               dense: true,
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 8),
-              leading: const Icon(Icons.check_circle_outline,
+              leading: Icon(Icons.check_circle_outline,
                   color: AppTheme.success, size: 18),
               title: Text(type.label,
-                  style: const TextStyle(fontSize: 13)),
+                  style: TextStyle(fontSize: 13)),
               subtitle: Text(
                 '${type.amharic} • ${strings.f('validForMonths', {'months': type.validityMonths})}',
-                style: const TextStyle(fontSize: 11),
+                style: TextStyle(fontSize: 11),
               ),
             ),
           )
@@ -532,12 +532,12 @@ class _ErrorCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.error_outline,
+          Icon(Icons.error_outline,
               color: AppTheme.error, size: 18),
           const SizedBox(width: 8),
           Expanded(
             child: Text(message,
-                style: const TextStyle(
+                style: TextStyle(
                     color: AppTheme.error, fontSize: 13)),
           ),
         ],
@@ -564,7 +564,7 @@ class _DocumentCard extends StatelessWidget {
     if (doc.isExpired) return AppTheme.error;
     if (doc.isAccepted) return AppTheme.success;
     if (doc.validationError != null) return AppTheme.warning;
-    return AppTheme.textSecondary;
+    return AppTheme.m3OnSurfaceVariant;
   }
 
   IconData get _statusIcon {
@@ -611,7 +611,7 @@ class _DocumentCard extends StatelessWidget {
                       ? Container(
                           color: AppTheme.primary
                               .withValues(alpha: 0.1),
-                          child: const Icon(Icons.picture_as_pdf,
+                          child: Icon(Icons.picture_as_pdf,
                               color: AppTheme.primary, size: 28),
                         )
                       : NativeFileImage(
@@ -620,9 +620,9 @@ class _DocumentCard extends StatelessWidget {
                           width: 52,
                           height: 52,
                           errorWidget: Container(
-                            color: AppTheme.m3SurfaceContainerLow,
-                            child: const Icon(Icons.description_outlined,
-                                color: AppTheme.textSecondary, size: 28),
+                            color: AppTheme.surfaceBgFor(Theme.of(context).brightness),
+                            child: Icon(Icons.description_outlined,
+                                color: AppTheme.textSecondaryFor(Theme.of(context).brightness), size: 28),
                           ),
                         ),
                 ),
@@ -642,9 +642,9 @@ class _DocumentCard extends StatelessWidget {
                     if (doc.detectedDate != null)
                       Text(
                         strings.f('issued', {'date': doc.detectedDate!}),
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontSize: 12,
-                            color: AppTheme.textSecondary),
+                            color: AppTheme.textSecondaryFor(Theme.of(context).brightness)),
                       ),
                     Row(
                       children: [
@@ -662,9 +662,9 @@ class _DocumentCard extends StatelessWidget {
                           const SizedBox(width: 8),
                           Text(
                             strings.f('confidence', {'percent': (doc.confidence * 100).toStringAsFixed(0)}),
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 11,
-                                color: AppTheme.textSecondary),
+                                color: AppTheme.textSecondaryFor(Theme.of(context).brightness)),
                           ),
                         ],
                       ],
@@ -680,9 +680,9 @@ class _DocumentCard extends StatelessWidget {
                 )
               else
                 IconButton(
-                  icon: const Icon(Icons.close, size: 18),
+                  icon: Icon(Icons.close, size: 18),
                   onPressed: onRemove,
-                  color: AppTheme.textSecondary,
+                  color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                 ),
             ],
           ),
@@ -698,13 +698,13 @@ class _DocumentCard extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.schedule_outlined,
+                  Icon(Icons.schedule_outlined,
                       color: AppTheme.warning, size: 14),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       doc.expiryWarning!,
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: AppTheme.warning, fontSize: 12),
                     ),
                   ),
@@ -728,7 +728,7 @@ class _DocumentCard extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.error_outline,
+                      Icon(Icons.error_outline,
                           color: AppTheme.error, size: 14),
                       const SizedBox(width: 6),
                       Expanded(
@@ -736,7 +736,7 @@ class _DocumentCard extends StatelessWidget {
                           doc.isExpired
                               ? strings.t('documentExpiredBilingual')
                               : doc.validationError ?? '',
-                          style: const TextStyle(
+                          style: TextStyle(
                               color: AppTheme.error, fontSize: 12, height: 1.4),
                         ),
                       ),
@@ -746,15 +746,16 @@ class _DocumentCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     TextButton.icon(
                       onPressed: onRetry,
-                      icon: const Icon(Icons.refresh, size: 14),
+                      icon: Icon(Icons.refresh, size: 14),
                       label: Text(strings.t('retryValidation'),
-                          style: const TextStyle(fontSize: 12)),
+                          style: TextStyle(fontSize: 12)),
                       style: TextButton.styleFrom(
                         foregroundColor: AppTheme.primary,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 4),
                         minimumSize: Size.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ],
@@ -781,7 +782,7 @@ class _DocumentCard extends StatelessWidget {
                       ),
                       child: Text(
                         kw,
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontSize: 10,
                             color: AppTheme.success,
                             fontWeight: FontWeight.w600),

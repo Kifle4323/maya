@@ -121,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         title: Text(strings.t('signIn')),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new),
+          icon: Icon(Icons.arrow_back_ios_new),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -144,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: AppTheme.primary.withValues(alpha: 0.10),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.lock_outline,
                     size: 40,
                     color: AppTheme.primary,
@@ -163,7 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Text(
                   strings.t('credentialLoginSubtitle'),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.textSecondary,
+                        color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                       ),
                 ),
 
@@ -185,7 +185,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.error_outline,
+                              Icon(Icons.error_outline,
                                   color: AppTheme.error, size: 16),
                               const SizedBox(width: 8),
                               Expanded(
@@ -212,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: InputDecoration(
                           labelText: strings.t('emailOrPhone'),
                           hintText: '+251 9XX XXX XXX',
-                          prefixIcon: const Icon(Icons.person_outline),
+                          prefixIcon: Icon(Icons.person_outline),
                         ),
                         onSubmitted: (_) => _loginWithPassword(),
                       ),
@@ -225,7 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         obscureText: _obscurePassword,
                         decoration: InputDecoration(
                           labelText: strings.t('password'),
-                          prefixIcon: const Icon(Icons.lock_outline),
+                          prefixIcon: Icon(Icons.lock_outline),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscurePassword
@@ -258,7 +258,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         color: Colors.white,
                                       ),
                                     )
-                                  : const Icon(Icons.login),
+                                  : Icon(Icons.login),
                               label: Text(strings.t('signIn')),
                             ),
                           );
@@ -277,7 +277,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         return OutlinedButton.icon(
                           onPressed:
                               authState.isBusy ? null : _loginWithBiometric,
-                          icon: const Icon(Icons.fingerprint),
+                          icon: Icon(Icons.fingerprint),
                           label: Text(strings.t('signInWithBiometrics')),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: AppTheme.primary,
@@ -298,13 +298,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.shield_outlined,
-                          size: 14, color: AppTheme.textSecondary),
+                      Icon(Icons.shield_outlined,
+                          size: 14, color: AppTheme.textSecondaryFor(Theme.of(context).brightness)),
                       const SizedBox(width: 6),
                       Text(
                         strings.t('authSecurityNote'),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppTheme.textSecondary,
+                              color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                             ),
                       ),
                     ],

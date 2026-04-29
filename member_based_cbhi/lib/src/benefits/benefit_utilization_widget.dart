@@ -89,8 +89,8 @@ class BenefitUtilizationWidget extends StatelessWidget {
                     decoration: BoxDecoration(color: AppTheme.success.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(8)),
                     child: Column(
                       children: [
-                        Text('${remaining.toStringAsFixed(0)} ETB', style: const TextStyle(fontWeight: FontWeight.w700, color: AppTheme.success, fontSize: 14)),
-                        Text(strings.t('remaining'), style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
+                        Text('${remaining.toStringAsFixed(0)} ETB', style: TextStyle(fontWeight: FontWeight.w700, color: AppTheme.success, fontSize: 14)),
+                        Text(strings.t('remaining'), style: TextStyle(color: AppTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 11)),
                       ],
                     ),
                   ),
@@ -103,7 +103,7 @@ class BenefitUtilizationWidget extends StatelessWidget {
                     child: Column(
                       children: [
                         Text('${(utilizationRate * 100).toStringAsFixed(0)}%', style: TextStyle(fontWeight: FontWeight.w700, color: barColor, fontSize: 14)),
-                        Text(strings.t('utilized'), style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
+                        Text(strings.t('utilized'), style: TextStyle(color: AppTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 11)),
                       ],
                     ),
                   ),
@@ -119,19 +119,19 @@ class BenefitUtilizationWidget extends StatelessWidget {
                   children: [
                     const Icon(Icons.warning_amber_outlined, color: AppTheme.warning, size: 16),
                     const SizedBox(width: 8),
-                    Expanded(child: Text(strings.t('nearingBenefitLimit'), style: const TextStyle(color: AppTheme.warning, fontSize: 12))),
+                    Expanded(child: Text(strings.t('nearingBenefitLimit'), style: TextStyle(color: AppTheme.warning, fontSize: 12))),
                   ],
                 ),
               ),
           ] else ...[
             Row(
               children: [
-                Text('${totalClaimed.toStringAsFixed(0)} ETB ${strings.t('totalClaimed')}', style: const TextStyle(fontWeight: FontWeight.w700, color: AppTheme.primary, fontSize: 13)),
+                Text('${totalClaimed.toStringAsFixed(0)} ETB ${strings.t('totalClaimed')}', style: TextStyle(fontWeight: FontWeight.w700, color: AppTheme.primary, fontSize: 13)),
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(color: AppTheme.success.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
-                  child: Text(strings.t('unlimited'), style: const TextStyle(color: AppTheme.success, fontWeight: FontWeight.w700, fontSize: 11)),
+                  child: Text(strings.t('unlimited'), style: TextStyle(color: AppTheme.success, fontWeight: FontWeight.w700, fontSize: 11)),
                 ),
               ],
             ),

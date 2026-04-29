@@ -1,8 +1,7 @@
 import { createHash } from 'crypto';
-import { Injectable, Logger, Optional } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { DemoSandboxService } from '../demo/demo-sandbox.service';
 import { VisionService } from '../vision/vision.service';
 import { ClassificationService } from './classification.service';
 import { ParsingService } from './parsing.service';
@@ -26,7 +25,7 @@ interface DecisionResult {
 
 /** In-process SHA-256 cache to avoid re-calling Vision API for the same file */
 const resultCache = new Map<string, { result: VerificationResultDto; expiresAt: number }>();
-const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 @Injectable()
 export class VerificationService {
@@ -39,7 +38,6 @@ export class VerificationService {
     private readonly parsingService: ParsingService,
     private readonly validationService: ValidationService,
     private readonly classificationService: ClassificationService,
-    @Optional() private readonly demo: DemoSandboxService,
   ) {}
 
   async verifyDocument(
@@ -48,25 +46,6 @@ export class VerificationService {
     dto: VerifyDocumentDto,
     userId?: string,
   ): Promise<VerificationResultDto> {
-    // ── Demo mode shortcut ─────────────────────────────────────────────────
-    if (this.demo?.isActive) {
-      this.logger.debug('[DEMO] Returning mock verification result');
-      const demoResult: VerificationResultDto = {
-        status: 'approved',
-        confidence: 0.95,
-        extracted: {
-          name: dto.userName,
-          idNumber: dto.userIdNumber,
-          expiryDate: null,
-          documentType: dto.documentType === 'INDIGENT_PROOF' ? 'INCOME_CERTIFICATE' : null,
-        },
-        reasons: [],
-        verificationId: 'demo-' + Date.now(),
-        isDemo: true,
-      };
-      return demoResult;
-    }
-
     // ── Cache check ────────────────────────────────────────────────────────
     const fileHash = createHash('sha256').update(fileBuffer).digest('hex');
     const cacheKey = `${fileHash}:${dto.userName}:${dto.userIdNumber}:${dto.documentType}`;
@@ -93,22 +72,91 @@ export class VerificationService {
       return this._buildManualReviewResult(dto, userId, 'Vision API unavailable');
     }
 
+    // ── Step 2b: ID card document validation ──────────────────────────────
+    if (dto.documentType === 'ID_CARD') {
+      const idValidation = this.visionService.validateIdCardText(
+        { fullText: ocrText, words: ocrText.split(/[\n\r\s]+/).map(w => w.trim()).filter(w => w.length > 0), confidence: ocrConfidence },
+        dto.userIdNumber,
+      );
+      if (!idValidation.isValid) {
+        this.logger.warn(`ID card validation failed: ${idValidation.issues.join('; ')}`);
+        const entity = this.verificationRepo.create({
+          userId: userId ?? null,
+          documentType: dto.documentType,
+          status: 'rejected',
+          confidence: 0,
+          extractedData: { rawText: ocrText || null },
+          validationErrors: idValidation.issues,
+        });
+        const saved = await this.verificationRepo.save(entity);
+        const rejectResult: VerificationResultDto = {
+          status: 'rejected',
+          confidence: 0,
+          extracted: { name: null, idNumber: null, expiryDate: null, documentType: null },
+          reasons: idValidation.issues,
+          verificationId: saved.id,
+          isDemo: false,
+        };
+        resultCache.set(cacheKey, { result: rejectResult, expiresAt: Date.now() + CACHE_TTL_MS });
+        return rejectResult;
+      }
+    }
+
     // ── Step 3: Parse structured fields ───────────────────────────────────
     const extractedName = this.parsingService.extractFullName(ocrText);
     const extractedId = this.parsingService.extractIdNumber(ocrText);
     const expiryDate = this.parsingService.extractExpiryDate(ocrText);
 
-    // ── Step 4: Validate name ──────────────────────────────────────────────
-    const nameMatchResult =
-      extractedName
-        ? this.validationService.fuzzyNameMatch(extractedName, dto.userName)
-        : { match: false, score: 0 };
+    // ── Step 3b: Hard check — name and ID must be found in the image ──────
+    const hardRejectReasons: string[] = [];
 
-    // ── Step 5: Validate ID ────────────────────────────────────────────────
-    const idMatch =
-      extractedId !== null &&
-      extractedId.replace(/\s/g, '').toUpperCase() ===
-        dto.userIdNumber.replace(/\s/g, '').toUpperCase();
+    if (!extractedName) {
+      hardRejectReasons.push('Could not find a name on the document that matches the provided name. Please upload a clear photo of your ID card.');
+    } else {
+      const nameResult = this.validationService.fuzzyNameMatch(extractedName, dto.userName);
+      if (!nameResult.match) {
+        hardRejectReasons.push(`Name on document ("${extractedName}") does not match the provided name ("${dto.userName}").`);
+      }
+    }
+
+    if (!extractedId) {
+      hardRejectReasons.push('Could not find an ID number on the document. Please upload a clear photo of your ID card.');
+    } else {
+      const normalizedExtracted = extractedId.replace(/\s/g, '').toUpperCase();
+      const normalizedProvided = dto.userIdNumber.replace(/\s/g, '').toUpperCase();
+      if (normalizedExtracted !== normalizedProvided) {
+        hardRejectReasons.push(`ID number on document (${extractedId}) does not match the provided number (${dto.userIdNumber}).`);
+      }
+    }
+
+    if (hardRejectReasons.length > 0) {
+      this.logger.warn(`Hard reject: ${hardRejectReasons.join('; ')}`);
+      const entity = this.verificationRepo.create({
+        userId: userId ?? null,
+        documentType: dto.documentType,
+        status: 'rejected',
+        confidence: 0,
+        extractedData: { name: extractedName, idNumber: extractedId, rawText: ocrText || null },
+        validationErrors: hardRejectReasons,
+      });
+      const saved = await this.verificationRepo.save(entity);
+      const rejectResult: VerificationResultDto = {
+        status: 'rejected',
+        confidence: 0,
+        extracted: { name: extractedName, idNumber: extractedId, expiryDate: null, documentType: null },
+        reasons: hardRejectReasons,
+        verificationId: saved.id,
+        isDemo: false,
+      };
+      resultCache.set(cacheKey, { result: rejectResult, expiresAt: Date.now() + CACHE_TTL_MS });
+      return rejectResult;
+    }
+
+    // ── Step 4: Validate name (already passed hard check above) ────────────
+    const nameMatchResult = this.validationService.fuzzyNameMatch(extractedName!, dto.userName);
+
+    // ── Step 5: Validate ID (already passed hard check above) ─────────────
+    const idMatch = true;
 
     // ── Step 6: Expiry check ───────────────────────────────────────────────
     const expired = expiryDate ? this.validationService.isExpired(expiryDate) : false;
@@ -196,7 +244,7 @@ export class VerificationService {
     }
 
     // Name mismatch (hard reject)
-    if (!nameMatch && nameScore < 0.5) {
+    if (!nameMatch) {
       reasons.push('Name mismatch');
     }
 

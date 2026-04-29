@@ -33,7 +33,7 @@ class DigitalCardScreen extends StatelessWidget {
             : snapshot.digitalCards;
 
         return Scaffold(
-          backgroundColor: AppTheme.m3SurfaceContainerLow,
+          backgroundColor: AppTheme.surfaceBgFor(Theme.of(context).brightness),
           body: ListView(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
             children: [
@@ -43,8 +43,8 @@ class DigitalCardScreen extends StatelessWidget {
                 children: [
                   Text(
                     strings.t('idCard'),
-                    style: const TextStyle(
-                      color: AppTheme.m3OnSurface,
+                    style: TextStyle(
+                      color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                       fontSize: 28,
                       fontWeight: FontWeight.w600,
                       height: 1.2,
@@ -53,8 +53,8 @@ class DigitalCardScreen extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     strings.t('presentCardForServices'),
-                    style: const TextStyle(
-                      color: AppTheme.m3OnSurfaceVariant,
+                    style: TextStyle(
+                      color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                     ),
@@ -180,7 +180,7 @@ class _M3CardLayoutState extends State<_M3CardLayout>
         // ── QR section (always visible below card) ──
         Container(
           decoration: BoxDecoration(
-            color: AppTheme.m3SurfaceContainerLow,
+            color: AppTheme.surfaceBgFor(Theme.of(context).brightness),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
@@ -197,8 +197,8 @@ class _M3CardLayoutState extends State<_M3CardLayout>
             children: [
               Text(
                 strings.t('scanToVerify'),
-                style: const TextStyle(
-                  color: AppTheme.m3OnSurface,
+                style: TextStyle(
+                  color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
                 ),
@@ -208,7 +208,7 @@ class _M3CardLayoutState extends State<_M3CardLayout>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppTheme.m3SurfaceContainerLowest,
+                  color: AppTheme.cardBgFor(Theme.of(context).brightness),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: AppTheme.m3OutlineVariant.withValues(alpha: 0.2),
@@ -244,8 +244,8 @@ class _M3CardLayoutState extends State<_M3CardLayout>
                             Text(
                               strings.t('noDigitalCardCached'),
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: AppTheme.m3OnSurfaceVariant,
+                              style: TextStyle(
+                                color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                                 fontSize: 12,
                               ),
                             ),
@@ -258,8 +258,8 @@ class _M3CardLayoutState extends State<_M3CardLayout>
                 hasToken
                     ? strings.t('showAtFacilityHint')
                     : strings.t('completeSyncForQr'),
-                style: const TextStyle(
-                  color: AppTheme.m3OnSurfaceVariant,
+                style: TextStyle(
+                  color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
                 ),
@@ -285,7 +285,7 @@ class _M3CardLayoutState extends State<_M3CardLayout>
                         label: strings.t('showAtFacility'),
                         icon: Icons.local_hospital_outlined,
                         backgroundColor: Colors.transparent,
-                        foregroundColor: AppTheme.m3OnSurface,
+                        foregroundColor: AppTheme.textPrimaryFor(Theme.of(context).brightness),
                         borderColor: AppTheme.m3Outline,
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(
@@ -389,7 +389,7 @@ class _CardFront extends StatelessWidget {
                         ),
                         Text(
                           strings.t('communityHealthPlan'),
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppTheme.m3OnPrimaryContainer,
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
@@ -419,7 +419,7 @@ class _CardFront extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             coverageStatus.toUpperCase(),
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppTheme.m3OnTertiaryContainer,
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
@@ -455,7 +455,7 @@ class _CardFront extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   card['memberName']?.toString() ?? snapshot.viewerName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppTheme.m3OnPrimaryContainer,
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
@@ -569,7 +569,7 @@ class _CardBack extends StatelessWidget {
         children: [
           Text(
             card['memberName']?.toString() ?? snapshot.viewerName,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppTheme.m3OnPrimaryContainer,
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -579,7 +579,7 @@ class _CardBack extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppTheme.cardBgFor(Theme.of(context).brightness),
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
@@ -613,8 +613,8 @@ class _CardBack extends StatelessWidget {
                         Text(
                           strings.t('noDigitalCardCached'),
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: AppTheme.m3OnSurfaceVariant,
+                          style: TextStyle(
+                            color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                             fontSize: 11,
                           ),
                         ),
@@ -704,7 +704,7 @@ class _ShowAtFacilityScreenState extends State<_ShowAtFacilityScreen> {
               const SizedBox(height: 8),
               Text(
                 widget.memberName,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
@@ -714,7 +714,7 @@ class _ShowAtFacilityScreenState extends State<_ShowAtFacilityScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppTheme.cardBgFor(Theme.of(context).brightness),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: QrImageView(data: widget.token, size: 320),
@@ -759,7 +759,7 @@ class _CardField extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           value.isEmpty ? '—' : value,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppTheme.m3OnPrimaryContainer,
             fontSize: 14,
             fontWeight: FontWeight.w600,

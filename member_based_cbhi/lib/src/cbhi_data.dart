@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io' if (dart.library.html) 'shared/web_stubs.dart';
+import 'dart:typed_data';
 
 
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart' if (dart.library.html) 'shared/db_stubs.dart';
@@ -12,7 +14,17 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart' if (dart.library.html) 'sha
 import 'registration/models/identity_model.dart';
 import 'registration/models/membership_type.dart';
 import 'registration/models/personal_info_model.dart';
+import 'shared/local_attachment_store.dart';
 import 'shared/secure_storage_service.dart';
+
+/// Converts a value that may be num, String, or null to double.
+/// Postgres numeric columns are returned as strings over JSON.
+double _toDouble(dynamic v) {
+  if (v == null) return 0;
+  if (v is num) return v.toDouble();
+  if (v is String) return double.tryParse(v) ?? 0;
+  return 0;
+}
 
 String get kDefaultApiBaseUrl {
   const envUrl = String.fromEnvironment('CBHI_API_BASE_URL');
@@ -340,9 +352,9 @@ class CbhiSnapshot {
       'UNKNOWN';
 
   double get premiumAmount =>
-      (coverage?['premiumAmount'] as num?)?.toDouble() ?? 0;
+      _toDouble(coverage?['premiumAmount']);
 
-  double get paidAmount => (coverage?['paidAmount'] as num?)?.toDouble() ?? 0;
+  double get paidAmount => _toDouble(coverage?['paidAmount']);
 
   String get coverageNumber => coverage?['coverageNumber']?.toString() ?? '';
 
@@ -959,11 +971,12 @@ class CbhiRepository {
   /// first time after registration — the session must stay active.
   /// Set the initial password for first-time setup. If [setupCode] is provided,
   /// it uses that as an implicit credential (allowing setup without a session).
-  Future<void> setInitialPasswordDirect({required String password, String? setupCode}) async {
+  Future<void> setInitialPasswordDirect({required String password, String? setupCode, String? phone}) async {
     await _postJson('/auth/set-initial-password', {
       'password': password,
       if (setupCode != null) 'setupCode': setupCode,
-    }, authorized: setupCode == null);
+      if (phone != null) 'phone': phone,
+    }, authorized: setupCode == null && phone == null);
   }
 
   /// GDPR: anonymise and deactivate the account.
@@ -1235,6 +1248,10 @@ class CbhiRepository {
         'employmentStatus': identity.employmentStatusForApi,
       },
       'indigentProofUploads': indigentProofUploads,
+      'idFrontUpload': await _buildAttachmentPayload(identity.idFrontPath),
+      'idBackUpload': await _buildAttachmentPayload(identity.idBackPath),
+      if (identity.verificationId != null) 'verificationId': identity.verificationId,
+      if (identity.verificationStatus != null) 'verificationStatus': identity.verificationStatus,
     };
 
     try {
@@ -1351,6 +1368,73 @@ class CbhiRepository {
         return 'application/pdf';
       default:
         return 'application/octet-stream';
+    }
+  }
+
+  // ── ID Document Verification ────────────────────────────────────────────────
+
+  /// Calls the backend OCR verification endpoint with the ID front image.
+  /// Returns a map with keys: status, confidence, extracted, reasons, verificationId.
+  Future<Map<String, dynamic>> verifyIdDocument({
+    required String idFrontPath,
+    required String fullName,
+    required String idNumber,
+  }) async {
+    Uint8List bytes;
+    String fileName;
+
+    if (kIsWeb) {
+      // On web, retrieve bytes from LocalAttachmentStore cache
+      final cached = LocalAttachmentStore.getWebBytes(idFrontPath);
+      debugPrint('[verifyIdDocument] Web path: $idFrontPath, cached bytes: ${cached != null ? '${cached.length} bytes' : 'NULL'}');
+      if (cached == null) {
+        throw const _ApiException('ID image data not available. Please re-select the image.', retryable: false);
+      }
+      bytes = cached;
+      // idFrontPath is like 'web:photo.jpg' — extract the filename part
+      final colonIdx = idFrontPath.indexOf(':');
+      fileName = colonIdx >= 0 ? idFrontPath.substring(colonIdx + 1) : idFrontPath;
+    } else {
+      final file = File(idFrontPath);
+      if (!await file.exists()) {
+        throw const _ApiException('ID front image not found.', retryable: false);
+      }
+      bytes = await file.readAsBytes();
+      fileName = p.basename(idFrontPath);
+    }
+
+    final mimeType = _resolveMimeType(fileName);
+
+    final uri = Uri.parse('$apiBaseUrl/verification/verify-document');
+    final request = http.MultipartRequest('POST', uri)
+      ..headers.addAll(await _headers(authorized: false))
+      ..fields['userName'] = fullName
+      ..fields['userIdNumber'] = idNumber
+      ..fields['documentType'] = 'ID_CARD'
+      ..files.add(http.MultipartFile.fromBytes(
+        'file', bytes,
+        filename: fileName,
+        contentType: _mimeFromStr(mimeType),
+      ));
+
+    try {
+      final streamed = await request.send().timeout(_kWriteTimeout);
+      final responseBody = await streamed.stream.bytesToString();
+      if (streamed.statusCode >= 400) {
+        throw _ApiException('Verification failed: $responseBody', retryable: false);
+      }
+      return jsonDecode(responseBody) as Map<String, dynamic>;
+    } catch (error) {
+      if (error is _ApiException) rethrow;
+      throw _ApiException('Verification service unavailable: $error', retryable: true);
+    }
+  }
+
+  static MediaType _mimeFromStr(String mime) {
+    try {
+      return MediaType.parse(mime);
+    } catch (_) {
+      return MediaType('application', 'octet-stream');
     }
   }
 

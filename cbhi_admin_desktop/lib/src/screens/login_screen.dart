@@ -159,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AdminTheme.cardBgFor(Theme.of(context).brightness),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Image.asset(
@@ -172,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 24),
                     Text(
                       strings.t('portalTitle'),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontSize: 36,
                         fontWeight: FontWeight.w800,
@@ -182,7 +182,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 16),
                     Text(
                       strings.t('portalSubtitle'),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white70,
                         fontSize: 16,
                         height: 1.6,
@@ -223,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Expanded(
             flex: 1,
             child: Container(
-              color: Colors.white,
+              color: AdminTheme.cardBgFor(Theme.of(context).brightness),
               child: Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 380),
@@ -293,7 +293,7 @@ class _FeatureRow extends StatelessWidget {
         const SizedBox(width: 12),
         Text(
           label,
-          style: const TextStyle(color: Colors.white70, fontSize: 14),
+          style: TextStyle(color: Colors.white70, fontSize: 14),
         ),
       ],
     );
@@ -356,7 +356,7 @@ class _PasswordStep extends StatelessWidget {
                 const SizedBox(width: 6),
                 Text(
                   strings.languageLabel(locale.languageCode),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AdminTheme.primary,
                     fontWeight: FontWeight.w600,
                   ),
@@ -368,16 +368,16 @@ class _PasswordStep extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           strings.t('signIn'),
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.w800,
-            color: AdminTheme.textDark,
+            color: AdminTheme.textPrimaryFor(Theme.of(context).brightness),
           ),
         ),
         const SizedBox(height: 8),
         Text(
           strings.t('adminAccessOnly'),
-          style: const TextStyle(color: AdminTheme.textSecondary),
+          style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness)),
         ),
         const SizedBox(height: 32),
 
@@ -395,7 +395,7 @@ class _PasswordStep extends StatelessWidget {
                 Expanded(
                   child: Text(
                     error!,
-                    style: const TextStyle(color: AdminTheme.error, fontSize: 13),
+                    style: TextStyle(color: AdminTheme.error, fontSize: 13),
                   ),
                 ),
               ],
@@ -450,34 +450,34 @@ class _PasswordStep extends StatelessWidget {
                   )
                 : Text(
                     strings.t('signIn'),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
           ),
         ),
-        const SizedBox(height: 24),
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: AdminTheme.gold.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: AdminTheme.gold.withValues(alpha: 0.3)),
-          ),
-          child: Row(
-            children: [
-              const Icon(Icons.science_outlined, size: 16, color: Color(0xFF856404)),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  strings.t('demoMode'),
-                  style: const TextStyle(fontSize: 12, color: Color(0xFF856404)),
-                ),
-              ),
-            ],
-          ),
-        ),
+        // const SizedBox(height: 44),
+        // Container(
+        //   padding: const EdgeInsets.all(12),
+        //   decoration: BoxDecoration(
+        //     color: AdminTheme.gold.withValues(alpha: 0.1),
+        //     borderRadius: BorderRadius.circular(10),
+        //     border: Border.all(color: AdminTheme.gold.withValues(alpha: 0.3)),
+        //   ),
+        //   child: Row(
+        //     children: [
+        //       const Icon(Icons.science_outlined, size: 16, color: Color(0xFF856404)),
+        //       const SizedBox(width: 8),
+        //       Expanded(
+        //         child: Text(
+        //           strings.t('demoMode'),
+        //           style: TextStyle(fontSize: 12, color: Color(0xFF856404)),
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
       ],
     );
   }
@@ -517,7 +517,7 @@ class _TotpStep extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios_new, size: 14),
           label: Text(strings.t('totpBackToPassword')),
           style: TextButton.styleFrom(
-            foregroundColor: AdminTheme.textSecondary,
+            foregroundColor: AdminTheme.textSecondaryFor(Theme.of(context).brightness),
             padding: EdgeInsets.zero,
           ),
         ),
@@ -540,16 +540,16 @@ class _TotpStep extends StatelessWidget {
 
         Text(
           strings.t('totpVerificationTitle'),
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w800,
-            color: AdminTheme.textDark,
+            color: AdminTheme.textPrimaryFor(Theme.of(context).brightness),
           ),
         ),
         const SizedBox(height: 8),
         Text(
           strings.t('totpVerificationSubtitle'),
-          style: const TextStyle(color: AdminTheme.textSecondary, height: 1.5),
+          style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), height: 1.5),
         ),
         const SizedBox(height: 32),
 
@@ -567,7 +567,7 @@ class _TotpStep extends StatelessWidget {
                 Expanded(
                   child: Text(
                     error!,
-                    style: const TextStyle(color: AdminTheme.error, fontSize: 13),
+                    style: TextStyle(color: AdminTheme.error, fontSize: 13),
                   ),
                 ),
               ],
@@ -615,7 +615,7 @@ class _TotpStep extends StatelessWidget {
                   )
                 : Text(
                     strings.t('totpVerify'),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                     ),

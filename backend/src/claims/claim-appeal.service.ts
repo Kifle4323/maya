@@ -111,12 +111,16 @@ export class ClaimAppealService {
       status: appeal.status,
       reason: appeal.reason,
       reviewNote: appeal.reviewNote ?? null,
-      reviewedAt: appeal.reviewedAt?.toISOString() ?? null,
+      reviewedAt: appeal.reviewedAt instanceof Date
+        ? appeal.reviewedAt.toISOString()
+        : ((appeal.reviewedAt as unknown as string)?.toString() ?? null),
       claimId: appeal.claim?.id ?? null,
       claimNumber: (appeal.claim as Claim & { claimNumber?: string })?.claimNumber ?? null,
       appellantId: appeal.appellant?.id ?? null,
       reviewedById: appeal.reviewedBy?.id ?? null,
-      createdAt: appeal.createdAt?.toISOString() ?? null,
+      createdAt: appeal.createdAt instanceof Date
+        ? appeal.createdAt.toISOString()
+        : ((appeal.createdAt as unknown as string)?.toString() ?? null),
     };
   }
 }

@@ -144,7 +144,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                         _ClaimsRow(
                           label: strings.t('totalClaimed'),
                           value: '${claims['totalClaimedAmount'] ?? 0} ETB',
-                          color: AdminTheme.textDark,
+                          color: AdminTheme.textPrimaryFor(Theme.of(context).brightness),
                           bold: true,
                         ),
                         _ClaimsRow(
@@ -221,8 +221,8 @@ class _ClaimsRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: const TextStyle(
-                color: AdminTheme.textSecondary,
+              style: TextStyle(
+                color: AdminTheme.textSecondaryFor(Theme.of(context).brightness),
                 fontSize: 14,
               ),
             ),

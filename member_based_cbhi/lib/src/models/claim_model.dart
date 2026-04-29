@@ -4,6 +4,15 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'claim_model.g.dart';
 
+/// Safely convert a value that may be num, String, or null to double.
+/// Postgres numeric columns are returned as strings over JSON.
+double _safeNumToDouble(dynamic v) {
+  if (v == null) return 0;
+  if (v is num) return v.toDouble();
+  if (v is String) return double.tryParse(v) ?? 0;
+  return 0;
+}
+
 @JsonSerializable()
 class ClaimModel {
   const ClaimModel({

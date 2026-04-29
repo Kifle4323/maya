@@ -5,6 +5,13 @@ import {
   NotFoundException,
   Optional,
 } from '@nestjs/common';
+
+/** Safely serialize a date that may be a Date object or a string from the DB. */
+function safeIsoDate(v: Date | string | null | undefined): string | null {
+  if (!v) return null;
+  if (v instanceof Date) return v.toISOString();
+  return (v as unknown as string).toString();
+}
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Claim } from '../claims/claim.entity';
@@ -31,6 +38,7 @@ import { NotificationService } from '../notifications/notification.service';
 import { NotificationsGateway } from '../notifications/notifications.gateway';
 import { Payment } from '../payments/payment.entity';
 import { SmsService } from '../sms/sms.service';
+import { CacheService } from '../common/cache/cache.service';
 import { SystemSetting } from '../system-settings/system-setting.entity';
 import { User } from '../users/user.entity';
 import { AuditLog, AuditAction } from '../audit/audit-log.entity';
@@ -77,6 +85,7 @@ export class AdminService {
     private readonly indigentService: IndigentService,
     private readonly coverageService: CoverageService,
     private readonly notificationService: NotificationService,
+    private readonly cacheService: CacheService,
     @Optional() private readonly smsService?: SmsService,
     @Optional() private readonly wsGateway?: NotificationsGateway,
   ) {}
@@ -103,7 +112,7 @@ export class AdminService {
         score: application.score,
         status: application.status,
         reason: application.reason,
-        createdAt: application.createdAt.toISOString(),
+        createdAt: safeIsoDate(application.createdAt)!,
       })),
       total,
       page,
@@ -142,6 +151,9 @@ export class AdminService {
       : null;
 
     if (user && application.status === IndigentApplicationStatus.APPROVED) {
+      // Invalidate cached snapshot so member sees updated status immediately
+      this.cacheService.del(`snapshot:${user.id}`);
+
       // B1: Auto-activate household coverage for approved indigent applications
       const household = await this.householdRepository.findOne({
         where: { headUser: { id: user.id } },
@@ -177,7 +189,7 @@ export class AdminService {
           this.wsGateway?.pushCoverageSync(user.id, {
             coverageNumber: coverage.coverageNumber,
             status: coverage.status,
-            endDate: coverage.endDate?.toISOString(),
+            endDate: safeIsoDate(coverage.endDate),
             membershipType: MembershipType.INDIGENT,
           });
         } catch (err) {
@@ -244,6 +256,12 @@ export class AdminService {
           : '0.00';
     await this.claimRepository.save(claim);
 
+    // Invalidate cached snapshot so member sees updated claim status
+    const memberUserId = claim.household?.headUser?.id ?? claim.beneficiary?.userAccount?.id;
+    if (memberUserId) {
+      this.cacheService.del(`snapshot:${memberUserId}`);
+    }
+
     // Audit log: record the claim review action
     await this.auditLogRepository.save(
       this.auditLogRepository.create({
@@ -300,7 +318,7 @@ export class AdminService {
       status: claim.status,
       approvedAmount: Number(claim.approvedAmount),
       decisionNote: claim.decisionNote,
-      reviewedAt: claim.reviewedAt?.toISOString() ?? null,
+      reviewedAt: safeIsoDate(claim.reviewedAt),
     };
   }
 
@@ -325,9 +343,9 @@ export class AdminService {
         status: claim.status,
         claimedAmount: Number(claim.claimedAmount),
         approvedAmount: Number(claim.approvedAmount),
-        serviceDate: claim.serviceDate.toISOString(),
-        submittedAt: claim.submittedAt?.toISOString() ?? null,
-        reviewedAt: claim.reviewedAt?.toISOString() ?? null,
+        serviceDate: safeIsoDate(claim.serviceDate)!,
+        submittedAt: safeIsoDate(claim.submittedAt),
+        reviewedAt: safeIsoDate(claim.reviewedAt),
         decisionNote: claim.decisionNote ?? null,
         beneficiaryName: claim.beneficiary?.fullName ?? null,
         membershipId: claim.beneficiary?.memberNumber ?? null,
@@ -355,7 +373,7 @@ export class AdminService {
         description: setting.description,
         value: setting.value,
         isSensitive: setting.isSensitive,
-        updatedAt: setting.updatedAt.toISOString(),
+        updatedAt: safeIsoDate(setting.updatedAt)!,
       })),
       syncedAt: new Date().toISOString(),
     };
@@ -435,8 +453,8 @@ export class AdminService {
 
     return {
       window: {
-        from: from?.toISOString() ?? null,
-        to: to?.toISOString() ?? null,
+        from: safeIsoDate(from),
+        to: safeIsoDate(to),
       },
       households,
       accreditedFacilities: facilities,
@@ -582,7 +600,7 @@ export class AdminService {
         households.map((h) => [
           h.householdCode, h.region, h.zone, h.woreda, h.kebele,
           String(h.memberCount), h.coverageStatus, h.membershipType ?? '',
-          h.createdAt.toISOString(),
+          safeIsoDate(h.createdAt)!,
         ]),
       );
     }
@@ -601,8 +619,8 @@ export class AdminService {
           c.household?.householdCode ?? '',
           c.facility?.name ?? '',
           String(c.claimedAmount), String(c.approvedAmount),
-          c.serviceDate.toISOString().split('T')[0],
-          c.createdAt.toISOString(),
+          safeIsoDate(c.serviceDate)!.split('T')[0],
+          safeIsoDate(c.createdAt)!,
         ]),
       );
     }
@@ -617,8 +635,8 @@ export class AdminService {
         payments.map((p) => [
           p.transactionReference, String(p.amount), p.method, p.status,
           p.providerName ?? '', p.receiptNumber ?? '',
-          p.paidAt?.toISOString() ?? '',
-          p.createdAt.toISOString(),
+          safeIsoDate(p.paidAt) ?? '',
+          safeIsoDate(p.createdAt)!,
         ]),
       );
     }
@@ -634,7 +652,7 @@ export class AdminService {
           a.id, a.userId ?? '', String(a.income), a.employmentStatus,
           String(a.familySize), String(a.hasProperty), String(a.disabilityStatus),
           String(a.score), a.status, a.reason,
-          a.createdAt.toISOString(),
+          safeIsoDate(a.createdAt)!,
         ]),
       );
     }
@@ -789,7 +807,7 @@ export class AdminService {
       addressLine: facility.addressLine ?? null,
       isAccredited: facility.isAccredited,
       staffCount: facility.facilityUsers?.filter((fu) => fu.isActive).length ?? 0,
-      createdAt: facility.createdAt?.toISOString() ?? null,
+      createdAt: safeIsoDate(facility.createdAt),
     };
   }
 
@@ -811,8 +829,8 @@ export class AdminService {
         email: u.email,
         role: u.role,
         isActive: u.isActive,
-        lastLoginAt: u.lastLoginAt?.toISOString() ?? null,
-        createdAt: u.createdAt.toISOString(),
+        lastLoginAt: safeIsoDate(u.lastLoginAt),
+        createdAt: safeIsoDate(u.createdAt)!,
       })),
       total, page, limit,
     };
@@ -940,10 +958,10 @@ export class AdminService {
         method: p.method,
         provider: p.providerName,
         receiptNumber: p.receiptNumber,
-        paidAt: p.paidAt?.toISOString() ?? null,
+        paidAt: safeIsoDate(p.paidAt),
         householdCode: p.coverage?.household?.householdCode ?? null,
         userName: p.processedBy ? `${p.processedBy.firstName} ${p.processedBy.lastName || ''}`.trim() : null,
-        createdAt: p.createdAt.toISOString(),
+        createdAt: safeIsoDate(p.createdAt)!,
       })),
       total,
       page,

@@ -223,6 +223,23 @@ export class AuthService {
     return { message: 'Password set successfully.' };
   }
 
+  async setInitialPasswordByPhone(phone: string, password: string) {
+    if (!password || password.length < 6) {
+      throw new BadRequestException('Password must be at least 6 characters.');
+    }
+    const normalized = this.normalizePhoneNumber(phone);
+    const user = await this.userRepository.findOne({
+      where: { phoneNumber: normalized ?? phone },
+    });
+    if (!user) throw new NotFoundException('User not found.');
+    if (user.passwordHash) {
+      throw new BadRequestException('Password already set. Use change-password instead.');
+    }
+    user.passwordHash = this.hashPassword(password);
+    await this.userRepository.save(user);
+    return { message: 'Password set successfully.' };
+  }
+
   async setPassword(userId: string, password: string) {
     if (!password || password.length < 6) {
       throw new BadRequestException('Password must be at least 6 characters.');

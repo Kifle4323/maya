@@ -136,7 +136,9 @@ export class GrievanceService {
       referenceId: g.referenceId,
       referenceType: g.referenceType,
       resolution: g.resolution,
-      resolvedAt: g.resolvedAt?.toISOString() ?? null,
+      resolvedAt: g.resolvedAt instanceof Date
+        ? g.resolvedAt.toISOString()
+        : ((g.resolvedAt as unknown as string)?.toString() ?? null),
       submittedBy: g.submittedBy ? {
         id: g.submittedBy.id,
         name: [g.submittedBy.firstName, g.submittedBy.lastName].filter(Boolean).join(' '),
@@ -146,7 +148,9 @@ export class GrievanceService {
         id: g.assignedTo.id,
         name: [g.assignedTo.firstName, g.assignedTo.lastName].filter(Boolean).join(' '),
       } : null,
-      createdAt: g.createdAt?.toISOString() ?? null,
+      createdAt: g.createdAt instanceof Date
+        ? g.createdAt.toISOString()
+        : ((g.createdAt as unknown as string)?.toString() ?? null),
     };
   }
 }

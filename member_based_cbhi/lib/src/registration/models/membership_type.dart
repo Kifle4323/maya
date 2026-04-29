@@ -34,7 +34,7 @@ class MembershipSelection {
     }
     return MembershipSelection(
       type: resolved,
-      premiumAmount: (json['premiumAmount'] as num?)?.toDouble(),
+      premiumAmount: double.tryParse(json['premiumAmount']?.toString() ?? ''),
     );
   }
 }

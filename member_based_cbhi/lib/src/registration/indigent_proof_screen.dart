@@ -222,7 +222,7 @@ class _IndigentProofScreenState extends State<IndigentProofScreen> {
                           const Spacer(),
                           StatusPill(
                             label: '${_paths.length} / 3',
-                            color: _paths.isNotEmpty ? AppTheme.primary : AppTheme.textSecondary,
+                            color: _paths.isNotEmpty ? AppTheme.primary : AppTheme.textSecondaryFor(Theme.of(context).brightness),
                             compact: true,
                           ),
                         ],
@@ -266,7 +266,7 @@ class _IndigentProofScreenState extends State<IndigentProofScreen> {
                                 Text(
                                   strings.t('tapAddToUpload'),
                                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: AppTheme.textSecondary,
+                                    color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                                   ),
                                 ),
                               ],

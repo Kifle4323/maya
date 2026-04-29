@@ -63,7 +63,7 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
       children: [
         // Filter bar
         Container(
-          color: Colors.white,
+          color: AdminTheme.cardBgFor(Theme.of(context).brightness),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           child: Row(
             children: [
@@ -111,7 +111,7 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
               const Spacer(),
               if (!_loading)
                 Text('${_logs.length} ${strings.t('records')}',
-                    style: const TextStyle(color: AdminTheme.textSecondary, fontSize: 13)),
+                    style: TextStyle(color: AdminTheme.textSecondaryFor(Theme.of(context).brightness), fontSize: 13)),
               const SizedBox(width: 8),
               IconButton(onPressed: _load, icon: const Icon(Icons.refresh),
                   tooltip: strings.t('refresh')),
@@ -147,7 +147,7 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
                           return DataRow(cells: [
                             DataCell(Text(
                               log['createdAt']?.toString().replaceFirst('T', ' ').substring(0, 19) ?? '—',
-                              style: const TextStyle(fontSize: 12, color: AdminTheme.textSecondary),
+                              style: TextStyle(fontSize: 12, color: AdminTheme.textSecondaryFor(Theme.of(context).brightness)),
                             )),
                             DataCell(Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -159,23 +159,23 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
                                   style: TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: 11)),
                             )),
                             DataCell(Text(log['entityType']?.toString() ?? '—',
-                                style: const TextStyle(fontSize: 12))),
+                                style: TextStyle(fontSize: 12))),
                             DataCell(Text(
                               (log['entityId']?.toString() ?? '—').length > 12
                                   ? '${(log['entityId']?.toString() ?? '').substring(0, 12)}…'
                                   : log['entityId']?.toString() ?? '—',
-                              style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
+                              style: TextStyle(fontFamily: 'monospace', fontSize: 11),
                             )),
                             DataCell(Text(
                               (log['userId']?.toString() ?? '—').length > 12
                                   ? '${(log['userId']?.toString() ?? '').substring(0, 12)}…'
                                   : log['userId']?.toString() ?? '—',
-                              style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
+                              style: TextStyle(fontFamily: 'monospace', fontSize: 11),
                             )),
                             DataCell(Text(log['userRole']?.toString() ?? '—',
-                                style: const TextStyle(fontSize: 12))),
+                                style: TextStyle(fontSize: 12))),
                             DataCell(Text(log['ipAddress']?.toString() ?? '—',
-                                style: const TextStyle(fontSize: 12))),
+                                style: TextStyle(fontSize: 12))),
                           ]);
                         }).toList(),
                       ),

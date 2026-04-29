@@ -34,12 +34,16 @@ class MainShell extends StatefulWidget {
     required this.onLogout,
     required this.locale,
     required this.onLocaleChanged,
+    required this.themeMode,
+    required this.onThemeChanged,
   });
 
   final AdminRepository repository;
   final VoidCallback onLogout;
   final Locale locale;
   final ValueChanged<Locale> onLocaleChanged;
+  final ThemeMode themeMode;
+  final ValueChanged<ThemeMode> onThemeChanged;
 
   @override
   State<MainShell> createState() => _MainShellState();
@@ -50,6 +54,7 @@ class _MainShellState extends State<MainShell> {
   bool _isOnline = true;
   bool _sidebarExpanded = true;
   Timer? _pingTimer;
+  String? _buildError;
 
   @override
   void initState() {
@@ -93,6 +98,40 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
+    if (_buildError != null) {
+      return Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                const SizedBox(height: 16),
+                Text('Render Error', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+                const SizedBox(height: 8),
+                SelectableText(_buildError!, style: const TextStyle(fontSize: 12, color: Colors.red)),
+                const SizedBox(height: 16),
+                FilledButton(onPressed: () => setState(() => _buildError = null), child: Text('Retry')),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    try {
+      return _buildContent(context);
+    } catch (e, st) {
+      debugPrint('MainShell build error: $e\n$st');
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) setState(() => _buildError = e.toString());
+      });
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+  }
+
+  Widget _buildContent(BuildContext context) {
     final strings = AppLocalizations.of(context);
     final navItems = _buildNavItems(strings);
     final pages = _buildPages();
@@ -100,39 +139,37 @@ class _MainShellState extends State<MainShell> {
     return Scaffold(
       body: Row(
         children: [
-          // ── Navigation Rail ────────────────────────────────────────────────
-          Container(
-            color: AdminTheme.sidebarBg,
+          // ── Custom Scrollable Sidebar ──────────────────────────────────────
+          SizedBox(
+            width: _sidebarExpanded ? _kSidebarExpandedWidth : _kSidebarCollapsedWidth,
+            child: Material(
+            color: AdminTheme.sidebarBgFor(Theme.of(context).brightness),
             child: Column(
               children: [
+                _SidebarHeader(
+                  expanded: _sidebarExpanded,
+                  onToggle: _toggleSidebar,
+                  strings: strings,
+                ),
+                Divider(color: AdminTheme.dividerFor(Theme.of(context).brightness), height: 1),
                 Expanded(
-                  child: NavigationRail(
-                    extended: _sidebarExpanded,
-                    minExtendedWidth: _kSidebarExpandedWidth,
-                    minWidth: _kSidebarCollapsedWidth,
-                    backgroundColor: AdminTheme.sidebarBg,
-                    indicatorColor: AdminTheme.primary.withValues(alpha: 0.5),
-                    unselectedIconTheme: const IconThemeData(color: AdminTheme.sidebarText),
-                    selectedIconTheme: const IconThemeData(color: Colors.white),
-                    unselectedLabelTextStyle: const TextStyle(color: AdminTheme.sidebarText),
-                    selectedLabelTextStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                    leading: _SidebarHeader(
-                      expanded: _sidebarExpanded,
-                      onToggle: _toggleSidebar,
-                      strings: strings,
-                    ),
-                    destinations: navItems.map((item) => NavigationRailDestination(
-                      icon: Icon(item.icon),
-                      selectedIcon: Icon(item.selectedIcon),
-                      label: Text(item.label),
-                    )).toList(),
-                    selectedIndex: _selectedIndex,
-                    onDestinationSelected: (index) {
-                      setState(() => _selectedIndex = index);
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    itemCount: navItems.length,
+                    itemBuilder: (context, index) {
+                      final item = navItems[index];
+                      final isSelected = index == _selectedIndex;
+                      return _SidebarItem(
+                        icon: isSelected ? item.selectedIcon : item.icon,
+                        label: item.label,
+                        expanded: _sidebarExpanded,
+                        isSelected: isSelected,
+                        onTap: () => setState(() => _selectedIndex = index),
+                      );
                     },
                   ),
                 ),
-                const Divider(color: Color(0xFF1E3530), height: 1),
+                Divider(color: AdminTheme.dividerFor(Theme.of(context).brightness), height: 1),
                 _SidebarFooter(
                   expanded: _sidebarExpanded,
                   strings: strings,
@@ -144,6 +181,7 @@ class _MainShellState extends State<MainShell> {
               ],
             ),
           ),
+          ),
 
           // ── Main content ─────────────────────────────────────────────────
           Expanded(
@@ -152,19 +190,38 @@ class _MainShellState extends State<MainShell> {
                 // Top bar
                 Container(
                   height: 64,
-                  color: Colors.white,
+                  color: AdminTheme.topBarBgFor(Theme.of(context).brightness),
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Row(
                     children: [
                       Text(
                         navItems[_selectedIndex].label,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
-                          color: AdminTheme.textDark,
+                          color: AdminTheme.topBarTextFor(Theme.of(context).brightness),
                         ),
                       ),
                       const Spacer(),
+                      // Theme toggle
+                      Tooltip(
+                        message: Theme.of(context).brightness == Brightness.dark ? 'Switch to light mode' : 'Switch to dark mode',
+                        child: IconButton(
+                          icon: Icon(
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Icons.light_mode_outlined
+                                : Icons.dark_mode_outlined,
+                          ),
+                          color: AdminTheme.topBarTextFor(Theme.of(context).brightness),
+                          onPressed: () {
+                            final isDark = widget.themeMode == ThemeMode.dark ||
+                                (widget.themeMode == ThemeMode.system &&
+                                    MediaQuery.of(context).platformBrightness == Brightness.dark);
+                            widget.onThemeChanged(isDark ? ThemeMode.light : ThemeMode.dark);
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 4),
                       _AdminNotificationBell(repository: widget.repository),
                       const SizedBox(width: 8),
                       PopupMenuButton<Locale>(
@@ -254,7 +311,7 @@ class _MainShellState extends State<MainShell> {
                     ],
                   ),
                 ),
-                const Divider(height: 1),
+                Divider(color: AdminTheme.dividerFor(Theme.of(context).brightness), height: 1),
 
                 // Page content
                 Expanded(
@@ -381,6 +438,85 @@ class _NavItem {
   final String label;
 }
 
+/// Single sidebar item — icon + optional label, with hover/selected states.
+class _SidebarItem extends StatefulWidget {
+  const _SidebarItem({
+    required this.icon,
+    required this.label,
+    required this.expanded,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool expanded;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  State<_SidebarItem> createState() => _SidebarItemState();
+}
+
+class _SidebarItemState extends State<_SidebarItem> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final sidebarText = AdminTheme.sidebarTextFor(Theme.of(context).brightness);
+    final bgColor = widget.isSelected
+        ? AdminTheme.primary.withValues(alpha: 0.5)
+        : _isHovered
+            ? Colors.white.withValues(alpha: 0.08)
+            : Colors.transparent;
+    final iconColor = widget.isSelected ? Colors.white : sidebarText;
+    final labelColor = widget.isSelected ? Colors.white : sidebarText;
+
+    return Tooltip(
+      message: widget.expanded ? '' : widget.label,
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: InkWell(
+          onTap: widget.onTap,
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            height: 44,
+            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: widget.expanded
+                ? Row(
+                    children: [
+                      const SizedBox(width: 12),
+                      Icon(widget.icon, size: 20, color: iconColor),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          widget.label,
+                          style: TextStyle(
+                            color: labelColor,
+                            fontSize: 13,
+                            fontWeight: widget.isSelected ? FontWeight.w700 : FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
+                    ],
+                  )
+                : Center(
+                    child: Icon(widget.icon, size: 22, color: iconColor),
+                  ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// Top section of the sidebar: logo + toggle button.
 class _SidebarHeader extends StatelessWidget {
   const _SidebarHeader({
@@ -405,7 +541,7 @@ class _SidebarHeader extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AdminTheme.cardBgFor(Theme.of(context).brightness),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Image.asset(
@@ -436,7 +572,7 @@ class _SidebarHeader extends StatelessWidget {
                   Text(
                     'CBHI Admin',
                     style: TextStyle(
-                      color: AdminTheme.sidebarText,
+                      color: AdminTheme.sidebarTextFor(Theme.of(context).brightness),
                       fontSize: 11,
                     ),
                   ),
@@ -459,7 +595,7 @@ class _SidebarHeader extends StatelessWidget {
                   expanded
                       ? Icons.view_sidebar
                       : Icons.view_sidebar_outlined,
-                  color: AdminTheme.sidebarText,
+                  color: AdminTheme.sidebarTextFor(Theme.of(context).brightness),
                   size: 20,
                 ),
               ),
@@ -506,17 +642,17 @@ class _SidebarFooter extends StatelessWidget {
                     ? MainAxisAlignment.start
                     : MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.logout,
-                    color: AdminTheme.sidebarText,
+                    color: AdminTheme.sidebarTextFor(Theme.of(context).brightness),
                     size: 20,
                   ),
                   if (expanded) ...[
                     const SizedBox(width: 12),
                     Text(
                       strings.t('signOut'),
-                      style: const TextStyle(
-                        color: AdminTheme.sidebarText,
+                      style: TextStyle(
+                        color: AdminTheme.sidebarTextFor(Theme.of(context).brightness),
                         fontSize: 13,
                       ),
                     ),
@@ -568,7 +704,7 @@ class _SidebarFooter extends StatelessWidget {
                     Text(
                       'CBHI Officer',
                       style: TextStyle(
-                        color: AdminTheme.sidebarText,
+                        color: AdminTheme.sidebarTextFor(Theme.of(context).brightness),
                         fontSize: 10,
                       ),
                     ),
@@ -672,7 +808,7 @@ class _AdminNotificationBellState extends State<_AdminNotificationBell> {
               width: 360,
               constraints: const BoxConstraints(maxHeight: 480),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardTheme.color ?? (Theme.of(context).brightness == Brightness.dark ? AdminTheme.darkCard : Colors.white),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -705,7 +841,7 @@ class _AdminNotificationBellState extends State<_AdminNotificationBell> {
                       ],
                     ),
                   ),
-                  const Divider(height: 1),
+                  Divider(color: AdminTheme.dividerFor(Theme.of(context).brightness), height: 1),
                   if (_notifications.isEmpty)
                     const Padding(
                       padding: EdgeInsets.all(32),
