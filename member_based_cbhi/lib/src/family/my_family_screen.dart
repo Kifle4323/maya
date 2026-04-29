@@ -606,7 +606,7 @@ class _M3MemberCard extends StatelessWidget {
                 ),
               ),
               // More options
-              if (!isFamilyMember)
+              if (!isFamilyMember && !member.isPrimaryHolder)
                 PopupMenuButton<String>(
                   icon: Icon(Icons.more_vert, color: AppTheme.textSecondaryFor(Theme.of(context).brightness), size: 20),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -648,16 +648,17 @@ class _M3MemberCard extends StatelessWidget {
                     }
                   },
                   itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 'edit',
-                      child: Row(
-                        children: [
-                          Icon(Icons.edit_outlined, size: 18),
-                          const SizedBox(width: 8),
-                          Text(strings.t('edit')),
-                        ],
+                    if (!member.isPrimaryHolder)
+                      PopupMenuItem(
+                        value: 'edit',
+                        child: Row(
+                          children: [
+                            Icon(Icons.edit_outlined, size: 18),
+                            const SizedBox(width: 8),
+                            Text(strings.t('edit')),
+                          ],
+                        ),
                       ),
-                    ),
                     if (!member.isPrimaryHolder)
                       PopupMenuItem(
                         value: 'remove',
@@ -700,7 +701,7 @@ class _M3MemberCard extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              if (!isFamilyMember)
+              if (!isFamilyMember && !member.isPrimaryHolder)
                 GestureDetector(
                   onTap: () async {
                     final changed = await Navigator.of(context).push<bool>(
