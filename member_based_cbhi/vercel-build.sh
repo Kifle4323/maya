@@ -43,7 +43,7 @@ flutter pub get
 echo ">>> Running dart analyze to surface compile errors early..."
 flutter analyze --no-fatal-infos 2>&1 | tail -80 || true
 
-API_URL="${CBHI_API_BASE_URL:-https://member-based-cbhi.vercel.app/api/v1}"
+API_URL="${CBHI_API_BASE_URL:-https://maya-u8mf.onrender.com/api/v1}"
 # Normalize: strip trailing slash and /api/v1 suffix, then always append /api/v1
 API_URL="${API_URL%/}"
 API_URL="${API_URL%/api/v1}"

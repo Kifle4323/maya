@@ -39,7 +39,7 @@ echo ">>> Cleaning and fetching dependencies..."
 flutter clean
 flutter pub get
 
-API_URL="${CBHI_API_BASE_URL:-https://member-based-cbhi.vercel.app/api/v1}"
+API_URL="${CBHI_API_BASE_URL:-https://maya-u8mf.onrender.com/api/v1}"
 # Normalize: strip trailing slash and /api/v1 suffix, then always append /api/v1
 # This ensures the URL is correct whether the env var includes /api/v1 or not.
 API_URL="${API_URL%/}"          # strip trailing slash
