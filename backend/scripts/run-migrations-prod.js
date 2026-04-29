@@ -18,7 +18,7 @@ if (!process.env.DB_HOST && !process.env.DATABASE_URL) {
   }
 }
 
-const { AppDataSource } = require('../dist/database/data-source');
+const { AppDataSource } = require('../dist/src/database/data-source');
 
 async function main() {
   console.log('[MIGRATION] Connecting to database...');
