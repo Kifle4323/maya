@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-import 'package:file_picker/file_picker.dart';
+// file_picker no longer needed — profile photo uses image_picker only
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -50,7 +50,7 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
   late final TextEditingController _age;
   late final TextEditingController _householdSize;
   String _gender = 'FEMALE';
-  String? _birthCertificatePath;
+  String? _profilePhotoPath;
 
   // Real-time duplicate detection
   String? _phoneError;
@@ -99,7 +99,7 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
       text: (initial?.householdSize ?? 1).toString(),
     );
     _gender = initial?.gender ?? 'FEMALE';
-    _birthCertificatePath = initial?.birthCertificatePath;
+    _profilePhotoPath = initial?.photoPath;
     _loadRegions(restoreFrom: initial);
   }
 
@@ -272,14 +272,14 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
     }
   }
 
-  Future<void> _pickBirthCertificate() async {
+  Future<void> _pickProfilePhoto() async {
     if (!kIsWeb) {
       await Permission.camera.request();
       await Permission.photos.request();
     }
     if (!mounted) return;
     final strings = CbhiLocalizations.of(context);
-    final choice = await showModalBottomSheet<String>(
+    final source = await showModalBottomSheet<ImageSource>(
       context: context,
       builder: (ctx) => SafeArea(
         child: Wrap(
@@ -288,54 +288,34 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
               ListTile(
                 leading: const Icon(Icons.camera_alt_outlined),
                 title: Text(strings.t('takePhoto')),
-                onTap: () => Navigator.pop(ctx, 'camera'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.photo_library_outlined),
-                title: Text(strings.t('chooseFromGallery')),
-                onTap: () => Navigator.pop(ctx, 'gallery'),
+                onTap: () => Navigator.pop(ctx, ImageSource.camera),
               ),
             ],
             ListTile(
-              leading: const Icon(Icons.picture_as_pdf_outlined),
-              title: Text(strings.t('choosePdfOrImage')),
-              onTap: () => Navigator.pop(ctx, 'file'),
+              leading: const Icon(Icons.photo_library_outlined),
+              title: Text(strings.t('chooseFromGallery')),
+              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
             ),
           ],
         ),
       ),
     );
-    if (choice == null) return;
-    if (choice == 'file') {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: const ['pdf', 'png', 'jpg', 'jpeg'],
-        withData: kIsWeb,
-      );
-      if (result == null) return;
-      final file = result.files.single;
-      if (kIsWeb) {
-        if (file.bytes != null && mounted) {
-          setState(() => _birthCertificatePath = 'web:${file.name}');
-        }
-      } else if (file.path != null) {
-        final persisted = await LocalAttachmentStore.persist(
-          file.path!,
-          category: 'registration_birth_certificate',
-        );
-        if (mounted) setState(() => _birthCertificatePath = persisted);
-      }
-      return;
-    }
-    final picked = choice == 'camera'
-        ? await _picker.pickImage(source: ImageSource.camera, imageQuality: 85)
-        : await _picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
+    if (source == null) return;
+    final picked = await _picker.pickImage(source: source, imageQuality: 85);
     if (picked != null) {
-      final persisted = await LocalAttachmentStore.persist(
-        picked.path,
-        category: 'registration_birth_certificate',
-      );
-      if (mounted) setState(() => _birthCertificatePath = persisted);
+      if (kIsWeb) {
+        final bytes = await picked.readAsBytes();
+        if (mounted) {
+          LocalAttachmentStore.putWebBytes(picked.name, bytes);
+          setState(() => _profilePhotoPath = 'web:${picked.name}');
+        }
+      } else {
+        final persisted = await LocalAttachmentStore.persist(
+          picked.path,
+          category: 'registration_profile_photo',
+        );
+        if (mounted) setState(() => _profilePhotoPath = persisted);
+      }
     }
   }
 
@@ -358,11 +338,6 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
       _phoneError = error;
       _checkingPhone = false;
     });
-  }
-
-  bool _isImage(String path) {
-    final n = path.toLowerCase();
-    return n.endsWith('.png') || n.endsWith('.jpg') || n.endsWith('.jpeg');
   }
 
   @override
@@ -671,15 +646,10 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Birth certificate (required)
-                  _DocumentPickerCard(
-                    title: strings.t('birthCertificate'),
-                    subtitle: strings.t('requiredImageOrPdf'),
-                    path: _birthCertificatePath,
-                    onPick: _pickBirthCertificate,
-                    isImage: _birthCertificatePath != null && _isImage(_birthCertificatePath!),
-                    uploadLabel: strings.t('uploadDocument'),
-                    replaceLabel: strings.t('replaceDocument'),
+                  // Household profile picture (required)
+                  _ProfilePhotoPicker(
+                    path: _profilePhotoPath,
+                    onPick: _pickProfilePhoto,
                     isRequired: true,
                   ),
                   const SizedBox(height: 32),
@@ -735,10 +705,10 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
     if (_checkingPhone) return; // Block if check in progress
     final strings = CbhiLocalizations.of(context);
 
-    // Validate birth certificate is uploaded
-    if (_birthCertificatePath == null || _birthCertificatePath!.isEmpty) {
+    // Validate profile photo is uploaded
+    if (_profilePhotoPath == null || _profilePhotoPath!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(strings.t('birthCertificateRequired'))),
+        SnackBar(content: Text(strings.t('profilePhotoRequired'))),
       );
       return;
     }
@@ -767,8 +737,9 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
         gender: _gender,
         dateOfBirth: DateTime.tryParse(_dateOfBirth.text.trim()) ?? DateTime.now(),
         birthCertificateRef: null,
-        birthCertificatePath: _birthCertificatePath,
+        birthCertificatePath: null,
         idDocumentPath: null,
+        photoPath: _profilePhotoPath,
         region: regionName,
         zone: zoneName,
         woreda: woredaName,
@@ -816,92 +787,122 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
   }
 }
 
-class _DocumentPickerCard extends StatelessWidget {
-  const _DocumentPickerCard({
-    required this.title,
-    required this.subtitle,
+class _ProfilePhotoPicker extends StatelessWidget {
+  const _ProfilePhotoPicker({
     required this.path,
     required this.onPick,
-    required this.isImage,
-    required this.uploadLabel,
-    required this.replaceLabel,
     this.isRequired = false,
   });
 
-  final String title;
-  final String subtitle;
   final String? path;
   final VoidCallback onPick;
-  final bool isImage;
-  final String uploadLabel;
-  final String replaceLabel;
   final bool isRequired;
 
   @override
   Widget build(BuildContext context) {
+    final strings = CbhiLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Row(
               children: [
-                Text(title, style: Theme.of(context).textTheme.titleMedium),
+                Text(strings.t('householdProfilePicture'),
+                    style: Theme.of(context).textTheme.titleMedium),
                 if (isRequired)
-                  Text(' *', style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 16, fontWeight: FontWeight.w700)),
+                  Text(' *',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      )),
               ],
             ),
             const SizedBox(height: 4),
-            Text(subtitle),
+            Text(strings.t('profilePictureSubtitle')),
             if (isRequired && path == null)
               Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Text(
-                  CbhiLocalizations.of(context).t('birthCertificateRequired'),
-                  style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 12),
+                  strings.t('profilePhotoRequired'),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.error,
+                    fontSize: 12,
+                  ),
                 ),
               ),
-            const SizedBox(height: 12),
-            if (path != null)
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
+            const SizedBox(height: 16),
+            // Photo preview
+            GestureDetector(
+              onTap: onPick,
+              child: Container(
+                width: 140,
+                height: 140,
                 decoration: BoxDecoration(
+                  shape: BoxShape.circle,
                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: path != null
+                        ? AppTheme.m3Primary
+                        : Theme.of(context).colorScheme.outline,
+                    width: path != null ? 3 : 1,
+                  ),
                 ),
-                child: kIsWeb
-                    ? const Icon(Icons.description_outlined, size: 48) // Web fallback
-                    : isImage
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: NativeFileImage(
-                              path: path!,
-                              height: 180,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : Row(
-                            children: [
-                              const Icon(Icons.description_outlined),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(path!.split('/').last),
+                child: path != null
+                    ? ClipOval(
+                        child: kIsWeb
+                            ? _WebImage(path: path!)
+                            : NativeFileImage(
+                                path: path!,
+                                fit: BoxFit.cover,
                               ),
-                            ],
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.camera_alt_outlined,
+                              size: 40,
+                              color: Theme.of(context).colorScheme.outline),
+                          const SizedBox(height: 4),
+                          Text(
+                            strings.t('addPhoto'),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Theme.of(context).colorScheme.outline,
+                            ),
                           ),
-
+                        ],
+                      ),
               ),
+            ),
             const SizedBox(height: 12),
             OutlinedButton.icon(
               onPressed: onPick,
-              icon: const Icon(Icons.upload_file_outlined),
-              label: Text(path == null ? uploadLabel : replaceLabel),
+              icon: Icon(path == null ? Icons.camera_alt_outlined : Icons.edit),
+              label: Text(path == null
+                  ? strings.t('addPhoto')
+                  : strings.t('changePhoto')),
             ),
           ],
         ),
       ),
     );
+  }
+}
+
+class _WebImage extends StatelessWidget {
+  const _WebImage({required this.path});
+  final String path;
+
+  @override
+  Widget build(BuildContext context) {
+    final key = path.replaceFirst('web:', '');
+    final bytes = LocalAttachmentStore.getWebBytes(key);
+    if (bytes != null) {
+      return Image.memory(bytes, fit: BoxFit.cover);
+    }
+    return const Icon(Icons.person, size: 48);
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io' if (dart.library.html) 'shared/web_stubs.dart';
-import 'dart:typed_data';
 
 
 import 'package:flutter/foundation.dart';
@@ -345,6 +344,8 @@ class CbhiSnapshot {
   String get viewerMembershipId => viewer?['membershipId']?.toString() ?? '';
 
   String get viewerBeneficiaryId => viewer?['beneficiaryId']?.toString() ?? '';
+
+  String? get viewerPhotoPath => viewer?['photoPath']?.toString();
 
   String get coverageStatus =>
       coverage?['status']?.toString() ??
@@ -933,10 +934,12 @@ class CbhiRepository {
     return _applyFamilyPayload(response);
   }
 
-  Future<List<FamilyMember>> addFamilyMember(FamilyMemberDraft draft) async {
+  Future<({List<FamilyMember> members, String? setupCode})> addFamilyMember(FamilyMemberDraft draft) async {
     final payload = await _buildFamilyMemberPayload(draft);
     final response = await _postJson('/cbhi/family', payload, authorized: true);
-    return _applyFamilyPayload(response);
+    final members = await _applyFamilyPayload(response);
+    final setupCode = response['setupCode']?.toString();
+    return (members: members, setupCode: setupCode);
   }
 
   Future<List<FamilyMember>> updateFamilyMember(
@@ -1129,7 +1132,8 @@ class CbhiRepository {
         await localDb.writeSnapshot(snapshot);
         return snapshot;
       } on _ApiException catch (error) {
-        if (!error.retryable) {
+        // 401 with a pending-sync token is expected — fall back to cached data
+        if (!error.retryable && error.statusCode != 401) {
           rethrow;
         }
       }
@@ -1292,6 +1296,9 @@ class CbhiRepository {
   ) async {
     return {
       ...personalInfo.toJson(),
+      'beneficiaryPhotoUpload': await _buildAttachmentPayload(
+        personalInfo.photoPath,
+      ),
       'birthCertificateUpload': await _buildAttachmentPayload(
         personalInfo.birthCertificatePath,
       ),

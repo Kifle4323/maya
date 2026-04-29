@@ -14,6 +14,7 @@ class PersonalInfoModel {
     this.birthCertificateRef,
     this.birthCertificatePath,
     this.idDocumentPath,
+    this.photoPath,
     required this.region,
     required this.zone,
     this.woreda,
@@ -33,6 +34,7 @@ class PersonalInfoModel {
   final String? birthCertificateRef;
   final String? birthCertificatePath;   // Path to uploaded file/image
   final String? idDocumentPath;         // Path to ID photo
+  final String? photoPath;              // Path to profile photo
 
   final String region;
   final String zone;
@@ -59,6 +61,7 @@ class PersonalInfoModel {
         'birthCertificateRef': birthCertificateRef,
         'birthCertificatePath': birthCertificatePath,
         'idDocumentPath': idDocumentPath,
+        'beneficiaryPhotoPath': photoPath,
         'address': {
           'region': region,
           'zone': zone,
@@ -83,6 +86,7 @@ class PersonalInfoModel {
       birthCertificateRef: json['birthCertificateRef']?.toString(),
       birthCertificatePath: json['birthCertificatePath']?.toString(),
       idDocumentPath: json['idDocumentPath']?.toString(),
+      photoPath: json['beneficiaryPhotoPath']?.toString() ?? json['photoPath']?.toString(),
       region: address['region']?.toString() ?? '',
       zone: address['zone']?.toString() ?? '',
       woreda: address['woreda']?.toString(),

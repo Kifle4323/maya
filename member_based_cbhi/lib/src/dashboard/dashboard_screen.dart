@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../auth/auth_cubit.dart';
-import '../benefits/benefit_utilization_widget.dart';
 import '../cbhi_data.dart';
 
 import '../cbhi_localizations.dart';
@@ -68,6 +67,13 @@ class DashboardScreen extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
+                          ProfileAvatar(
+                            name: snapshot.viewerName,
+                            photoPath: snapshot.viewerPhotoPath,
+                            repository: context.read<AppCubit>().repository,
+                            radius: 24,
+                          ),
+                          const SizedBox(width: 12),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,7 +117,7 @@ class DashboardScreen extends StatelessWidget {
                         Expanded(
                           child: _QuickStatTile(
                             label: strings.t('coverage'),
-                            value: snapshot.coverageStatus,
+                            value: strings.enumValue(snapshot.coverageStatus),
                             icon: Icons.verified_user_outlined,
                             color: _coverageColor(snapshot.coverageStatus),
                           ),
@@ -201,8 +207,6 @@ class DashboardScreen extends StatelessWidget {
                       const SizedBox(height: AppTheme.spacingL),
                     ],
                     
-                    _BenefitUtilizationSection(snapshot: snapshot),
-                    
                     const SizedBox(height: AppTheme.spacingL),
                     
                     if (snapshot.referrals.isNotEmpty) ...[
@@ -257,9 +261,6 @@ class _CoverageHeroCard extends StatelessWidget {
     } else {
       subtitle = '${strings.t('householdCode')}: ${snapshot.householdCode}';
     }
-
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
     // Status chip colors per M3 HealthShield spec
     Color statusBg;
@@ -379,7 +380,7 @@ class _CoverageHeroCard extends StatelessWidget {
                           Icon(statusIcon, size: 14, color: statusFg),
                           const SizedBox(width: 4),
                           Text(
-                            status,
+                            strings.enumValue(status),
                             style: TextStyle(
                               color: statusFg,
                               fontSize: 11,
@@ -413,6 +414,15 @@ class _CoverageHeroCard extends StatelessWidget {
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
                     height: 1.1,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    color: AppTheme.m3OnPrimaryContainer.withValues(alpha: 0.7),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -1111,124 +1121,6 @@ class _M3StatusChip extends StatelessWidget {
           fontSize: 11,
           fontWeight: FontWeight.w500,
         ),
-      ),
-    );
-  }
-}
-
-// ─── _BenefitUtilizationSection ──────────────────────────────────────────────
-
-class _BenefitUtilizationSection extends StatelessWidget {
-  const _BenefitUtilizationSection({required this.snapshot});
-
-  final CbhiSnapshot snapshot;
-
-  @override
-  Widget build(BuildContext context) {
-    final strings = CbhiLocalizations.of(context);
-    final totalClaimed = snapshot.claims.fold(
-        0.0,
-        (sum, c) => sum + _safeDouble(c['claimedAmount']));
-    final annualCeiling =
-        _safeDouble(snapshot.coverage?['annualCeiling']);
-    final pct = annualCeiling > 0
-        ? (totalClaimed / annualCeiling).clamp(0.0, 1.0)
-        : 0.0;
-    // Guard against NaN/Infinity from bad data
-    final safePct = pct.isNaN || pct.isInfinite ? 0.0 : pct;
-    final pctLabel = '${(safePct * 100).toStringAsFixed(0)}%';
-
-    return Container(
-      decoration: BoxDecoration(
-        color: AppTheme.surfaceBgFor(Theme.of(context).brightness),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: AppTheme.m3SurfaceVariant,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(Icons.pie_chart_outline, size: 16, color: AppTheme.textSecondaryFor(Theme.of(context).brightness)),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                strings.t('benefitUtilization'),
-                style: TextStyle(
-                  color: AppTheme.textPrimaryFor(Theme.of(context).brightness),
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.15,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                pctLabel,
-                style: TextStyle(
-                  color: AppTheme.m3Primary,
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                  height: 1,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 2),
-                child: Text(
-                  strings.t('usedThisYear'),
-                  style: TextStyle(
-                    color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          // Progress bar
-          ClipRRect(
-            borderRadius: BorderRadius.circular(999),
-            child: LinearProgressIndicator(
-              value: safePct,
-              minHeight: 10,
-              backgroundColor: AppTheme.m3SurfaceVariant,
-              valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.m3Primary),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            annualCeiling > 0
-                ? '${totalClaimed.toStringAsFixed(0)} / ${annualCeiling.toStringAsFixed(0)} ETB ${strings.t('used')}'
-                : strings.t('benefitUtilizationNoData'),
-            style: TextStyle(
-              color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
-              fontSize: 13,
-            ),
-          ),
-        ],
       ),
     );
   }

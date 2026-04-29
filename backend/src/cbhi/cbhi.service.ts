@@ -151,6 +151,12 @@ export class CbhiService {
       dto.birthCertificatePath,
       dto.birthCertificateUpload,
     );
+    await this.upsertBeneficiaryDocument(
+      beneficiary,
+      DocumentType.BENEFICIARY_PHOTO,
+      dto.beneficiaryPhotoPath,
+      dto.beneficiaryPhotoUpload,
+    );
 
     return {
       registrationId: user.id,
@@ -586,12 +592,13 @@ export class CbhiService {
           dto.identityType === IdentityDocumentType.NATIONAL_ID
             ? (this.clean(dto.identityNumber) ?? null)
             : null,
+        phoneNumber: phoneNumber,
         isPrimaryHolder: false,
         isEligible: household.coverageStatus === CoverageStatus.ACTIVE,
       }),
     );
 
-    await this.upsertBeneficiaryUserAccount(beneficiary, household, {
+    const accountResult = await this.upsertBeneficiaryUserAccount(beneficiary, household, {
       firstName: dto.firstName,
       middleName: dto.middleName,
       lastName: dto.lastName,
@@ -599,6 +606,7 @@ export class CbhiService {
       identityType: dto.identityType,
       identityNumber: dto.identityNumber,
     });
+    const setupCode = accountResult && 'setupCode' in accountResult ? accountResult.setupCode : null;
 
     await this.upsertBeneficiaryDocument(
       beneficiary,
@@ -638,7 +646,11 @@ export class CbhiService {
       } catch (_) { /* non-blocking */ }
     }
 
-    return this.getFamily(userId);
+    const family = await this.getFamily(userId);
+    if (setupCode) {
+      return { ...family, setupCode };
+    }
+    return family;
   }
 
   async updateFamilyMember(
@@ -679,9 +691,10 @@ export class CbhiService {
     beneficiary.identityType = dto.identityType ?? beneficiary.identityType;
     beneficiary.identityNumber =
       this.clean(dto.identityNumber) ?? beneficiary.identityNumber;
+    beneficiary.phoneNumber = phoneNumber ?? beneficiary.phoneNumber;
     this.assertBeneficiaryPhonePolicy(
       beneficiary.relationshipToHouseholdHead,
-      phoneNumber ?? beneficiary.userAccount?.phoneNumber ?? null,
+      beneficiary.phoneNumber ?? beneficiary.userAccount?.phoneNumber ?? null,
       'update',
     );
     beneficiary.nationalId =
@@ -690,7 +703,7 @@ export class CbhiService {
         : null;
     await this.beneficiaryRepository.save(beneficiary);
 
-    await this.upsertBeneficiaryUserAccount(beneficiary, household, {
+    const accountResult = await this.upsertBeneficiaryUserAccount(beneficiary, household, {
       firstName: dto.firstName ?? this.namePart(beneficiary.fullName, 0),
       middleName: dto.middleName ?? this.namePart(beneficiary.fullName, 1),
       lastName: dto.lastName ?? this.namePart(beneficiary.fullName, 2),
@@ -698,6 +711,7 @@ export class CbhiService {
       identityType: beneficiary.identityType ?? undefined,
       identityNumber: beneficiary.identityNumber ?? undefined,
     });
+    const setupCode = accountResult && 'setupCode' in accountResult ? accountResult.setupCode : null;
 
     await this.upsertBeneficiaryDocument(
       beneficiary,
@@ -718,7 +732,11 @@ export class CbhiService {
       dto.beneficiaryPhotoUpload,
     );
 
-    return this.getFamily(userId);
+    const family = await this.getFamily(userId);
+    if (setupCode) {
+      return { ...family, setupCode };
+    }
+    return family;
   }
 
   async removeFamilyMember(userId: string, memberId: string) {
@@ -1011,10 +1029,7 @@ export class CbhiService {
       isAdult: beneficiary.dateOfBirth
         ? this.calculateAge(beneficiary.dateOfBirth) >= 18
         : false,
-      canLoginIndependently: this.canBeneficiaryLoginIndependently(
-        beneficiary.relationshipToHouseholdHead,
-        beneficiary.dateOfBirth ?? null,
-      ),
+      canLoginIndependently: beneficiary.userAccount?.isActive === true,
       relationshipToHouseholdHead: beneficiary.relationshipToHouseholdHead,
       coverageStatus: household.coverageStatus,
       reason: beneficiary.isEligible
@@ -1208,7 +1223,7 @@ export class CbhiService {
     },
   ) {
     const phoneNumber =
-      this.clean(input.phoneNumber) ?? beneficiary.userAccount?.phoneNumber;
+      this.clean(input.phoneNumber) ?? beneficiary.phoneNumber ?? beneficiary.userAccount?.phoneNumber;
     const eligibleForIndependentAccess = this.canBeneficiaryLoginIndependently(
       beneficiary.relationshipToHouseholdHead,
       beneficiary.dateOfBirth ?? null,
@@ -1220,7 +1235,9 @@ export class CbhiService {
         beneficiary.userAccount.phoneNumber = phoneNumber ?? null;
         await this.userRepository.save(beneficiary.userAccount);
       }
-      return beneficiary.userAccount ?? null;
+      return beneficiary.userAccount
+        ? { user: beneficiary.userAccount, setupCode: null }
+        : null;
     }
 
     const user =
@@ -1248,13 +1265,23 @@ export class CbhiService {
         : null;
     user.isActive = true;
 
+    const isNewAccount = !beneficiary.userAccount;
     const savedUser = await this.userRepository.save(user);
-    if (beneficiary.userAccount?.id !== savedUser.id) {
+    if (isNewAccount) {
       beneficiary.userAccount = savedUser;
       await this.beneficiaryRepository.save(beneficiary);
     }
 
-    return savedUser;
+    // Generate a setup code for new accounts so the family member can set their password
+    let setupCode: string | null = null;
+    if (isNewAccount && eligibleForIndependentAccess && phoneNumber) {
+      setupCode = this.generateCode('SC').slice(-6); // 6-digit code
+      // Store the setup code as the initial password so the member can sign in
+      savedUser.passwordHash = this.authService.hashPassword(setupCode);
+      await this.userRepository.save(savedUser);
+    }
+
+    return { user: savedUser, setupCode };
   }
 
   private async recountHouseholdMembers(householdId: string) {
@@ -1337,12 +1364,8 @@ export class CbhiService {
       birthCertificatePath: birthCertificate?.fileUrl ?? null,
       idDocumentPath: identityDocument?.fileUrl ?? null,
       photoPath: beneficiaryPhoto?.fileUrl ?? null,
-      phoneNumber: beneficiary.userAccount?.phoneNumber ?? null,
+      phoneNumber: beneficiary.phoneNumber ?? beneficiary.userAccount?.phoneNumber ?? null,
       canLoginIndependently:
-        this.canBeneficiaryLoginIndependently(
-          beneficiary.relationshipToHouseholdHead,
-          beneficiary.dateOfBirth ?? null,
-        ) &&
         beneficiary.userAccount?.isActive === true &&
         beneficiary.userAccount?.role === UserRole.BENEFICIARY,
       coverageStatus: household.coverageStatus,
@@ -1356,6 +1379,10 @@ export class CbhiService {
     beneficiary: Beneficiary,
     isHouseholdHead: boolean,
   ) {
+    const beneficiaryPhoto = beneficiary.documents?.find(
+      (document) => document.type === DocumentType.BENEFICIARY_PHOTO,
+    );
+
     return {
       userId: user.id,
       role: user.role,
@@ -1364,6 +1391,7 @@ export class CbhiService {
       membershipId: beneficiary.memberNumber,
       fullName: beneficiary.fullName,
       phoneNumber: user.phoneNumber ?? null,
+      photoPath: beneficiaryPhoto?.fileUrl ?? null,
     };
   }
 
@@ -1470,21 +1498,15 @@ export class CbhiService {
     phoneNumber: string | null,
     action: 'create' | 'update',
   ) {
-    if (relationship !== RelationshipToHouseholdHead.CHILD && !phoneNumber) {
-      throw new BadRequestException(
-        `Phone number is required to ${action} a non-child beneficiary.`,
-      );
-    }
+    // Phone is optional — beneficiaries without a phone simply won't get a login account
   }
 
   private canBeneficiaryLoginIndependently(
     relationship: RelationshipToHouseholdHead,
     dateOfBirth: Date | string | null,
   ) {
-    if (relationship === RelationshipToHouseholdHead.CHILD || !dateOfBirth) {
-      return false;
-    }
-    return this.calculateAge(dateOfBirth) >= 18;
+    // Any beneficiary with a phone number can log in independently
+    return true;
   }
 
   private calculateAge(dateOfBirth: Date | string) {

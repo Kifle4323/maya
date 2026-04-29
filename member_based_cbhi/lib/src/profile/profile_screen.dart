@@ -7,6 +7,7 @@ import '../auth/auth_cubit.dart';
 import '../cbhi_data.dart';
 import '../cbhi_localizations.dart';
 import '../cbhi_state.dart';
+import '../shared/premium_widgets.dart';
 import '../benefits/benefit_package_screen.dart';
 import '../coverage/coverage_history_screen.dart';
 import '../grievances/grievance_screen.dart';
@@ -923,27 +924,11 @@ class _M3ProfileHeaderCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Avatar
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppTheme.m3PrimaryContainer.withValues(alpha: 0.2),
-              border: Border.all(
-                color: AppTheme.m3Primary.withValues(alpha: 0.2),
-                width: 2,
-              ),
-            ),
-            child: Center(
-              child: Text(
-                _initials(displayName),
-                style: TextStyle(
-                  color: AppTheme.m3Primary,
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
+          ProfileAvatar(
+            name: displayName,
+            photoPath: snapshot.viewerPhotoPath,
+            repository: context.read<AppCubit>().repository,
+            radius: 40,
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -1002,7 +987,7 @@ class _M3ProfileHeaderCard extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        coverageStatus,
+                        strings.enumValue(coverageStatus),
                         style: TextStyle(
                           color: AppTheme.m3Primary,
                           fontSize: 11,

@@ -1,9 +1,3 @@
-import 'dart:io' if (dart.library.html) '../shared/web_stubs.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
-import '../shared/native_file_image_impl.dart'
-    if (dart.library.html) '../shared/native_file_image_web.dart' as impl;
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,6 +5,7 @@ import '../auth/auth_cubit.dart';
 import '../cbhi_data.dart';
 import '../cbhi_localizations.dart';
 import '../i18n/app_localizations.dart' as i18n;
+import '../shared/premium_widgets.dart';
 import '../theme/app_theme.dart';
 import 'add_beneficiary_screen.dart';
 import 'my_family_cubit.dart';
@@ -339,7 +334,13 @@ class _HeadOfHouseholdCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Avatar
-                _MemberAvatar(repository: repository, member: member, radius: 40),
+                ProfileAvatar(
+                  name: member.fullName,
+                  photoPath: member.photoPath,
+                  repository: repository,
+                  radius: 40,
+                  backgroundColor: AppTheme.m3SecondaryContainer,
+                ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -370,7 +371,7 @@ class _HeadOfHouseholdCard extends StatelessWidget {
                               Icon(Icons.check_circle, size: 14, color: AppTheme.m3Primary),
                               const SizedBox(width: 4),
                               Text(
-                                member.coverageStatus,
+                                strings.enumValue(member.coverageStatus),
                                 style: TextStyle(
                                   color: AppTheme.m3Primary,
                                   fontSize: 12,
@@ -557,7 +558,13 @@ class _M3MemberCard extends StatelessWidget {
               // Avatar
               Stack(
                 children: [
-                  _MemberAvatar(repository: repository, member: member, radius: 24),
+                  ProfileAvatar(
+                    name: member.fullName,
+                    photoPath: member.photoPath,
+                    repository: repository,
+                    radius: 24,
+                    backgroundColor: AppTheme.m3SecondaryContainer,
+                  ),
                   if (member.isPrimaryHolder)
                     Positioned(
                       right: 0,
@@ -589,7 +596,7 @@ class _M3MemberCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '${member.relationshipToHouseholdHead ?? strings.t('member')} • ${member.membershipId.isEmpty ? '—' : member.membershipId}',
+                      '${strings.enumValue(member.relationshipToHouseholdHead) ?? strings.t('member')} • ${member.membershipId.isEmpty ? '—' : member.membershipId}',
                       style: TextStyle(
                         color: AppTheme.textSecondaryFor(Theme.of(context).brightness),
                         fontSize: 13,
@@ -682,7 +689,7 @@ class _M3MemberCard extends StatelessWidget {
                     Icon(_statusIcon(status), size: 13, color: _statusFg(status)),
                     const SizedBox(width: 4),
                     Text(
-                      status,
+                      strings.enumValue(status),
                       style: TextStyle(
                         color: _statusFg(status),
                         fontSize: 11,
@@ -816,74 +823,3 @@ class _EmptyFamilyState extends StatelessWidget {
   }
 }
 
-// ── Member Avatar ─────────────────────────────────────────────────────────────
-
-class _MemberAvatar extends StatelessWidget {
-  const _MemberAvatar({
-    required this.repository,
-    required this.member,
-    this.radius = 28,
-  });
-
-  final CbhiRepository repository;
-  final FamilyMember member;
-  final double radius;
-
-  @override
-  Widget build(BuildContext context) {
-    final resolved = repository.resolveMediaUrl(member.photoPath);
-    final hasLocalFile =
-        !kIsWeb &&
-        member.photoPath != null &&
-        member.photoPath!.isNotEmpty &&
-        File(member.photoPath!).existsSync();
-
-    if (hasLocalFile) {
-      return CircleAvatar(
-        radius: radius,
-        backgroundImage: impl.getFileImageProvider(member.photoPath!),
-      );
-    }
-
-    if (resolved.startsWith('http://') || resolved.startsWith('https://')) {
-      return CircleAvatar(
-        radius: radius,
-        child: ClipOval(
-          child: CachedNetworkImage(
-            imageUrl: resolved,
-            width: radius * 2,
-            height: radius * 2,
-            fit: BoxFit.cover,
-            placeholder: (context, url) =>
-                const CircularProgressIndicator(strokeWidth: 2),
-            errorWidget: (context, url, error) => Text(_initials(member.fullName)),
-          ),
-        ),
-      );
-    }
-
-    return CircleAvatar(
-      radius: radius,
-      backgroundColor: AppTheme.m3SecondaryContainer,
-      child: Text(
-        _initials(member.fullName),
-        style: TextStyle(
-          color: AppTheme.m3OnSecondaryContainer,
-          fontSize: radius * 0.6,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-
-  String _initials(String name) {
-    final parts = name
-        .split(RegExp(r'\s+'))
-        .where((p) => p.isNotEmpty)
-        .toList();
-    if (parts.isEmpty) return 'B';
-    if (parts.length == 1) return parts.first.substring(0, 1).toUpperCase();
-    return '${parts.first.substring(0, 1)}${parts.last.substring(0, 1)}'
-        .toUpperCase();
-  }
-}

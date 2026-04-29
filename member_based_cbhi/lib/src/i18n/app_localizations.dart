@@ -38,7 +38,40 @@ class AppLocalizations {
 
   String t(String key) {
     final lang = locale.languageCode;
-    return _strings[lang]?[key] ?? _strings['en']?[key] ?? key;
+    final lookup = _strings[lang]?[key] ?? _strings['en']?[key];
+    if (lookup != null) return lookup;
+    // No translation found — convert camelCase / snake_case key to readable text
+    return _humanizeKey(key);
+  }
+
+  /// Convert a camelCase or snake_case key to human-readable text.
+  /// e.g. 'recentActivity' → 'Recent Activity', 'pending_payment' → 'Pending Payment'
+  static String _humanizeKey(String key) {
+    return key
+        .replaceAll('_', ' ')
+        .split(RegExp(r'(?=[A-Z])'))
+        .where((s) => s.isNotEmpty)
+        .map((s) => s[0].toUpperCase() + s.substring(1))
+        .join(' ');
+  }
+
+  /// Translate a raw enum value (e.g. 'ACTIVE', 'CHILD', 'NATIONAL_ID')
+  /// into a localized human-readable string.
+  String enumValue(String? value) {
+    if (value == null || value.isEmpty) return '';
+    final key = value.toLowerCase();
+    final lang = locale.languageCode;
+    final lookup = _strings[lang]?[key] ?? _strings['en']?[key];
+    // If we have a localization for the lowercase key, use it; otherwise
+    // fall back to a title-case version of the raw value.
+    if (lookup != null) return lookup;
+    // Convert UPPER_SNAKE_CASE or camelCase to Title Case
+    return value
+        .replaceAll('_', ' ')
+        .split(RegExp(r'(?=[A-Z])'))
+        .where((s) => s.isNotEmpty)
+        .map((s) => s[0].toUpperCase() + s.substring(1).toLowerCase())
+        .join(' ');
   }
 
   String f(String key, Map<String, dynamic> params) {
@@ -122,6 +155,11 @@ const _en = <String, String>{
   'biometricLogin': 'Biometric Login',
   'authSecurityNote': 'Your data is encrypted and secure',
   'birthCertificate': 'Birth certificate',
+  'householdProfilePicture': 'Household Profile Picture',
+  'profilePictureSubtitle': 'Add a photo of the household head for identification.',
+  'profilePhotoRequired': 'Profile photo is required.',
+  'addPhoto': 'Add Photo',
+  'changePhoto': 'Change Photo',
   'byAccepting': 'By accepting, you consent to the collection and use of your data as described above.',
   'cancel': 'Cancel',
   'captureBeneficiaryProfile': 'Capture the beneficiary profile, photo, and optional OTP access phone number.',
@@ -132,6 +170,20 @@ const _en = <String, String>{
   'changePassword': 'Change Password',
   'changesWaitingToSync': 'Changes are waiting to sync.',
   'child': 'Child',
+  'head': 'Head',
+  'active': 'Active',
+  'unpaid': 'Unpaid',
+  'pending_payment': 'Pending Payment',
+  'pending_renewal': 'Pending Renewal',
+  'lapsed': 'Lapsed',
+  'inactive': 'Inactive',
+  'national_id': 'National ID',
+  'local_id': 'Local ID',
+  'unspecified': 'Unspecified',
+  'under_review': 'Under Review',
+  'rejected': 'Rejected',
+  'submitted': 'Submitted',
+  'unknown': 'Unknown',
   'chooseFromGallery': 'Choose from gallery',
   'chooseMembershipPathway': 'Choose the household membership pathway. Paying members can enter a premium estimate while indigent members use employment screening.',
   'choosePdfOrImage': 'Choose PDF or image',
@@ -436,6 +488,7 @@ const _en = <String, String>{
   'offlineQueueActive': 'Offline queue active',
   'offlineQueueMessage': 'Your household record is safely queued offline. As soon as the app syncs online, your member account will activate automatically.',
   'offlineReady': 'Offline Ready',
+  'copiedToClipboard': 'Copied to clipboard',
   'ok': 'OK',
   'onboardingBody1': 'Community-Based Health Insurance protects your family from unexpected medical costs. Register once and access healthcare services across accredited facilities.',
   'onboardingBody2': 'Register your household in guided steps: personal details and ID, review, identity, membership, and optional indigent proof documents — even without internet.',
@@ -831,6 +884,11 @@ const _am = <String, String>{
   'biometricLogin': 'ባዮሜትሪክ ግቤት',
   'authSecurityNote': 'ውሂብዎ ተመስጥሮ ደህንነቱ ተጠብቋል',
   'birthCertificate': 'የልደት ምስክር ወረቀት',
+  'householdProfilePicture': 'የቤተሰብ ፎቶ',
+  'profilePictureSubtitle': 'ለማንነት ማረጋገጫ የቤተሰብ ራስ ፎቶ ያክሉ።',
+  'profilePhotoRequired': 'ፎቶ ማከል ያስፈልጋል።',
+  'addPhoto': 'ፎቶ አክል',
+  'changePhoto': 'ፎቶ ቀይር',
   'byAccepting': 'በመቀበልዎ ከላይ እንደተገለጸው ውሂብዎ እንዲሰበሰብ ይፈቅዳሉ።',
   'cancel': 'ሰርዝ',
   'captureBeneficiaryProfile': 'የተጠቃሚ መገለጫ፣ ፎቶ እና አማራጭ OTP ስልክ ቁጥር ያስቀምጡ።',
@@ -841,6 +899,20 @@ const _am = <String, String>{
   'changePassword': 'የይለፍ ቃል ቀይር',
   'changesWaitingToSync': 'ለማሳመን ምናልባት ጊዜ ይወስዳል።',
   'child': 'ልጅ',
+  'head': 'ራስ',
+  'active': 'ንቁ',
+  'unpaid': 'ያልተከፈለ',
+  'pending_payment': 'ክፍያ በመጠባበቅ ላይ',
+  'pending_renewal': 'ማደስ በመጠባበቅ ላይ',
+  'lapsed': 'ያለፈ',
+  'inactive': 'ያልነቃ',
+  'national_id': 'ብሔራዊ መታወቂያ',
+  'local_id': 'የአካባቢ መታወቂያ',
+  'unspecified': 'ያልተወሰነ',
+  'under_review': 'በግምገማ ላይ',
+  'rejected': 'ውድቅ',
+  'submitted': 'የቀረበ',
+  'unknown': 'ያልታወቀ',
   'chooseFromGallery': 'ከጋለሪ ምረጥ',
   'chooseMembershipPathway': 'የቤተሰብ አባልነት ዓይነት ይምረጡ።',
   'choosePdfOrImage': 'PDF ወይም ምስል ምረጥ',
@@ -1146,6 +1218,7 @@ const _am = <String, String>{
   'offlineQueueActive': 'ኦፍላይን ወረፋ ነቅቷል',
   'offlineQueueMessage': 'የቤተሰብ መዝገብዎ ኦፍላይን ሆኖ ተቀምጧል። መተግበሪያው ኦንላይን ሲሆን መለያዎ ይነቃል።',
   'offlineReady': 'ያለ ኢንተርኔት ይሰራል',
+  'copiedToClipboard': 'ወደ ቅንጥብ ሰሌዳ ተቀድቷል',
   'ok': 'እሺ',
   'onboardingBody1': 'የማህበረሰብ ጤና መድን ቤተሰብዎን ከሚጠበቁ የህክምና ወጪዎች ይጠብቃል። አንድ ጊዜ ይመዝገቡ እና በተፈቀዱ ተቋማት ውስጥ አገልግሎት ያግኙ።',
   'onboardingBody2': 'ቤተሰብዎን በቀላል ደረጃዎች ይመዝገቡ፦ ግላዊ መረጃ፣ ማንነት፣ አባልነት — ያለ ኢንተርኔትም ይሰራል።',
@@ -1542,6 +1615,11 @@ const _om = <String, String>{
   'biometricLogin': 'Seensa baayomeetrikii',
   'authSecurityNote': 'Deetaan kee tiifamee nagaha dha',
   'birthCertificate': 'Ragaa dhalootaa',
+  'householdProfilePicture': 'Suuraa Maatii',
+  'profilePictureSubtitle': 'Suuraa hogganaa maatii eenyummaa mirkaneessuuf dabalaa.',
+  'profilePhotoRequired': 'Suuraan barbaachisaa dha.',
+  'addPhoto': 'Suuraa dabalii',
+  'changePhoto': 'Suuraa jijjiiri',
   'byAccepting': 'Fudhachuudhaan, odeeffannoon kee akka funaanamu hayyamta.',
   'cancel': 'Dhiisi',
   'captureBeneficiaryProfile': 'Profaayilii, suuraa, fi lakkoofsa bilbilaa OTP fayyadamaa sassaabi.',
@@ -1552,6 +1630,20 @@ const _om = <String, String>{
   'changePassword': 'Jecha darbii jijjiiri',
   'changesWaitingToSync': 'Jijjiiramni walsimsiifamuuf eeggachaa jira.',
   'child': 'Daa\'ima',
+  'head': 'Mataa',
+  'active': 'Ho\'a',
+  'unpaid': 'Hin kaffalame',
+  'pending_payment': 'Kaffaltiin eeggachaa jira',
+  'pending_renewal': 'Haara\'uu eeggachaa jira',
+  'lapsed': 'Dabale',
+  'inactive': 'Hin hojju',
+  'national_id': 'ID Biyyaalessaa',
+  'local_id': 'ID Naannoo',
+  'unspecified': 'Hin beekamne',
+  'under_review': 'Qorannoo eeggachaa jira',
+  'rejected': 'Diddeessame',
+  'submitted': 'Dhihaate',
+  'unknown': 'Hin beekamu',
   'chooseFromGallery': 'Gaallarii irraa filadhu',
   'chooseMembershipPathway': 'Gosa miseensummaa maatii filadhaa.',
   'choosePdfOrImage': 'PDF yookaan suuraa filadhu',
@@ -1857,6 +1949,7 @@ const _om = <String, String>{
   'offlineQueueActive': 'Tarree toora ala hojii irra jira',
   'offlineQueueMessage': 'Galmeessa maatii kee toora ala olkaa\'ame. Interneetii yoo argame herreggaan kee ni hojjata.',
   'offlineReady': 'Toora ala hojjata',
+  'copiedToClipboard': 'Gabaabifamee waraqaa',
   'ok': 'Tole',
   'onboardingBody1': 'Caasaan fayyaa hawaasaa maatii keessan baasii fayyaa hin eegamne irraa eega. Yeroo tokko galmeessaa tajaajila dhaabbilee raggaafaman irraa argadhaa.',
   'onboardingBody2': 'Maatii keessan tartiibaan galmeessaa: odeeffannoo dhuunfaa, eenyummaa, miseensummaa — toora ala illee hojjata.',

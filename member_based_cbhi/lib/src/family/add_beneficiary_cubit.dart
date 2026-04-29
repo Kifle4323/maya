@@ -8,6 +8,7 @@ class AddBeneficiaryState extends Equatable {
     required this.isSubmitting,
     this.photoPath,
     this.error,
+    this.setupCode,
   });
 
   factory AddBeneficiaryState.initial({String? photoPath}) {
@@ -17,22 +18,25 @@ class AddBeneficiaryState extends Equatable {
   final bool isSubmitting;
   final String? photoPath;
   final String? error;
+  final String? setupCode;
 
   AddBeneficiaryState copyWith({
     bool? isSubmitting,
     String? photoPath,
     String? error,
+    String? setupCode,
     bool clearError = false,
   }) {
     return AddBeneficiaryState(
       isSubmitting: isSubmitting ?? this.isSubmitting,
       photoPath: photoPath ?? this.photoPath,
       error: clearError ? null : error ?? this.error,
+      setupCode: setupCode ?? this.setupCode,
     );
   }
 
   @override
-  List<Object?> get props => [isSubmitting, photoPath, error];
+  List<Object?> get props => [isSubmitting, photoPath, error, setupCode];
 }
 
 class AddBeneficiaryCubit extends Cubit<AddBeneficiaryState> {
@@ -52,7 +56,8 @@ class AddBeneficiaryCubit extends Cubit<AddBeneficiaryState> {
     emit(state.copyWith(isSubmitting: true, clearError: true));
     try {
       if (memberId == null) {
-        await repository.addFamilyMember(draft);
+        final result = await repository.addFamilyMember(draft);
+        emit(state.copyWith(isSubmitting: false, clearError: true, setupCode: result.setupCode));
       } else {
         await repository.updateFamilyMember(memberId, draft);
       }

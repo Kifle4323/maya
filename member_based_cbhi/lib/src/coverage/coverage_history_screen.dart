@@ -99,7 +99,7 @@ class _CoverageHistoryScreenState extends State<CoverageHistoryScreen> {
                                   ],
                                 ),
                               ),
-                              StatusBadge(label: status),
+                              StatusBadge(label: strings.enumValue(status)),
                             ],
                           ),
                           const SizedBox(height: 12),
@@ -111,7 +111,7 @@ class _CoverageHistoryScreenState extends State<CoverageHistoryScreen> {
                               Expanded(child: _CoverageMetric(label: strings.t('paid'), value: '${paid.toStringAsFixed(0)} ETB', color: AppTheme.success)),
                               Expanded(child: _CoverageMetric(
                                 label: strings.t('membershipType'),
-                                value: coverage['membershipType']?.toString() ?? '—',
+                                value: strings.enumValue(coverage['membershipType']?.toString()) ?? '—',
                                 color: AppTheme.primary,
                               )),
                             ],

@@ -322,6 +322,21 @@ class AppLocalizationsOm extends AppLocalizations {
   String get householdSize => 'Baay\'ina maatii';
 
   @override
+  String get householdProfilePicture => 'Suuraa Maatii';
+
+  @override
+  String get profilePictureSubtitle => 'Suuraa hogganaa maatii eenyummaa mirkaneessuuf dabalaa.';
+
+  @override
+  String get profilePhotoRequired => 'Suuraan barbaachisaa dha.';
+
+  @override
+  String get addPhoto => 'Suuraa dabalii';
+
+  @override
+  String get changePhoto => 'Suuraa jijjiiri';
+
+  @override
   String get birthCertificate => 'Ragaa dhalootaa';
 
   @override
@@ -811,6 +826,9 @@ class AppLocalizationsOm extends AppLocalizations {
 
   @override
   String get spouse => 'Haadha warraa/abbaa warraa';
+
+  @override
+  String get head => 'Mataa';
 
   @override
   String get child => 'Daa\'ima';

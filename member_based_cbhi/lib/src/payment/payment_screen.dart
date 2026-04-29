@@ -688,6 +688,13 @@ class _CheckoutSection extends StatelessWidget {
 
 // ── Verify result card (pending/failed) ─────────────────────────────────────
 
+String _parseAmt(dynamic v) {
+  if (v == null) return '';
+  if (v is num) return v.toStringAsFixed(2);
+  final parsed = double.tryParse(v.toString());
+  return parsed != null ? parsed.toStringAsFixed(2) : v.toString();
+}
+
 class _VerifyResultCard extends StatelessWidget {
   const _VerifyResultCard({required this.result, required this.strings});
   final Map<String, dynamic> result;
@@ -720,7 +727,7 @@ class _VerifyResultCard extends StatelessWidget {
           if (result['amount'] != null)
             Padding(
               padding: const EdgeInsets.only(top: 6),
-              child: Text('${strings.t('amountLabel')}: ${result['amount']} ${strings.t('etb')}'),
+              child: Text('${strings.t('amountLabel')}: ${_parseAmt(result['amount'])} ${strings.t('etb')}'),
             ),
           if (result['message'] != null)
             Padding(
@@ -878,7 +885,7 @@ class _ReceiptDialog extends StatelessWidget {
           SizedBox(height: 16),
           const Divider(),
           SizedBox(height: 8),
-          _ReceiptRow(label: strings.t('receiptAmount'), value: '${result['amount'] ?? ''} ETB'),
+          _ReceiptRow(label: strings.t('receiptAmount'), value: '${_safeParseAmount(result['amount'])} ETB'),
           _ReceiptRow(label: strings.t('receiptReference'), value: txRef),
           if (result['paymentMethod'] != null)
             _ReceiptRow(label: strings.t('receiptMethod'), value: result['paymentMethod'].toString()),
@@ -927,6 +934,13 @@ class _ReceiptDialog extends StatelessWidget {
     final parsed = DateTime.tryParse(raw);
     if (parsed == null) return raw;
     return '${parsed.day.toString().padLeft(2, '0')}/${parsed.month.toString().padLeft(2, '0')}/${parsed.year}';
+  }
+
+  String _safeParseAmount(dynamic v) {
+    if (v == null) return '';
+    if (v is num) return v.toStringAsFixed(2);
+    final parsed = double.tryParse(v.toString());
+    return parsed != null ? parsed.toStringAsFixed(2) : v.toString();
   }
 }
 

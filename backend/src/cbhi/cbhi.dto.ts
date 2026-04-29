@@ -107,6 +107,15 @@ export class RegistrationStepOneDto {
   @Type(() => InlineAttachmentDto)
   idDocumentUpload?: InlineAttachmentDto;
 
+  @IsOptional()
+  @IsString()
+  beneficiaryPhotoPath?: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => InlineAttachmentDto)
+  beneficiaryPhotoUpload?: InlineAttachmentDto;
+
   @ValidateNested()
   @Type(() => AddressDto)
   address!: AddressDto;

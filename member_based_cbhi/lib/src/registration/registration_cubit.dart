@@ -97,14 +97,40 @@ class RegistrationCubit extends Cubit<RegistrationState> {
   /// Navigate to the payment step for paying members who chose "Pay Now".
   Future<void> beginPayment(MembershipSelection membership) async {
     emit(state.copyWith(isLoading: true, clearError: true));
+
+    // Generate 6-digit setup code — same as _runRegistration
+    final setupCode = _generateTempPassword();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('cbhi_setup_code', setupCode);
+    await prefs.setString('cbhi_temp_password', setupCode);
+    await prefs.setBool('cbhi_has_temp_password', true);
+    final phone = state.personalInfo?.phone;
+    if (phone != null && phone.isNotEmpty) {
+      await prefs.setString('cbhi_registered_phone', phone);
+    }
+
     // Run registration first to get the snapshot, then show payment
     try {
-      final snapshot = await repository.registerFull(
+      var snapshot = await repository.registerFull(
         personalInfo: state.personalInfo!,
         identity: state.identity!,
         membership: membership,
         indigentProofPaths: const [],
       );
+      // Inject setup code notification
+      final setupCodeNotification = {
+        'id': 'setup-code-${DateTime.now().millisecondsSinceEpoch}',
+        'type': 'SYSTEM_ALERT',
+        'title': 'Your Setup Code',
+        'body': 'Your 6-digit setup code is: $setupCode. Use this to set your password in Profile \u2192 Change Password.',
+        'isRead': false,
+        'createdAt': DateTime.now().toIso8601String(),
+      };
+      final existingNotifications = List<Map<String, dynamic>>.from(snapshot.notifications);
+      existingNotifications.insert(0, setupCodeNotification);
+      snapshot = snapshot.copyWith(notifications: existingNotifications);
+      await repository.localDb.writeSnapshot(snapshot);
+
       final next = state.copyWith(
         membership: membership,
         registrationSnapshot: snapshot,
@@ -122,8 +148,21 @@ class RegistrationCubit extends Cubit<RegistrationState> {
         return;
       }
       // Network error — build offline snapshot and go to payment anyway
-      final offlineSnapshot = _buildOfflineSnapshot(membership);
+      var offlineSnapshot = _buildOfflineSnapshot(membership);
+      // Inject setup code notification
+      final setupCodeNotification = {
+        'id': 'setup-code-${DateTime.now().millisecondsSinceEpoch}',
+        'type': 'SYSTEM_ALERT',
+        'title': 'Your Setup Code',
+        'body': 'Your 6-digit setup code is: $setupCode. Use this to set your password in Profile \u2192 Change Password.',
+        'isRead': false,
+        'createdAt': DateTime.now().toIso8601String(),
+      };
+      final existingNotifications = List<Map<String, dynamic>>.from(offlineSnapshot.notifications);
+      existingNotifications.insert(0, setupCodeNotification);
+      offlineSnapshot = offlineSnapshot.copyWith(notifications: existingNotifications);
       await repository.localDb.writeSnapshot(offlineSnapshot);
+
       final next = state.copyWith(
         membership: membership,
         registrationSnapshot: offlineSnapshot,

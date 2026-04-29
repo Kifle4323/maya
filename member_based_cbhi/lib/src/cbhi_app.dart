@@ -22,7 +22,6 @@ import 'notifications/notification_inbox_screen.dart';
 import 'profile/profile_screen.dart';
 import 'registration/registration_cubit.dart';
 import 'registration/registration_flow.dart';
-import 'shared/animated_widgets.dart';
 import 'shared/connectivity_banner.dart';
 import 'shared/connectivity_cubit.dart';
 import 'shared/help_screen.dart';

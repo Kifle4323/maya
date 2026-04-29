@@ -9,6 +9,7 @@ class FamilyState extends Equatable {
     required this.isLoading,
     required this.isSaving,
     this.error,
+    this.lastSetupCode,
   });
 
   factory FamilyState.initial() => const FamilyState(
@@ -21,12 +22,14 @@ class FamilyState extends Equatable {
   final bool isLoading;
   final bool isSaving;
   final String? error;
+  final String? lastSetupCode;
 
   FamilyState copyWith({
     List<FamilyMember>? members,
     bool? isLoading,
     bool? isSaving,
     String? error,
+    String? lastSetupCode,
     bool clearError = false,
   }) {
     return FamilyState(
@@ -34,11 +37,12 @@ class FamilyState extends Equatable {
       isLoading: isLoading ?? this.isLoading,
       isSaving: isSaving ?? this.isSaving,
       error: clearError ? null : error ?? this.error,
+      lastSetupCode: lastSetupCode ?? this.lastSetupCode,
     );
   }
 
   @override
-  List<Object?> get props => [members, isLoading, isSaving, error];
+  List<Object?> get props => [members, isLoading, isSaving, error, lastSetupCode];
 }
 
 class MyFamilyCubit extends Cubit<FamilyState> {
@@ -73,8 +77,8 @@ class MyFamilyCubit extends Cubit<FamilyState> {
   Future<void> addMember(FamilyMemberDraft draft) async {
     emit(state.copyWith(isSaving: true, clearError: true));
     try {
-      final members = await repository.addFamilyMember(draft);
-      emit(state.copyWith(members: members, isSaving: false, clearError: true));
+      final result = await repository.addFamilyMember(draft);
+      emit(state.copyWith(members: result.members, isSaving: false, clearError: true, lastSetupCode: result.setupCode));
     } catch (error) {
       emit(state.copyWith(isSaving: false, error: error.toString()));
     }

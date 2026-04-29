@@ -688,6 +688,36 @@ abstract class AppLocalizations {
   /// **'Household size'**
   String get householdSize;
 
+  /// No description provided for @householdProfilePicture.
+  ///
+  /// In en, this message translates to:
+  /// **'Household Profile Picture'**
+  String get householdProfilePicture;
+
+  /// No description provided for @profilePictureSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a photo of the household head for identification.'**
+  String get profilePictureSubtitle;
+
+  /// No description provided for @profilePhotoRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile photo is required.'**
+  String get profilePhotoRequired;
+
+  /// No description provided for @addPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Photo'**
+  String get addPhoto;
+
+  /// No description provided for @changePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Photo'**
+  String get changePhoto;
+
   /// No description provided for @birthCertificate.
   ///
   /// In en, this message translates to:
@@ -1605,6 +1635,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Spouse'**
   String get spouse;
+
+  /// No description provided for @head.
+  ///
+  /// In en, this message translates to:
+  /// **'Head'**
+  String get head;
 
   /// No description provided for @child.
   ///

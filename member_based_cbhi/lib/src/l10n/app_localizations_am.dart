@@ -318,6 +318,21 @@ class AppLocalizationsAm extends AppLocalizations {
   String get householdSize => 'የቤተሰብ ቁጥር';
 
   @override
+  String get householdProfilePicture => 'የቤተሰብ ፎቶ';
+
+  @override
+  String get profilePictureSubtitle => 'ለማንነት ማረጋገጫ የቤተሰብ ራስ ፎቶ ያክሉ።';
+
+  @override
+  String get profilePhotoRequired => 'ፎቶ ማከል ያስፈልጋል።';
+
+  @override
+  String get addPhoto => 'ፎቶ አክል';
+
+  @override
+  String get changePhoto => 'ፎቶ ቀይር';
+
+  @override
   String get birthCertificate => 'የልደት ምስክር ወረቀት';
 
   @override
@@ -794,6 +809,9 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get spouse => 'ሚስት/ባል';
+
+  @override
+  String get head => 'ራስ';
 
   @override
   String get child => 'ልጅ';

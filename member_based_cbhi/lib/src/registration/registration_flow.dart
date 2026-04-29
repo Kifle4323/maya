@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../auth/account_setup_screen.dart';
 import '../auth/auth_cubit.dart';
 import '../auth/auth_state.dart';
 import '../cbhi_localizations.dart';
@@ -128,26 +127,6 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
                 ),
               );
 
-            case RegistrationStep.setupAccount:
-              final phone = state.registeredPhone ?? '';
-              if (phone.isEmpty) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  regCubit.reset();
-                  authCubit.adoptRegisteredSession();
-                });
-                return const Scaffold(
-                  body: Center(child: CircularProgressIndicator()),
-                );
-              }
-              return _StepWrapper(
-                step: RegistrationStep.setupAccount,
-                child: AccountSetupScreen(
-                  authCubit: authCubit,
-                  repository: repo,
-                  phoneNumber: phone,
-                ),
-              );
-
             case RegistrationStep.completed:
               return _RegistrationCompletedView(
                 personalInfo: state.personalInfo,
@@ -155,6 +134,7 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
                 isOffline: state.isOffline,
               );
             case RegistrationStep.start:
+            case RegistrationStep.setupAccount:
             case RegistrationStep.error:
               // Restart from personalInfo on unexpected states
               WidgetsBinding.instance.addPostFrameCallback((_) {

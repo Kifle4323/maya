@@ -83,6 +83,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!ok) {
       setState(() => _error = cubit.state.error ?? strings.t('unknownError'));
+    } else {
+      Navigator.of(context).pop();
     }
   }
 
@@ -108,6 +110,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!ok) {
       setState(() => _error = cubit.state.error ?? strings.t('unknownError'));
+    } else {
+      Navigator.of(context).pop();
     }
   }
 

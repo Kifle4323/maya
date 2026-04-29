@@ -6,6 +6,7 @@ import '../shared/native_file_image_impl.dart'
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart'
@@ -15,6 +16,7 @@ import '../cbhi_data.dart';
 import '../cbhi_localizations.dart';
 import '../shared/ethiopic_date_picker.dart';
 import '../shared/local_attachment_store.dart';
+import '../theme/app_theme.dart';
 import 'add_beneficiary_cubit.dart';
 
 class AddBeneficiaryScreen extends StatefulWidget {
@@ -187,6 +189,61 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
       draft: draft,
     );
     if (success && mounted) {
+      final setupCode = _cubit.state.setupCode;
+      if (setupCode != null && setupCode.isNotEmpty) {
+        final strings = CbhiLocalizations.of(context);
+        await showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(strings.t('setupCode')),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(strings.t('tempPasswordWarning')),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppTheme.m3PrimaryContainer.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        setupCode,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 4,
+                          color: AppTheme.m3Primary,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        icon: const Icon(Icons.copy, size: 20),
+                        onPressed: () {
+                          Clipboard.setData(ClipboardData(text: setupCode));
+                          ScaffoldMessenger.of(ctx).showSnackBar(
+                            SnackBar(content: Text(strings.t('setupCodeCopied'))),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              FilledButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(strings.t('ok')),
+              ),
+            ],
+          ),
+        );
+      }
       Navigator.of(context).pop(true);
     }
   }
@@ -298,13 +355,17 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           ),
                           const SizedBox(height: 12),
                           DropdownButtonFormField<String>(
-                            value: _relationship,
+                            value: ['SPOUSE','CHILD','PARENT','SIBLING','OTHER','HEAD','UNSPECIFIED'].contains(_relationship) ? _relationship : 'OTHER',
                             decoration: InputDecoration(
                               labelText: strings.t(
                                 'relationshipToHouseholdHead',
                               ),
                             ),
                             items: [
+                              DropdownMenuItem(
+                                value: 'HEAD',
+                                child: Text(strings.t('head')),
+                              ),
                               DropdownMenuItem(
                                 value: 'SPOUSE',
                                 child: Text(strings.t('spouse')),
@@ -346,12 +407,8 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                             ),
                             validator: (value) {
                               final trimmed = value?.trim() ?? '';
-                              if (_relationship == 'CHILD' &&
-                                  (trimmed.isEmpty || trimmed == '+2519')) {
-                                return null;
-                              }
                               if (trimmed.isEmpty || trimmed == '+2519') {
-                                return strings.t('phoneRequiredForNonChild');
+                                return null; // phone is optional
                               }
                               if (trimmed.length < 10) {
                                 return strings.t(
@@ -370,7 +427,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           Text(strings.t('nationalIdOrLocalIdOptional')),
                           const SizedBox(height: 12),
                           DropdownButtonFormField<String>(
-                            value: _identityType ?? 'NONE',
+                            value: ['NONE','NATIONAL_ID','LOCAL_ID','PASSPORT'].contains(_identityType ?? 'NONE') ? (_identityType ?? 'NONE') : 'NONE',
                             decoration: InputDecoration(
                               labelText: strings.t('idTypeOptional'),
                             ),
@@ -386,6 +443,10 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                               DropdownMenuItem<String>(
                                 value: 'LOCAL_ID',
                                 child: Text(strings.t('localId')),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'PASSPORT',
+                                child: Text(strings.t('passport')),
                               ),
                             ],
                             onChanged: (value) =>

@@ -322,6 +322,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get householdSize => 'Household size';
 
   @override
+  String get householdProfilePicture => 'Household Profile Picture';
+
+  @override
+  String get profilePictureSubtitle => 'Add a photo of the household head for identification.';
+
+  @override
+  String get profilePhotoRequired => 'Profile photo is required.';
+
+  @override
+  String get addPhoto => 'Add Photo';
+
+  @override
+  String get changePhoto => 'Change Photo';
+
+  @override
   String get birthCertificate => 'Birth certificate';
 
   @override
@@ -816,6 +831,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get spouse => 'Spouse';
+
+  @override
+  String get head => 'Head';
 
   @override
   String get child => 'Child';

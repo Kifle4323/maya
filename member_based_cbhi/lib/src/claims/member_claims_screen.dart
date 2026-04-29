@@ -400,7 +400,7 @@ class _InfoCard extends StatelessWidget {
           color: AppTheme.m3OutlineVariant.withValues(alpha: 0.3),
         ),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -421,7 +421,7 @@ class _InfoCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           if (items != null)
             ...items!.map((item) => Padding(
               padding: const EdgeInsets.only(bottom: 8),
@@ -577,7 +577,7 @@ class _M3ClaimCard extends StatelessWidget {
                     Icon(_statusIcon(status), size: 12, color: _statusFg(status)),
                     const SizedBox(width: 4),
                     Text(
-                      status,
+                      strings.enumValue(status),
                       style: TextStyle(
                         color: _statusFg(status),
                         fontSize: 11,

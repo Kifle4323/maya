@@ -179,7 +179,8 @@ export class PaymentService {
 
     // If still pending, verify with Chapa
     const result = await this.chapaService.verifyPayment(txRef);
-    this.logger.log(`Verification result for ${txRef}: ${result.status} - ${result.amount} ${result.currency}`);
+    const verifiedAmount = result.amount ?? parseFloat(payment.amount);
+    this.logger.log(`Verification result for ${txRef}: ${result.status} - ${verifiedAmount} ${result.currency}`);
 
     if (result.status === 'success') {
       // Security check: validate amount and currency (skip for demo/test payments)
@@ -199,10 +200,10 @@ export class PaymentService {
     return {
       txRef,
       status: result.status,
-      amount: result.amount,
-      currency: result.currency,
+      amount: verifiedAmount,
+      currency: result.currency ?? payment.currency,
       paymentMethod: result.paymentMethod,
-      paidAt: result.paidAt,
+      paidAt: result.paidAt ?? new Date().toISOString(),
       message: result.message,
       coverageActivated: result.status === 'success',
       coverageEndDate: payment.coverage?.endDate instanceof Date

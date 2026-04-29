@@ -11,9 +11,15 @@
 //   - Zero emoji — Material icons only
 // ============================================================================
 
+import 'dart:io' if (dart.library.html) 'web_stubs.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
+import '../cbhi_data.dart';
+import 'native_file_image_impl.dart'
+    if (dart.library.html) 'native_file_image_web.dart' as impl;
 import '../theme/app_theme.dart';
 
 // ─── SpringTap ─────────────────────────────────────────────────────────────
@@ -908,12 +914,22 @@ class ProfileAvatar extends StatelessWidget {
     this.radius = 28.0,
     this.backgroundColor,
     this.imageUrl,
+    this.photoPath,
+    this.repository,
   });
 
   final String name;
   final double radius;
   final Color? backgroundColor;
+
+  /// Remote image URL (http/https).
   final String? imageUrl;
+
+  /// Local or resolved photo path from CbhiSnapshot.viewerPhotoPath or Beneficiary.photoPath.
+  final String? photoPath;
+
+  /// Repository used to resolve relative media URLs.
+  final CbhiRepository? repository;
 
   String get _initials {
     final parts = name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
@@ -925,22 +941,62 @@ class ProfileAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = backgroundColor ?? AppTheme.primary.withValues(alpha: 0.15);
-    return CircleAvatar(
-      radius: radius,
-      backgroundColor: bg,
-      backgroundImage: imageUrl != null && imageUrl!.startsWith('http')
-          ? NetworkImage(imageUrl!)
-          : null,
-      child: imageUrl == null || !imageUrl!.startsWith('http')
-          ? Text(
+
+    // 1. Local file (native only)
+    final hasLocalFile =
+        !kIsWeb &&
+        photoPath != null &&
+        photoPath!.isNotEmpty &&
+        File(photoPath!).existsSync();
+    if (hasLocalFile) {
+      return CircleAvatar(
+        radius: radius,
+        backgroundColor: bg,
+        backgroundImage: impl.getFileImageProvider(photoPath!),
+      );
+    }
+
+    // 2. Resolved remote URL (via repository or direct imageUrl)
+    final resolved = repository?.resolveMediaUrl(photoPath) ?? '';
+    final effectiveUrl = resolved.isNotEmpty ? resolved : (imageUrl ?? '');
+
+    if (effectiveUrl.startsWith('http://') || effectiveUrl.startsWith('https://')) {
+      return CircleAvatar(
+        radius: radius,
+        backgroundColor: bg,
+        child: ClipOval(
+          child: CachedNetworkImage(
+            imageUrl: effectiveUrl,
+            width: radius * 2,
+            height: radius * 2,
+            fit: BoxFit.cover,
+            placeholder: (context, url) =>
+                const CircularProgressIndicator(strokeWidth: 2),
+            errorWidget: (context, url, error) => Text(
               _initials,
               style: TextStyle(
                 color: AppTheme.primary,
                 fontWeight: FontWeight.w700,
                 fontSize: radius * 0.55,
               ),
-            )
-          : null,
+            ),
+          ),
+        ),
+      );
+    }
+
+    // 3. Fallback: initials
+    return CircleAvatar(
+      radius: radius,
+      backgroundColor: bg,
+      child: Text(
+        _initials,
+        style: TextStyle(
+          color: AppTheme.primary,
+          fontWeight: FontWeight.w700,
+          fontSize: radius * 0.55,
+        ),
+      ),
     );
   }
 }

@@ -55,6 +55,9 @@ export class Beneficiary extends AuditableEntity {
   @Column({ type: 'varchar', length: 64, nullable: true })
   identityNumber?: string | null;
 
+  @Column({ type: 'varchar', length: 32, nullable: true })
+  phoneNumber?: string | null;
+
   @Column({
     type: 'enum',
     enum: RelationshipToHouseholdHead,

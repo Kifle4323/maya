@@ -147,9 +147,9 @@ export class ChapaService {
     if (this.demo?.isActive || !this.isConfigured) {
       return this.demo?.verifyPayment(txRef) ?? {
         success: true,
-        status: 'success',
+        status: 'success' as const,
         txRef,
-        amount: 0, // Amount validation is skipped for demo/test payments
+        amount: undefined, // Let payment.service fall back to DB amount
         currency: 'ETB',
         message: 'Demo payment verified',
         isDemo: true,

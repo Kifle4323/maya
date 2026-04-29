@@ -162,6 +162,7 @@ class _GrievanceCard extends StatelessWidget {
     final status = grievance['status']?.toString() ?? 'OPEN';
     final type = grievance['type']?.toString() ?? 'OTHER';
     final color = _statusColor(status);
+    final strings = CbhiLocalizations.of(context);
 
     return GlassCard(
       padding: const EdgeInsets.all(16),
@@ -181,11 +182,11 @@ class _GrievanceCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(grievance['subject']?.toString() ?? '', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
-                    Text(type.replaceAll('_', ' '), style: Theme.of(context).textTheme.bodySmall),
+                    Text(strings.enumValue(type), style: Theme.of(context).textTheme.bodySmall),
                   ],
                 ),
               ),
-              StatusBadge(label: status, color: color),
+              StatusBadge(label: strings.enumValue(status), color: color),
             ],
           ),
           const SizedBox(height: 12),
