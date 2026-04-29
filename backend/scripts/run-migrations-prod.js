@@ -21,6 +21,8 @@ if (!process.env.DB_HOST && !process.env.DATABASE_URL) {
 const { AppDataSource } = require('../dist/src/database/data-source');
 
 async function main() {
+  const host = process.env.DB_HOST || process.env.DATABASE_URL ? '(from env)' : '(not set)';
+  console.log('[MIGRATION] DB config present:', host);
   console.log('[MIGRATION] Connecting to database...');
 
   await AppDataSource.initialize();
@@ -42,6 +44,7 @@ async function main() {
 }
 
 main().catch(err => {
-  console.error('[MIGRATION] FAILED:', err.message);
+  console.error('[MIGRATION] FAILED:', err.message || err);
+  console.error('[MIGRATION] Full error:', err);
   process.exit(1);
 });
