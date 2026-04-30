@@ -64,7 +64,7 @@ export class ChapaService {
     if (this.demo?.isActive || !this.isConfigured) {
       return this.demo?.initiatePayment(input) ?? {
         success: true,
-        checkoutUrl: `http://localhost:3000/api/v1/demo/payment-page?txRef=${input.txRef}&amount=${input.amount}`,
+        checkoutUrl: `${process.env.APP_BASE_URL ?? 'https://maya-u8mf.onrender.com'}/api/v1/demo/payment-page?txRef=${input.txRef}&amount=${input.amount}`,
         txRef: input.txRef,
         message: 'Demo payment — no CHAPA_SECRET_KEY configured',
         isDemo: true,
@@ -195,7 +195,7 @@ export class ChapaService {
   private _resolveUrl(envValue: string | undefined, fallbackPath: string): string {
     const base = envValue && !envValue.includes('your-domain')
       ? envValue
-      : (process.env.APP_BASE_URL ?? 'http://localhost:3000');
+      : (process.env.APP_BASE_URL ?? 'https://maya-u8mf.onrender.com');
     const url = base.replace(/\/+$/, '');
     return `${url}${fallbackPath}`;
   }
