@@ -925,21 +925,14 @@ export class CbhiService {
   private resolvePremiumAmount(
     householdSize: number,
     membershipType: MembershipType,
-    requestedPremium: number | undefined,
+    _requestedPremium: number | undefined,
     eligibility: EligibilityDecision,
   ) {
     if (membershipType === MembershipType.INDIGENT && eligibility.approved) {
       return 0;
     }
 
-    if (
-      membershipType === MembershipType.PAYING &&
-      requestedPremium !== undefined &&
-      requestedPremium >= 0
-    ) {
-      return requestedPremium;
-    }
-
+    // Always calculate from household size — ignore client-sent value
     return this.calculatePremium(householdSize);
   }
 

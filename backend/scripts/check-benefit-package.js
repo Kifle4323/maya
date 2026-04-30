@@ -19,7 +19,17 @@ async function main() {
   const res = await client.query('SELECT id, name, "premiumPerMember", "annualCeiling", "isActive" FROM benefit_packages');
   console.log('Benefit Packages:', JSON.stringify(res.rows, null, 2));
 
-  const cov = await client.query('SELECT id, "premiumAmount", "paidAmount", status FROM coverage ORDER BY "createdAt" DESC LIMIT 5');
+  // Recalculate coverage premiums: 1200 + (memberCount - 1) * 120
+  const covUpdate = await client.query(`
+    UPDATE coverages c
+    SET "premiumAmount" = (1200 + GREATEST(h."memberCount" - 1, 0) * 120)::text
+    FROM households h
+    WHERE c."householdId" = h.id
+      AND h."membershipType" = 'paying'
+  `);
+  console.log('Updated', covUpdate.rowCount, 'coverage record(s) with recalculated premium');
+
+  const cov = await client.query('SELECT c.id, c."premiumAmount", c."paidAmount", c.status, h."memberCount", h."membershipType" FROM coverages c JOIN households h ON c."householdId" = h.id ORDER BY c."createdAt" DESC LIMIT 10');
   console.log('Coverage records:', JSON.stringify(cov.rows, null, 2));
 
   await client.end();
