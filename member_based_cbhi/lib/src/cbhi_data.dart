@@ -1690,7 +1690,7 @@ class CbhiRepository {
         'status': 'PENDING_RENEWAL',
         'premiumAmount': membership.isIndigent
             ? 0
-            : membership.premiumAmount ?? 0,
+            : membership.premiumAmount ?? 1200,
         'paidAmount': 0,
       },
       card: null,

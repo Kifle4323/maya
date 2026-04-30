@@ -11,6 +11,11 @@ async function main() {
   });
 
   await client.connect();
+
+  // Update premiumPerMember to 1200 for active packages
+  const upd = await client.query('UPDATE benefit_packages SET "premiumPerMember" = \'1200\' WHERE "isActive" = true');
+  console.log('Updated', upd.rowCount, 'benefit package(s) to premiumPerMember=1200');
+
   const res = await client.query('SELECT id, name, "premiumPerMember", "annualCeiling", "isActive" FROM benefit_packages');
   console.log('Benefit Packages:', JSON.stringify(res.rows, null, 2));
 

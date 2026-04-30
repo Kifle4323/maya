@@ -227,7 +227,7 @@ class MembershipSelectionScreen extends StatelessWidget {
               cubit.beginPayment(
                 const MembershipSelection(
                   type: MembershipType.paying,
-                  premiumAmount: 500,
+                  premiumAmount: null,
                 ),
               );
             },
