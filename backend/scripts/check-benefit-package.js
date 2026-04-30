@@ -22,7 +22,7 @@ async function main() {
   // Recalculate coverage premiums: 1200 + (memberCount - 1) * 120
   const covUpdate = await client.query(`
     UPDATE coverages c
-    SET "premiumAmount" = (1200 + GREATEST(h."memberCount" - 1, 0) * 120)::text
+    SET "premiumAmount" = (1200 + GREATEST(h."memberCount" - 1, 0) * 120)::numeric
     FROM households h
     WHERE c."householdId" = h.id
       AND h."membershipType" = 'paying'
