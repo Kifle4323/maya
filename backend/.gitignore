@@ -36,8 +36,7 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # ── SECRETS — NEVER COMMIT THESE ─────────────────────────────────────────────
-.env
-.env.*
+
 !.env.example
 *.pem
 *.key
