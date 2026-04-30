@@ -826,7 +826,8 @@ double _safeDouble(dynamic v) {
 String _calcDisplayPremium(CbhiSnapshot snapshot) {
   final memberCount =
       _safeDouble(snapshot.household['memberCount']).toInt().clamp(1, 999);
-  final calculated = memberCount * 120;
+  final additional = (memberCount - 1).clamp(0, 999);
+  final calculated = 1200 + additional * 120;
   return '$calculated ETB';
 }
 

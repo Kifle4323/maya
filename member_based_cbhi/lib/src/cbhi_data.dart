@@ -1775,7 +1775,7 @@ class CbhiRepository {
     try {
       return await _getJson('/benefit-packages/active');
     } catch (_) {
-      return {'name': 'Standard CBHI Package', 'items': [], 'premiumPerMember': '120', 'annualCeiling': '0'};
+      return {'name': 'Standard CBHI Package', 'items': [], 'premiumPerMember': '1200', 'annualCeiling': '0'};
     }
   }
 

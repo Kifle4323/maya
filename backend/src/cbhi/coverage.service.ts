@@ -30,32 +30,33 @@ export type EligibilityDecision = {
  */
 @Injectable()
 export class CoverageService {
-  private readonly premiumPerMember = Number(process.env.CBHI_PREMIUM_PER_MEMBER ?? 120);
+  private readonly householdBasePremium = Number(process.env.CBHI_HOUSEHOLD_BASE_PREMIUM ?? 1200);
+  private readonly additionalBeneficiaryPremium = Number(process.env.CBHI_ADDITIONAL_BENEFICIARY_PREMIUM ?? 120);
 
   // Research-based 4-tier sliding scale (PMC11936286, Jimma University 2022)
   private get tierBasePremiums() {
     return {
       [MembershipTier.INDIGENT]: 0,
-      [MembershipTier.LOW_INCOME]: Number(process.env.CBHI_PREMIUM_LOW ?? 350),
-      [MembershipTier.MIDDLE_INCOME]: Number(process.env.CBHI_PREMIUM_MIDDLE ?? 500),
-      [MembershipTier.HIGH_INCOME]: Number(process.env.CBHI_PREMIUM_HIGH ?? 650),
+      [MembershipTier.LOW_INCOME]: Number(process.env.CBHI_PREMIUM_LOW ?? 1200),
+      [MembershipTier.MIDDLE_INCOME]: Number(process.env.CBHI_PREMIUM_MIDDLE ?? 1200),
+      [MembershipTier.HIGH_INCOME]: Number(process.env.CBHI_PREMIUM_HIGH ?? 1200),
     };
   }
 
   private get additionalAdultPremium() {
-    return Number(process.env.CBHI_PREMIUM_ADDITIONAL_ADULT ?? 100);
+    return Number(process.env.CBHI_ADDITIONAL_BENEFICIARY_PREMIUM ?? 120);
   }
 
   /**
    * Calculate tier-based premium.
-   * Base + (additionalAdults * additionalAdultRate)
-   * additionalAdults = max(0, householdSize - 1)  (first adult is base)
+   * Base (1200) covers the household head; each additional beneficiary costs 120.
+   * additionalBeneficiaries = max(0, householdSize - 1)
    */
   calculateTierPremium(tier: MembershipTier, householdSize: number): number {
     if (tier === MembershipTier.INDIGENT) return 0;
     const base = this.tierBasePremiums[tier];
-    const additionalAdults = Math.max(0, householdSize - 1);
-    return base + additionalAdults * this.additionalAdultPremium;
+    const additionalBeneficiaries = Math.max(0, householdSize - 1);
+    return base + additionalBeneficiaries * this.additionalAdultPremium;
   }
 
   constructor(

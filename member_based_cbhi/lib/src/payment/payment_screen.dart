@@ -83,10 +83,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
   double get _premiumAmount {
     final fromSnapshot = widget.snapshot.premiumAmount;
     if (fromSnapshot > 0) return fromSnapshot;
-    // Fallback: calculate from memberCount × 120 ETB (same as dashboard)
+    // Fallback: base 1200 ETB + 120 per additional beneficiary (same as dashboard)
     final memberCount =
         double.tryParse(widget.snapshot.household['memberCount']?.toString() ?? '1')?.toInt() ?? 1;
-    return memberCount * 120.0;
+    return 1200.0 + (memberCount - 1).clamp(0, 999) * 120.0;
   }
 
   // ── Auto-polling ──────────────────────────────────────────────────────────

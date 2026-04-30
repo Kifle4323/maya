@@ -51,8 +51,11 @@ type EligibilityDecision = {
 
 @Injectable()
 export class CbhiService {
-  private readonly premiumPerMember = Number(
-    process.env.CBHI_PREMIUM_PER_MEMBER ?? 120,
+  private readonly householdBasePremium = Number(
+    process.env.CBHI_HOUSEHOLD_BASE_PREMIUM ?? 1200,
+  );
+  private readonly additionalBeneficiaryPremium = Number(
+    process.env.CBHI_ADDITIONAL_BENEFICIARY_PREMIUM ?? 120,
   );
 
   private readonly cardSecret = process.env.DIGITAL_CARD_SECRET ?? 'cbhi-card';
@@ -638,7 +641,7 @@ export class CbhiService {
             order: { createdAt: 'DESC' },
           });
           if (coverage) {
-            const newPremium = Math.max(updatedHousehold.memberCount, 1) * this.premiumPerMember;
+            const newPremium = this.calculatePremium(updatedHousehold.memberCount);
             coverage.premiumAmount = newPremium.toFixed(2);
             await this.coverageRepository.save(coverage);
           }
@@ -957,7 +960,9 @@ export class CbhiService {
   }
 
   private calculatePremium(memberCount: number) {
-    return Math.max(memberCount, 1) * this.premiumPerMember;
+    // Base premium covers the household; each additional beneficiary beyond 1 costs extra
+    const additionalBeneficiaries = Math.max(memberCount - 1, 0);
+    return this.householdBasePremium + additionalBeneficiaries * this.additionalBeneficiaryPremium;
   }
 
   private issueDigitalCard(input: {
