@@ -124,6 +124,7 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
                   repository: repo,
                   snapshot: snapshot,
                   onPaymentComplete: regCubit.submitPaymentSuccess,
+                  accessToken: state.accessToken,
                 ),
               );
 

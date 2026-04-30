@@ -712,6 +712,12 @@ class CbhiRepository {
     }
   }
 
+  /// Get the current access token — used to pass auth to PaymentScreen during registration
+  Future<String?> getCurrentAccessToken() async {
+    final session = await _readStoredSession();
+    return session?.accessToken;
+  }
+
   static Future<CbhiRepository> create({
     String? apiBaseUrl,
   }) async {
@@ -1096,7 +1102,34 @@ class CbhiRepository {
   Future<Map<String, dynamic>> initiatePayment({
     required double amount,
     String? description,
+    String? accessToken,
   }) async {
+    if (accessToken != null && accessToken.isNotEmpty) {
+      // Use provided token directly (e.g. from registration response)
+      final headers = <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      };
+      try {
+        final response = await _client
+            .post(
+              Uri.parse('$apiBaseUrl/payments/initiate'),
+              headers: headers,
+              body: jsonEncode({
+                'amount': amount,
+                'description': description,
+              }),
+            )
+            .timeout(_kWriteTimeout);
+        return _decodeResponse('/payments/initiate', response);
+      } catch (error) {
+        if (error is _ApiException) rethrow;
+        throw const _ApiException(
+          'Connection to server failed. Please check your internet or the server status.',
+          retryable: true,
+        );
+      }
+    }
     return _postJson('/payments/initiate', {
       'amount': amount,
       'description': description,
@@ -1562,7 +1595,12 @@ class CbhiRepository {
   Future<Map<String, String>> _headers({required bool authorized}) async {
     final headers = <String, String>{'Content-Type': 'application/json'};
     if (authorized) {
-      final session = await _readStoredSession();
+      var session = await _readStoredSession();
+      // Retry once — secure storage may not have persisted yet after registration
+      if (session?.accessToken == null || session!.accessToken.isEmpty) {
+        await Future.delayed(const Duration(milliseconds: 300));
+        session = await _readStoredSession();
+      }
       final token = session?.accessToken;
       if (token == null || token.isEmpty) {
         throw const _ApiException(

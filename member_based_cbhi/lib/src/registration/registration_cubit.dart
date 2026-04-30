@@ -131,6 +131,9 @@ class RegistrationCubit extends Cubit<RegistrationState> {
       snapshot = snapshot.copyWith(notifications: existingNotifications);
       await repository.localDb.writeSnapshot(snapshot);
 
+      // Read the access token that was just stored by registerFull
+      final accessToken = await repository.getCurrentAccessToken();
+
       final next = state.copyWith(
         membership: membership,
         registrationSnapshot: snapshot,
@@ -138,6 +141,7 @@ class RegistrationCubit extends Cubit<RegistrationState> {
         currentStep: RegistrationStep.payment,
         isLoading: false,
         clearError: true,
+        accessToken: accessToken,
       );
       emit(next);
       _saveDraft(next);

@@ -24,6 +24,7 @@ class RegistrationState {
   final bool isOffline;
   final String? registeredPhone;
   final CbhiSnapshot? registrationSnapshot;
+  final String? accessToken;
 
   const RegistrationState({
     this.currentStep = RegistrationStep.start,
@@ -35,6 +36,7 @@ class RegistrationState {
     this.isOffline = false,
     this.registeredPhone,
     this.registrationSnapshot,
+    this.accessToken,
   });
 
   RegistrationState copyWith({
@@ -49,6 +51,7 @@ class RegistrationState {
     bool clearMembership = false,
     String? registeredPhone,
     CbhiSnapshot? registrationSnapshot,
+    String? accessToken,
   }) {
     return RegistrationState(
       currentStep: currentStep ?? this.currentStep,
@@ -60,6 +63,7 @@ class RegistrationState {
       isOffline: isOffline ?? this.isOffline,
       registeredPhone: registeredPhone ?? this.registeredPhone,
       registrationSnapshot: registrationSnapshot ?? this.registrationSnapshot,
+      accessToken: accessToken ?? this.accessToken,
     );
   }
 }

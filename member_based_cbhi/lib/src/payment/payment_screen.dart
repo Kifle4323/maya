@@ -16,11 +16,14 @@ class PaymentScreen extends StatefulWidget {
     required this.repository,
     required this.snapshot,
     required this.onPaymentComplete,
+    this.accessToken,
   });
 
   final CbhiRepository repository;
   final CbhiSnapshot snapshot;
   final VoidCallback onPaymentComplete;
+  /// Optional access token from registration — used when secure storage hasn't persisted yet
+  final String? accessToken;
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
@@ -149,6 +152,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       final result = await widget.repository.initiatePayment(
         amount: _premiumAmount,
         description: 'CBHI premium for household ${widget.snapshot.householdCode}',
+        accessToken: widget.accessToken,
       );
 
       setState(() {
